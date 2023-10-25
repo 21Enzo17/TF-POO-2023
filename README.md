@@ -48,3 +48,5 @@ devolución, estado del préstamo (prestado o devuelto).
 equipo. Deben crear un nuevo proyecto gitlab con la nueva distribución de grupos de alumnos
 
 - Implemente los patrones de diseño Service Layer, DTO, DI
+
+## Diagrama UML
