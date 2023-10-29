@@ -3,13 +3,19 @@ package ar.edu.unju.fi.tp9.service.impl;
 import java.util.Optional;
 
 import org.apache.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ar.edu.unju.fi.tp9.dto.LibroDeleteDto;
+import ar.edu.unju.fi.tp9.dto.LibroEditDto;
+import ar.edu.unju.fi.tp9.dto.LibroSaveDto;
+import ar.edu.unju.fi.tp9.dto.LibroSearchDto;
 import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.LibroRepository;
 import ar.edu.unju.fi.tp9.service.LibroService;
+import ar.edu.unju.fi.tp9.util.EstadoLibro;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -19,107 +25,136 @@ public class LibroServiceImpl implements LibroService{
 	LibroRepository libroRepository;
 	
 	private static Logger logger = Logger.getLogger(LibroServiceImpl.class);
-	
-	/**
-	 * Verifica que el libro a guardar no tenga un ISBN y numero de inventario ya registrados.
-	 * @param libro a verificar.
-	 * @return boolean, false si se puede registrar, true si no. 
-	 */
-	private boolean verificarIsbnNumInventario(Libro libro) {
-		Libro libroIsbn = libroRepository.findByIsbn(libro.getIsbn());
-		
-		if(libroIsbn == null)
-			return false; //Si el libro con ISBN pasado no existe devuelve falso
-		else if (libroIsbn.getNumeroInventario() != libro.getNumeroInventario())
-			return false; //Si el libro con el mismo ISBN tiene un numero de inventario diferente devuelve falso
-		else
-			return true; //Devuelve verdadero si ISBN y numero de inventario son iguales.
-	}
-	
-	
-	/**
-	 * Guarda un libro pasado por parametro si el libro no tiene un ISBN y numero de inventario ya registrado.
-	 */
-	//FIXME Aplicar DTO
-	@Override
-	public void guardarLibro(Libro libro) throws ManagerException{
-		if(verificarIsbnNumInventario(libro)) {
-			logger.error("ISBN " + libro.getIsbn() + "registrado con el mismo numero de inventario");
-			throw new ManagerException("ISBN " + libro.getIsbn() + " registrado con el mismo numero de inventario");
-		}
-		else{
-			logger.info("El libro " + libro.getTitulo() + " de " + libro.getAutor() + " registrado exitosamente.");
-			libroRepository.save(libro);
-		}
-	}
 
+	private static ModelMapper mapper = new ModelMapper();
+	
 	/**
-	 * Elimina un libro por su id, si es que existe un libro registrado con el id pasado por parametro.
+	 * Guarda un libro DTO pasado por parametro, verificando que su ISBN y numero de inventario no hayan sido registrado previamente.
 	 */
-	//FIXME Aplicar DTO
 	@Override
-	public void eliminarLibro(Long id){
-		Optional<Libro> libroEliminar = libroRepository.findById(id);
-		
-		if(libroEliminar.isEmpty()) {
-			logger.error("La id: " + id + " no este registrada para ningun libro.");
-			throw new EntityNotFoundException("La id: " + id + " no este registrada para ningun libro.");
+	public void guardarLibro(LibroSaveDto libroDto) throws ManagerException {
+		Libro nuevoLibro = new Libro();
+		mapper.map(libroDto, nuevoLibro);
+
+		if(libroRepository.existsByIsbn(nuevoLibro.getIsbn()) ) {
+			logger.error("ISBN: " + nuevoLibro.getIsbn() + " ya ah sido registrado.");
+			throw new ManagerException("ISBN: " + nuevoLibro.getIsbn() + " ya ah sido registrado.");
+		}
+		else if(libroRepository.existsByNumeroInventario(nuevoLibro.getNumeroInventario())) {
+			logger.error("Numero de inventario: " + nuevoLibro.getNumeroInventario() + " ya ah sido registrado.");
+			throw new ManagerException("Numero de inventario: " + nuevoLibro.getNumeroInventario() + " ya ah sido registrado.");
 		}
 		else {
-			logger.info("Libro con id: " + id + "eliminado con exito.");
-			libroRepository.delete(libroEliminar.get());
+			nuevoLibro.setEstado(EstadoLibro.DISPONIBLE);
+			libroRepository.save(nuevoLibro);
+			logger.info("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
 		}
 	}
 
 	/**
-	 * Edita un libro pasado por parametro si es que su id fue registrado previamente.
+	 * Recibe un libro DTO por parametro, mapeo un libro y verifica que exista previamente antes de eliminarlo.
 	 */
-	//FIXME Aplicar DTO
 	@Override
-	public void editarLibro(Libro libro){
-		if( !libroRepository.existsById(libro.getId()) ) {
-			logger.error("El libro " + libro.getTitulo() + " no se encuentra registrado.");
-			throw new EntityNotFoundException("El libro con id: " + libro.getId() + " no se encuentra registrado.");
+	public void eliminarLibro(LibroDeleteDto libroDto) {
+		Libro eliminarLibro = new Libro();
+		mapper.map(libroDto, eliminarLibro);
+		
+		if(libroRepository.existsById(eliminarLibro.getId())) {
+			libroRepository.delete(eliminarLibro);
+			logger.info("Libro con id: " + eliminarLibro.getId() + " ah sido eliminado.");
 		}
 		else {
-			logger.info("El libro con id: " + libro.getId() + " se modifico correctamente.");
-			libroRepository.save(libro);
+			logger.error("Libro con id: " + eliminarLibro.getId() + " no ah sido registrado.");
+			throw new EntityNotFoundException("Libro con id: " + eliminarLibro.getId() + " no ah sido registrado.");
 		}
 	}
 
 	/**
-	 * Busca un libro por id, si no lo encuentra devuelve null.
+	 * Recibe un libro DTO por parametro, es mapeado un libro y verifica que exista previamente antes de editarlo.
 	 */
 	@Override
-	public Libro buscarLibroPorId(Long id) {
-		Optional<Libro> libroId = libroRepository.findById(id);
-		if(libroId.isEmpty())
+	public void editarLibro(LibroEditDto libroDto) {
+		Libro editarLibro = new Libro();
+		mapper.map(libroDto, editarLibro);
+		
+		if(libroRepository.existsById(editarLibro.getId())) {
+			libroRepository.save(editarLibro);
+			logger.info("Libro con id: " + editarLibro.getId() + " ah sido modificado.");
+		}
+		else {
+			logger.error("Libron con id: " + editarLibro.getId() + " no ah sido registrado.");
+			throw new EntityNotFoundException("Libron con id: " + editarLibro.getId() + " no ah sido registrado.");
+		}
+	}
+
+	/**
+	 * Busca un libro por id pasado por parametro, si existe lo mapea a libro DTO y lo devuelve, de lo contrario devuelve null.
+	 */
+	@Override
+	public LibroSearchDto buscarLibroPorId(Long id) {
+		
+		LibroSearchDto libroDto = new LibroSearchDto();
+		Optional<Libro> libroBuscado = libroRepository.findById(id);
+		
+		if(libroBuscado.isEmpty())
 			return null;
-		else
-			return libroId.get();
+		else {
+			mapper.map(libroBuscado.get(), libroDto);
+			logger.info("Devolviendo el libro " + libroDto.getTitulo());
+			return libroDto;
+		}
 	}
 
 	/**
-	 * Busca un libro por titulo, si no lo encuentra devuelve null.
+	 * Busca un libro por titulo, 
 	 */
 	@Override
-	public Libro buscarLibroPorTitulo(String titulo) {
-		return libroRepository.findByTitulo(titulo);
+	public LibroSearchDto buscarLibroPorTitulo(String titulo) {
+		LibroSearchDto libroDto = new LibroSearchDto();
+		Libro libroBuscado = libroRepository.findByTitulo(titulo);
+		
+		if(libroBuscado == null)
+			return null;
+		else {
+			mapper.map(libroBuscado, libroDto);
+			return libroDto;
+		}
 	}
 
 	/**
-	 * Busca un libro por autor, si no lo encuentra devuelve null.
+	 * Busca un libro por autor pasado por parametro y lo mapea a DTO, si no existe, devuelve null.
 	 */
 	@Override
-	public Libro buscarLibroPorAutor(String autor) {
-		return libroRepository.findByAutor(autor);
+	public LibroSearchDto buscarLibroPorAutor(String autor) {
+		LibroSearchDto libroDto = new LibroSearchDto();
+		Libro libroBuscado = libroRepository.findByAutor(autor);
+		
+		if(libroBuscado == null)
+			return null;
+		else {
+			mapper.map(libroBuscado, libroDto);
+			return libroDto;
+		}
 	}
 
 	/**
-	 * Busca un libro por ISBN, si no lo encuentra devuelve null.
+	 * Busca un 
 	 */
 	@Override
-	public Libro buscarLibroPorIsbn(String isbn) {
-		return libroRepository.findByIsbn(isbn);
+	public LibroSearchDto buscarLibroPorIsbn(String isbn) {
+		LibroSearchDto libroDto = new LibroSearchDto();
+		Libro libroBuscado = libroRepository.findByIsbn(isbn);
+		
+		if(libroBuscado == null)
+			return null;
+		else {
+			mapper.map(libroBuscado, libroDto);
+			return libroDto;
+		}
+	}
+
+	@Override
+	public long librosSize() {
+		return libroRepository.count();
 	}
 }

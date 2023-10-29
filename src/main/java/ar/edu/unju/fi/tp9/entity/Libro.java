@@ -1,7 +1,10 @@
 package ar.edu.unju.fi.tp9.entity;
 
+import ar.edu.unju.fi.tp9.util.EstadoLibro;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +27,8 @@ public class Libro {
 	@Column(name = "num_inventario")
 	private Long numeroInventario;
 	
-	private String estado;
+	@Enumerated(EnumType.STRING)
+	private EstadoLibro estado;
 
 	//TODO Relacion con prestamos.
 	
@@ -33,7 +37,7 @@ public class Libro {
 	public Libro() {
 	}
 	
-	public Libro(String titulo, String autor, String isbn, Long numeroInventario, String estado) {
+	public Libro(String titulo, String autor, String isbn, Long numeroInventario, EstadoLibro estado) {
 		this.titulo = titulo;
 		this.autor = autor;
 		this.isbn = isbn;
@@ -47,6 +51,10 @@ public class Libro {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	public String getTitulo() {
 		return titulo;
 	}
@@ -79,11 +87,11 @@ public class Libro {
 		this.numeroInventario = numeroInventario;
 	}
 
-	public String getEstado() {
+	public EstadoLibro getEstado() {
 		return estado;
 	}
 
-	public void setEstado(String estado) {
+	public void setEstado(EstadoLibro estado) {
 		this.estado = estado;
 	}
 }
