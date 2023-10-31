@@ -1,29 +1,12 @@
 package ar.edu.unju.fi.tp9.dto;
 
-public class LibroSaveDto {
-	
-	private String titulo;
+public class LibroSaveDto extends LibroBaseDto{
 	
 	private String autor;
 	
 	private String isbn;
 	
 	private Long numeroInventario;
-
-	public LibroSaveDto(String titulo, String autor, String isbn, Long numeroInventario) {
-		this.titulo = titulo;
-		this.autor = autor;
-		this.isbn = isbn;
-		this.numeroInventario = numeroInventario;
-	}
-
-	public String getTitulo() {
-		return titulo;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
 
 	public String getAutor() {
 		return autor;

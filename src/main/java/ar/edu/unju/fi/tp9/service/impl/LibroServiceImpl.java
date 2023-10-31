@@ -61,7 +61,7 @@ public class LibroServiceImpl implements LibroService{
 		
 		if(libroRepository.existsById(eliminarLibro.getId())) {
 			libroRepository.delete(eliminarLibro);
-			logger.info("Libro con id: " + eliminarLibro.getId() + " ah sido eliminado.");
+			logger.info("El libro "+ eliminarLibro.getTitulo() + " ah sido eliminado.");
 		}
 		else {
 			logger.error("Libro con id: " + eliminarLibro.getId() + " no ah sido registrado.");

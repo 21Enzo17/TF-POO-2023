@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,11 +30,52 @@ public class LibroServiceTest {
 	
 	ModelMapper mapper = new ModelMapper();
 	
+	LibroSaveDto libroGuardarDto;
+	LibroSaveDto libroThrowDto1;
+	LibroSaveDto libroThrowDto2;
+	LibroDeleteDto libroEliminarDto;
+	LibroSearchDto libroGuardadoDto;
+	LibroEditDto libroEditarDto;
+	
+	@BeforeEach
+	void iniciarVariables() {
+		libroGuardarDto = new LibroSaveDto();
+		libroGuardarDto.setTitulo("Un libro");
+		libroGuardarDto.setAutor("autor");
+		libroGuardarDto.setIsbn("ISBN-10-1234567890");
+		libroGuardarDto.setNumeroInventario(111l);
+		
+		libroThrowDto1 = new LibroSaveDto();
+		libroThrowDto1.setTitulo("Otro libro");
+		libroThrowDto1.setAutor("autor");
+		libroThrowDto1.setIsbn("ISBN-10-1234567890");
+		libroThrowDto1.setNumeroInventario(222l);
+		
+		libroThrowDto2 = new LibroSaveDto();
+		libroThrowDto2.setTitulo("Otro libro");
+		libroThrowDto2.setAutor("autor");
+		libroThrowDto2.setIsbn("ISBN-10-0987654321");
+		libroThrowDto2.setNumeroInventario(111l);
+		
+		libroEliminarDto = new LibroDeleteDto();
+		libroGuardadoDto = new LibroSearchDto();
+		libroEditarDto = new LibroEditDto();
+	}
+	
+	@AfterEach
+	void resetearVariables() {
+		libroGuardarDto = null;
+		libroThrowDto1 = null;
+		libroThrowDto2 = null;
+		libroGuardadoDto = null;
+		libroEditarDto = null;
+		libroEliminarDto = null;
+	}
+	
 	@Test
 	@DisplayName("Test guardar libro")
 	void guardarLibroTest() throws ManagerException {
 		//Guarda el libro y verifica la cantidad sea correcta.
-		LibroSaveDto libroGuardarDto = new LibroSaveDto("Un libro", "autor", "ISBN-10-1234567890", 111l);
 		libroService.guardarLibro(libroGuardarDto);
 		
 		assertEquals(6, libroService.librosSize());
@@ -40,35 +83,28 @@ public class LibroServiceTest {
 		//Lo busca y verifica que no sea null, y el isbn sea correcto.
 		LibroSearchDto libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
 		assertNotNull(libroGuardadoDto);
-		
 		assertEquals(libroGuardadoDto.getIsbn(), "ISBN-10-1234567890");
 		
 		//Verificación de throw con el isbn repetido.
-		LibroSaveDto libroThrowDto = new LibroSaveDto("Otro libro", "autor", "ISBN-10-1234567890", 222l);
-		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto));
+		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto1));
 		
 		//Verificaicon de throw con numero de inventario repetido.
-		libroThrowDto.setIsbn("ISBN-10-0987654321");
-		libroThrowDto.setNumeroInventario(111l);
-		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto));
+		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto2));
 		
 		//Elimina el libro de prueba.
-		LibroDeleteDto libroBorrarDto = new LibroDeleteDto();
-		libroBorrarDto.setId(libroGuardadoDto.getId());
-		libroService.eliminarLibro(libroBorrarDto);
+		mapper.map(libroGuardadoDto, libroEliminarDto);
+		libroService.eliminarLibro(libroEliminarDto);
 	}
 	
 	@Test
 	@DisplayName("Test eliminar libro")
 	void eliminarLibroTest() throws ManagerException {
 		//Guarda un libro.
-		LibroSaveDto libroGuardarDto = new LibroSaveDto("Un libro", "autor", "ISBN-10-1111111111", 777l);
 		libroService.guardarLibro(libroGuardarDto);
 		
 		//Lo busca y lo mapea a un libroDeleteDto.
-		LibroSearchDto libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
-		LibroDeleteDto libroEliminarDto = new LibroDeleteDto();
-		libroEliminarDto.setId(libroGuardadoDto.getId());
+		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
+		mapper.map(libroGuardadoDto, libroEliminarDto);
 		
 		//Lo elimina y verifica el total.
 		libroService.eliminarLibro(libroEliminarDto);
@@ -83,49 +119,48 @@ public class LibroServiceTest {
 	@DisplayName("Test editar libro")
 	void editarLibroTest() {
 		//Busca un libro guardado con import.sql
-		LibroSearchDto libroBuscarDto = libroService.buscarLibroPorTitulo("IT");
-		LibroEditDto libroEditarDto = new LibroEditDto();
+		libroGuardadoDto = libroService.buscarLibroPorTitulo("IT");
 		
 		//Lo mapea a un libroEditarDto, lo modifica y manda a editar.
-		mapper.map(libroBuscarDto, libroEditarDto);
+		mapper.map(libroGuardadoDto, libroEditarDto);
 		libroEditarDto.setTitulo("Moby dick");
 		libroEditarDto.setEstado(EstadoLibro.PRESTADO);
 		libroService.editarLibro(libroEditarDto);
 		
 		//Busca el libro por autor no modificado y verifica que los valores se hayan modificado y que no sea null.
-		libroBuscarDto = libroService.buscarLibroPorAutor("Stephen King");
-		assertNotNull(libroBuscarDto);
-		assertEquals(libroBuscarDto.getTitulo(), "Moby dick");
-		assertEquals(libroBuscarDto.getEstado(), EstadoLibro.PRESTADO);
+		libroGuardadoDto = libroService.buscarLibroPorAutor("Stephen King");
+		assertNotNull(libroGuardadoDto);
+		assertEquals(libroGuardadoDto.getTitulo(), "Moby dick");
+		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.PRESTADO);
 	}
 	
 	@Test
 	@DisplayName("Test Buscar Libro por Autor")
 	void buscarLibroAutorTest() {
-		LibroSearchDto libroBuscarDto = libroService.buscarLibroPorAutor("J.K Rowling");
-		assertNotNull(libroBuscarDto);
+		libroGuardadoDto = libroService.buscarLibroPorAutor("J.K Rowling");
+		assertNotNull(libroGuardadoDto);
 		
-		assertEquals(libroBuscarDto.getTitulo(), "Harry Potter y la piedra filosofal");
-		assertEquals(libroBuscarDto.getEstado(), EstadoLibro.DISPONIBLE);
+		assertEquals(libroGuardadoDto.getTitulo(), "Harry Potter y la piedra filosofal");
+		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.DISPONIBLE);
 	}
 	
 	@Test
 	@DisplayName("Test Buscar Libro por Titulo")
 	void buscarLibroTitutloTest() {
-		LibroSearchDto libroBuscarDto = libroService.buscarLibroPorTitulo("El camino de los reyes");
-		assertNotNull(libroBuscarDto);
+		libroGuardadoDto = libroService.buscarLibroPorTitulo("El camino de los reyes");
+		assertNotNull(libroGuardadoDto);
 		
-		assertEquals(libroBuscarDto.getAutor(), "Brandon Sanderson");
-		assertEquals(libroBuscarDto.getIsbn(), "ISBN-10-0061120082");
+		assertEquals(libroGuardadoDto.getAutor(), "Brandon Sanderson");
+		assertEquals(libroGuardadoDto.getIsbn(), "ISBN-10-0061120082");
 	}
 	
 	@Test
 	@DisplayName("Test Buscar Libro por ISBN")
 	void buscarLibroIsbnTest() {
-		LibroSearchDto libroBuscarDto = libroService.buscarLibroPorIsbn("ISBN-10-0451524935");
-		assertNotNull(libroBuscarDto);
+		libroGuardadoDto = libroService.buscarLibroPorIsbn("ISBN-10-0451524935");
+		assertNotNull(libroGuardadoDto);
 		
-		assertEquals(libroBuscarDto.getAutor(), "J.R.R. Tolkien");
-		assertEquals(libroBuscarDto.getTitulo(), "El senior de los anillos");
+		assertEquals(libroGuardadoDto.getAutor(), "J.R.R. Tolkien");
+		assertEquals(libroGuardadoDto.getTitulo(), "El senior de los anillos");
 	}
 }
