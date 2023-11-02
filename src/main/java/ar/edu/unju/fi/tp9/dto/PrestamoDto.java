@@ -1,7 +1,6 @@
 package ar.edu.unju.fi.tp9.dto;
 
 import java.io.Serializable;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
