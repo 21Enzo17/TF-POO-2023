@@ -3,6 +3,7 @@ package ar.edu.unju.fi.tp9.service;
 import org.springframework.stereotype.Service;
 
 import ar.edu.unju.fi.tp9.dto.MiembroDto;
+import ar.edu.unju.fi.tp9.entity.Miembro;
 
 
 @Service
@@ -24,4 +25,8 @@ public interface IMiembroService {
     public MiembroDto obtenerMiembroByCorreo(String correo);
 
     public MiembroDto obtenerMiembroById(Integer id);
+
+    public Miembro miembroDtoAMiembro(MiembroDto miembroDto);
+
+    public MiembroDto miembroAMiembroDto(Miembro miembro);
 }

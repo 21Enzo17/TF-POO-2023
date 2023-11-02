@@ -1,4 +1,4 @@
-package ar.edu.unju.fi.tp9;
+package ar.edu.unju.fi.tp9.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

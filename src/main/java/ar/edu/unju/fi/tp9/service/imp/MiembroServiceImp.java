@@ -76,6 +76,7 @@ public class MiembroServiceImp implements IMiembroService {
      * @param miembroDto
      * @return miembro
      */
+    @Override
     public Miembro miembroDtoAMiembro(MiembroDto miembroDto){
         Miembro miembro;
         ModelMapper modelMapper = new ModelMapper();
@@ -94,6 +95,7 @@ public class MiembroServiceImp implements IMiembroService {
      * @param miembro
      * @return
      */
+    @Override
     public MiembroDto miembroAMiembroDto(Miembro miembro){
         MiembroDto miembroDto;
         ModelMapper modelMapper = new ModelMapper();
