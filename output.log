@@ -1,0 +1,47 @@
+2023-10-29 16:26:54 INFO  LibroServiceImpl:50 - El libro Un librose registro con exito
+2023-10-29 16:26:54 ERROR LibroServiceImpl:40 - ISBN: ISBN-10-1234567890 ya ah sido registrado.
+2023-10-29 16:28:17 INFO  LibroServiceImpl:50 - El libro Un librose registro con exito
+2023-10-29 16:28:17 ERROR LibroServiceImpl:40 - ISBN: ISBN-10-1234567890 ya ah sido registrado.
+2023-10-29 16:33:27 INFO  LibroServiceImpl:50 - El libro Un librose registro con exito
+2023-10-29 16:33:27 INFO  LibroServiceImpl:50 - El libro Un librose registro con exito
+2023-10-29 17:03:43 INFO  LibroServiceImpl:50 - El libro Un librose registro con exito
+2023-10-29 17:03:43 INFO  LibroServiceImpl:50 - El libro Un librose registro con exito
+2023-10-29 17:06:13 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:07:35 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:09:22 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:11:34 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:13:35 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:13:36 INFO  LibroServiceImpl:64 - Libro con id: 6 ah sido eliminado.
+2023-10-29 17:20:16 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:20:16 INFO  LibroServiceImpl:64 - Libro con id: 6 ah sido eliminado.
+2023-10-29 17:20:47 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:20:47 INFO  LibroServiceImpl:64 - Libro con id: 6 ah sido eliminado.
+2023-10-29 17:20:47 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:20:47 ERROR LibroServiceImpl:40 - ISBN: ISBN-10-1234567890 ya ah sido registrado.
+2023-10-29 17:20:47 ERROR LibroServiceImpl:44 - Numero de inventario: 111 ya ah sido registrado.
+2023-10-29 17:20:47 INFO  LibroServiceImpl:64 - Libro con id: 7 ah sido eliminado.
+2023-10-29 17:21:44 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:21:44 INFO  LibroServiceImpl:64 - Libro con id: 6 ah sido eliminado.
+2023-10-29 17:21:45 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:21:45 ERROR LibroServiceImpl:40 - ISBN: ISBN-10-1234567890 ya ah sido registrado.
+2023-10-29 17:21:45 ERROR LibroServiceImpl:44 - Numero de inventario: 111 ya ah sido registrado.
+2023-10-29 17:21:45 INFO  LibroServiceImpl:64 - Libro con id: 7 ah sido eliminado.
+2023-10-29 17:24:00 INFO  LibroServiceImpl:82 - Libro con id: 1 ah sido modificado.
+2023-10-29 17:24:00 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:24:00 INFO  LibroServiceImpl:64 - Libro con id: 6 ah sido eliminado.
+2023-10-29 17:24:00 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 17:24:00 ERROR LibroServiceImpl:40 - ISBN: ISBN-10-1234567890 ya ah sido registrado.
+2023-10-29 17:24:00 ERROR LibroServiceImpl:44 - Numero de inventario: 111 ya ah sido registrado.
+2023-10-29 17:24:00 INFO  LibroServiceImpl:64 - Libro con id: 7 ah sido eliminado.
+2023-10-29 18:11:01 INFO  LibroServiceImpl:82 - Libro con id: 1 ah sido modificado.
+2023-10-29 18:11:01 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 18:11:01 INFO  LibroServiceImpl:64 - Libro con id: 6 ah sido eliminado.
+2023-10-29 18:11:01 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 18:11:01 ERROR LibroServiceImpl:40 - ISBN: ISBN-10-1234567890 ya ah sido registrado.
+2023-10-29 18:11:01 ERROR LibroServiceImpl:44 - Numero de inventario: 111 ya ah sido registrado.
+2023-10-29 18:11:53 INFO  LibroServiceImpl:82 - Libro con id: 1 ah sido modificado.
+2023-10-29 18:11:53 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 18:11:53 INFO  LibroServiceImpl:64 - Libro con id: 6 ah sido eliminado.
+2023-10-29 18:11:53 INFO  LibroServiceImpl:50 - El libro Un libro se registro con exito
+2023-10-29 18:11:53 ERROR LibroServiceImpl:40 - ISBN: ISBN-10-1234567890 ya ah sido registrado.
+2023-10-29 18:11:53 ERROR LibroServiceImpl:44 - Numero de inventario: 111 ya ah sido registrado.
