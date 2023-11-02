@@ -2,9 +2,19 @@
 ## Profesores
 - José Zapana
 - Juan Carlos Rodriguez
-## Integrantes
+## Info del proyecto
+### Verion de Java
+Java 17
+### Librerias
+* Mysql-Connector-Java
+* Spring-Boot-Starter-Test
+* Log4j
+* Junit
+### Integrantes
 - Enzo Nicolás Meneghini
 - Mauricio Miranda
+
+
 
 ## Contexto del Problema
 
