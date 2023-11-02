@@ -1,5 +1,8 @@
 package ar.edu.unju.fi.tp9.dto;
 
+import jakarta.transaction.Transactional;
+
+@Transactional
 public class LibroDto {
 	private Long id;
 

@@ -7,24 +7,32 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 
 @Entity
 @Table(name = "libros")
+@Transactional
 public class Libro {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 	
+	@Column(name = "titulo")
 	private String titulo;
 	
+	@Column(name = "autor")
 	private String autor;
 	
+	@Column(name = "isbn")
 	private String isbn;
+	
 	
 	@Column(name = "num_inventario")
 	private Long numeroInventario;
 	
+	@Column(name = "estado")
 	private String estado;
 	
 	@OneToOne(mappedBy = "libro")
@@ -35,14 +43,17 @@ public class Libro {
 	public Libro() {
 	}
 	
-	public Libro(String titulo, String autor, String isbn, Long numeroInventario, String estado) {
+	public Libro(Long id, String titulo, String autor, String isbn, Long numeroInventario, String estado,
+			Prestamo prestamo) {
+		this.id = id;
 		this.titulo = titulo;
 		this.autor = autor;
 		this.isbn = isbn;
 		this.numeroInventario = numeroInventario;
 		this.estado = estado;
+		this.prestamo = prestamo;
 	}
-	
+
 	////////// Getters y Setters //////////
 
 	public Long getId() {

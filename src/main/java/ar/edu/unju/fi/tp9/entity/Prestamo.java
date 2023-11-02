@@ -12,20 +12,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 
 @Entity
 @Table(name = "prestamos")
+@Transactional
 public class Prestamo {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 	
 	//TODO Relacion con miembro.
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_libro")
-	private Libro libro = new Libro();
+	private Libro libro  = new Libro();
 	
 	@Column(name = "fecha_prestamo")
 	private LocalDateTime fechaPrestamo;
@@ -33,6 +36,7 @@ public class Prestamo {
 	@Column(name = "fecha_devolucion")
 	private LocalDateTime fechaDevolucion;
 
+	@Column(name = "estado")
 	private String estado;
 
 	////////// Constructores /////////////
@@ -40,11 +44,12 @@ public class Prestamo {
 	public Prestamo() {
 	}
 	
-	public Prestamo(Long id, Libro libro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion) {
+	public Prestamo(Long id, Libro libro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion, String estado) {
 		this.id = id;
 		this.libro = libro;
 		this.fechaPrestamo = fechaPrestamo;
 		this.fechaDevolucion = fechaDevolucion;
+		this.estado = estado;
 	}
 	
 	////////// Getters y Setters //////////

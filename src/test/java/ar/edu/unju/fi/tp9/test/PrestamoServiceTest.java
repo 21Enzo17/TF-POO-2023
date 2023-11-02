@@ -3,7 +3,9 @@ package ar.edu.unju.fi.tp9.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 import ar.edu.unju.fi.tp9.entity.util.EstadoPrestamo;
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.LibroService;
 import ar.edu.unju.fi.tp9.service.PrestamoService;
+import ar.edu.unju.fi.tp9.util.EstadoLibro;
 
 @SpringBootTest
 public class PrestamoServiceTest {
@@ -24,26 +28,9 @@ public class PrestamoServiceTest {
 	PrestamoService prestamoService;
 	
 	@Autowired
-	LibroService libroService;
+	static LibroService libroService;
 	
 	PrestamoDto prestamoDto;
-	LibroDto libroDto;
-	
-	@BeforeEach
-	void inicializarVariables() {
-		libroDto = libroService.buscarLibroPorTitulo("IT");
-		
-		prestamoDto = new PrestamoDto();
-		prestamoDto.setFechaPrestamo("06/11/2023 17:30");
-		prestamoDto.setFechaDevolucion("13/11/2023 17:30");
-		prestamoDto.setLibro(libroDto);
-	}
-	
-	@AfterEach
-	void reiniciarVariables() {
-		libroDto = null;
-		prestamoDto = null;
-	}
 	
 	@Test
 	@DisplayName("Test Guardar Prestamo")
@@ -54,7 +41,7 @@ public class PrestamoServiceTest {
 		prestamoDto = prestamoService.buscarPrestamoPorId(1l);
 		assertNotNull(prestamoDto);
 		assertEquals(prestamoDto.getEstado(), "PRESTADO");
-		assertEquals(prestamoDto.getLibro().getTitulo(), "Libro test");
+		assertEquals(prestamoDto.getLibro().getTitulo(), "libro uno");
 		
 		prestamoService.eliminarPrestamo(prestamoDto);
 	}
@@ -62,6 +49,7 @@ public class PrestamoServiceTest {
 	@Test
 	@DisplayName("Test Devolver Prestamo")
 	void devolverPrestamoTest() {
+		prestamoDto.setLibro(libroService.buscarLibroPorTitulo("Don Quijote de la Mancha"));
 		prestamoService.guardarPrestamo(prestamoDto);
 		prestamoDto = prestamoService.buscarPrestamoPorId(1l);
 		

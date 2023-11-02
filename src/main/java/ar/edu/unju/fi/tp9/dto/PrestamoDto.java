@@ -1,9 +1,16 @@
 package ar.edu.unju.fi.tp9.dto;
 
-public class PrestamoDto{
+import java.io.Serializable;
+
+import jakarta.transaction.Transactional;
+
+@Transactional
+public class PrestamoDto implements Serializable{
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	
-	private LibroDto libro;
+	private LibroDto libro = new LibroDto();
 	
 	private String fechaPrestamo;
 	
