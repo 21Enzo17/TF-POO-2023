@@ -3,7 +3,7 @@ package ar.edu.unju.fi.tp9.dto;
 public class PrestamoDto{
 	private Long id;
 	
-	private LibroBuscarDto libro;
+	private LibroDto libro;
 	
 	private String fechaPrestamo;
 	
@@ -19,11 +19,11 @@ public class PrestamoDto{
 		this.id = id;
 	}
 
-	public LibroBuscarDto getLibro() {
+	public LibroDto getLibro() {
 		return libro;
 	}
 
-	public void setLibro(LibroBuscarDto libro) {
+	public void setLibro(LibroDto libro) {
 		this.libro = libro;
 	}
 

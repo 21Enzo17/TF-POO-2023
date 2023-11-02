@@ -7,10 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ar.edu.unju.fi.tp9.dto.LibroEliminarDto;
-import ar.edu.unju.fi.tp9.dto.LibroEditarDto;
-import ar.edu.unju.fi.tp9.dto.LibroGuardarDto;
-import ar.edu.unju.fi.tp9.dto.LibroBuscarDto;
+import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.LibroRepository;
@@ -28,24 +25,34 @@ public class LibroServiceImpl implements LibroService{
 
 	private static ModelMapper mapper = new ModelMapper();
 	
+	
+	private boolean estaIsbnRegistrado(String isbn) {
+		return libroRepository.existsByIsbn(isbn);
+	}
+	
+	private boolean estaNumeroInventarioRegistrado(Long numeroInventario) {
+		return libroRepository.existsByNumeroInventario(numeroInventario);
+	}
+	
 	/**
 	 * Guarda un libro DTO pasado por parametro, verificando que su ISBN y numero de inventario no hayan sido registrado previamente.
 	 */
 	@Override
-	public void guardarLibro(LibroGuardarDto libroDto) throws ManagerException {
+	public void guardarLibro(LibroDto libroDto) throws ManagerException {
 		Libro nuevoLibro = new Libro();
-		mapper.map(libroDto, nuevoLibro);
+		
 
-		if(libroRepository.existsByIsbn(nuevoLibro.getIsbn()) ) {
-			logger.error("ISBN: " + nuevoLibro.getIsbn() + " ya ah sido registrado.");
-			throw new ManagerException("ISBN: " + nuevoLibro.getIsbn() + " ya ah sido registrado.");
+		if(estaIsbnRegistrado(libroDto.getIsbn())) {
+			logger.error("ISBN: " + libroDto.getIsbn() + " ya ah sido registrado.");
+			throw new ManagerException("ISBN: " + libroDto.getIsbn() + " ya ah sido registrado.");
 		}
-		else if(libroRepository.existsByNumeroInventario(nuevoLibro.getNumeroInventario())) {
-			logger.error("Numero de inventario: " + nuevoLibro.getNumeroInventario() + " ya ah sido registrado.");
-			throw new ManagerException("Numero de inventario: " + nuevoLibro.getNumeroInventario() + " ya ah sido registrado.");
+		else if(estaNumeroInventarioRegistrado(libroDto.getNumeroInventario())) {
+			logger.error("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ah sido registrado.");
+			throw new ManagerException("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ah sido registrado.");
 		}
 		else {
-			nuevoLibro.setEstado(EstadoLibro.DISPONIBLE);
+			mapper.map(libroDto, nuevoLibro);
+			nuevoLibro.setEstado(EstadoLibro.DISPONIBLE.toString());
 			libroRepository.save(nuevoLibro);
 			logger.info("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
 		}
@@ -55,17 +62,17 @@ public class LibroServiceImpl implements LibroService{
 	 * Recibe un libro DTO por parametro, mapeo un libro y verifica que exista previamente antes de eliminarlo.
 	 */
 	@Override
-	public void eliminarLibro(LibroEliminarDto libroDto) {
+	public void eliminarLibro(LibroDto libroDto) {
 		Libro eliminarLibro = new Libro();
-		mapper.map(libroDto, eliminarLibro);
 		
-		if(libroRepository.existsById(eliminarLibro.getId())) {
+		if(libroRepository.existsById(libroDto.getId())) {
+			mapper.map(libroDto, eliminarLibro);
 			libroRepository.delete(eliminarLibro);
 			logger.info("El libro "+ eliminarLibro.getTitulo() + " ah sido eliminado.");
 		}
 		else {
-			logger.error("Libro con id: " + eliminarLibro.getId() + " no ah sido registrado.");
-			throw new EntityNotFoundException("Libro con id: " + eliminarLibro.getId() + " no ah sido registrado.");
+			logger.error("Libro con id: " + libroDto.getId() + " no ah sido registrado.");
+			throw new EntityNotFoundException("Libro con id: " + libroDto.getId() + " no ah sido registrado.");
 		}
 	}
 
@@ -73,17 +80,18 @@ public class LibroServiceImpl implements LibroService{
 	 * Recibe un libro DTO por parametro, es mapeado un libro y verifica que exista previamente antes de editarlo.
 	 */
 	@Override
-	public void editarLibro(LibroEditarDto libroDto) {
+	public void editarLibro(LibroDto libroDto) {
 		Libro editarLibro = new Libro();
-		mapper.map(libroDto, editarLibro);
 		
-		if(libroRepository.existsById(editarLibro.getId())) {
+		
+		if(libroRepository.existsById(libroDto.getId())) {
+			mapper.map(libroDto, editarLibro);
 			libroRepository.save(editarLibro);
 			logger.info("Libro con id: " + editarLibro.getId() + " ah sido modificado.");
 		}
 		else {
-			logger.error("Libron con id: " + editarLibro.getId() + " no ah sido registrado.");
-			throw new EntityNotFoundException("Libron con id: " + editarLibro.getId() + " no ah sido registrado.");
+			logger.error("Libron con id: " + libroDto.getId() + " no ah sido registrado.");
+			throw new EntityNotFoundException("Libron con id: " + libroDto.getId() + " no ah sido registrado.");
 		}
 	}
 
@@ -91,9 +99,9 @@ public class LibroServiceImpl implements LibroService{
 	 * Busca un libro por id pasado por parametro, si existe lo mapea a libro DTO y lo devuelve, de lo contrario devuelve null.
 	 */
 	@Override
-	public LibroBuscarDto buscarLibroPorId(Long id) {
+	public LibroDto buscarLibroPorId(Long id) {
 		
-		LibroBuscarDto libroDto = new LibroBuscarDto();
+		LibroDto libroDto = new LibroDto();
 		Optional<Libro> libroBuscado = libroRepository.findById(id);
 		
 		if(libroBuscado.isEmpty())
@@ -106,11 +114,11 @@ public class LibroServiceImpl implements LibroService{
 	}
 
 	/**
-	 * Busca un libro por titulo, 
+	 * Busca un libro por titulo si lo encuentra devuelve dto, sino, null, 
 	 */
 	@Override
-	public LibroBuscarDto buscarLibroPorTitulo(String titulo) {
-		LibroBuscarDto libroDto = new LibroBuscarDto();
+	public LibroDto buscarLibroPorTitulo(String titulo) {
+		LibroDto libroDto = new LibroDto();
 		Libro libroBuscado = libroRepository.findByTitulo(titulo);
 		
 		if(libroBuscado == null)
@@ -125,8 +133,8 @@ public class LibroServiceImpl implements LibroService{
 	 * Busca un libro por autor pasado por parametro y lo mapea a DTO, si no existe, devuelve null.
 	 */
 	@Override
-	public LibroBuscarDto buscarLibroPorAutor(String autor) {
-		LibroBuscarDto libroDto = new LibroBuscarDto();
+	public LibroDto buscarLibroPorAutor(String autor) {
+		LibroDto libroDto = new LibroDto();
 		Libro libroBuscado = libroRepository.findByAutor(autor);
 		
 		if(libroBuscado == null)
@@ -138,11 +146,11 @@ public class LibroServiceImpl implements LibroService{
 	}
 
 	/**
-	 * Busca un 
+	 * Devuelve un libroDto buscado por isbn pasado por parametro, si no existe, sino devuelve null.
 	 */
 	@Override
-	public LibroBuscarDto buscarLibroPorIsbn(String isbn) {
-		LibroBuscarDto libroDto = new LibroBuscarDto();
+	public LibroDto buscarLibroPorIsbn(String isbn) {
+		LibroDto libroDto = new LibroDto();
 		Libro libroBuscado = libroRepository.findByIsbn(isbn);
 		
 		if(libroBuscado == null)

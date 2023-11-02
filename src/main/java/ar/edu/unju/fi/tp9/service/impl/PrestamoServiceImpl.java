@@ -9,9 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ar.edu.unju.fi.tp9.dto.LibroGuardarDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
-import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.entity.Prestamo;
 import ar.edu.unju.fi.tp9.entity.util.EstadoPrestamo;
 import ar.edu.unju.fi.tp9.repository.PrestamoRepository;

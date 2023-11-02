@@ -14,10 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import ar.edu.unju.fi.tp9.dto.LibroEliminarDto;
-import ar.edu.unju.fi.tp9.dto.LibroEditarDto;
-import ar.edu.unju.fi.tp9.dto.LibroGuardarDto;
-import ar.edu.unju.fi.tp9.dto.LibroBuscarDto;
+import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.LibroService;
 import ar.edu.unju.fi.tp9.util.EstadoLibro;
@@ -30,36 +27,32 @@ public class LibroServiceTest {
 	
 	ModelMapper mapper = new ModelMapper();
 	
-	LibroGuardarDto libroGuardarDto;
-	LibroGuardarDto libroThrowDto1;
-	LibroGuardarDto libroThrowDto2;
-	LibroEliminarDto libroEliminarDto;
-	LibroBuscarDto libroGuardadoDto;
-	LibroEditarDto libroEditarDto;
+	LibroDto libroGuardarDto;
+	LibroDto libroThrowDto1;
+	LibroDto libroThrowDto2;
+	LibroDto libroGuardadoDto;
 	
 	@BeforeEach
 	void iniciarVariables() {
-		libroGuardarDto = new LibroGuardarDto();
+		libroGuardarDto = new LibroDto();
 		libroGuardarDto.setTitulo("Un libro");
 		libroGuardarDto.setAutor("autor");
 		libroGuardarDto.setIsbn("ISBN-10-1234567890");
 		libroGuardarDto.setNumeroInventario(111l);
 		
-		libroThrowDto1 = new LibroGuardarDto();
+		libroThrowDto1 = new LibroDto();
 		libroThrowDto1.setTitulo("Otro libro");
 		libroThrowDto1.setAutor("autor");
 		libroThrowDto1.setIsbn("ISBN-10-1234567890");
 		libroThrowDto1.setNumeroInventario(222l);
 		
-		libroThrowDto2 = new LibroGuardarDto();
+		libroThrowDto2 = new LibroDto();
 		libroThrowDto2.setTitulo("Otro libro");
 		libroThrowDto2.setAutor("autor");
 		libroThrowDto2.setIsbn("ISBN-10-0987654321");
 		libroThrowDto2.setNumeroInventario(111l);
 		
-		libroEliminarDto = new LibroEliminarDto();
-		libroGuardadoDto = new LibroBuscarDto();
-		libroEditarDto = new LibroEditarDto();
+		libroGuardadoDto = new LibroDto();
 	}
 	
 	@AfterEach
@@ -68,49 +61,33 @@ public class LibroServiceTest {
 		libroThrowDto1 = null;
 		libroThrowDto2 = null;
 		libroGuardadoDto = null;
-		libroEditarDto = null;
-		libroEliminarDto = null;
 	}
 	
 	@Test
 	@DisplayName("Test guardar libro")
 	void guardarLibroTest() throws ManagerException {
-		//Guarda el libro y verifica la cantidad sea correcta.
 		libroService.guardarLibro(libroGuardarDto);
-		
 		assertEquals(6, libroService.librosSize());
 		
-		//Lo busca y verifica que no sea null, y el isbn sea correcto.
-		LibroBuscarDto libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
+		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
 		assertNotNull(libroGuardadoDto);
 		assertEquals(libroGuardadoDto.getIsbn(), "ISBN-10-1234567890");
 		
-		//Verificación de throw con el isbn repetido.
 		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto1));
-		
-		//Verificaicon de throw con numero de inventario repetido.
 		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto2));
 		
-		//Elimina el libro de prueba.
-		mapper.map(libroGuardadoDto, libroEliminarDto);
-		libroService.eliminarLibro(libroEliminarDto);
+		libroService.eliminarLibro(libroGuardadoDto);
 	}
 	
 	@Test
 	@DisplayName("Test eliminar libro")
 	void eliminarLibroTest() throws ManagerException {
-		//Guarda un libro.
 		libroService.guardarLibro(libroGuardarDto);
-		
-		//Lo busca y lo mapea a un libroDeleteDto.
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
-		mapper.map(libroGuardadoDto, libroEliminarDto);
 		
-		//Lo elimina y verifica el total.
-		libroService.eliminarLibro(libroEliminarDto);
+		libroService.eliminarLibro(libroGuardadoDto);
 		assertEquals(5, libroService.librosSize());
 		
-		//Lo busca y verifica que devuelva null.
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
 		assertNull(libroGuardadoDto);
 	}
@@ -118,20 +95,16 @@ public class LibroServiceTest {
 	@Test
 	@DisplayName("Test editar libro")
 	void editarLibroTest() {
-		//Busca un libro guardado con import.sql
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("IT");
 		
-		//Lo mapea a un libroEditarDto, lo modifica y manda a editar.
-		mapper.map(libroGuardadoDto, libroEditarDto);
-		libroEditarDto.setTitulo("Moby dick");
-		libroEditarDto.setEstado(EstadoLibro.PRESTADO);
-		libroService.editarLibro(libroEditarDto);
+		libroGuardadoDto.setTitulo("Moby dick");
+		libroGuardadoDto.setEstado(EstadoLibro.PRESTADO.toString());
+		libroService.editarLibro(libroGuardadoDto);
 		
-		//Busca el libro por autor no modificado y verifica que los valores se hayan modificado y que no sea null.
 		libroGuardadoDto = libroService.buscarLibroPorAutor("Stephen King");
 		assertNotNull(libroGuardadoDto);
 		assertEquals(libroGuardadoDto.getTitulo(), "Moby dick");
-		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.PRESTADO);
+		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.PRESTADO.toString());
 	}
 	
 	@Test
@@ -141,7 +114,7 @@ public class LibroServiceTest {
 		assertNotNull(libroGuardadoDto);
 		
 		assertEquals(libroGuardadoDto.getTitulo(), "Harry Potter y la piedra filosofal");
-		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.DISPONIBLE);
+		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.DISPONIBLE.toString());
 	}
 	
 	@Test

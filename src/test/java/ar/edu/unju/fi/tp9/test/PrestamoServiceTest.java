@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import ar.edu.unju.fi.tp9.dto.LibroBuscarDto;
+import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 import ar.edu.unju.fi.tp9.entity.util.EstadoPrestamo;
 import ar.edu.unju.fi.tp9.service.LibroService;
@@ -27,7 +27,7 @@ public class PrestamoServiceTest {
 	LibroService libroService;
 	
 	PrestamoDto prestamoDto;
-	LibroBuscarDto libroDto;
+	LibroDto libroDto;
 	
 	@BeforeEach
 	void inicializarVariables() {

@@ -1,26 +1,22 @@
 package ar.edu.unju.fi.tp9.service;
 
-import ar.edu.unju.fi.tp9.dto.LibroEliminarDto;
-import ar.edu.unju.fi.tp9.dto.LibroEditarDto;
-import ar.edu.unju.fi.tp9.dto.LibroGuardarDto;
-import ar.edu.unju.fi.tp9.dto.LibroBuscarDto;
-import ar.edu.unju.fi.tp9.entity.Libro;
+import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 
 public interface LibroService {
-	void guardarLibro(LibroGuardarDto libroDto) throws ManagerException;
+	void guardarLibro(LibroDto libroDto) throws ManagerException;
 	
-	void eliminarLibro(LibroEliminarDto libroDto);
+	void eliminarLibro(LibroDto libroDto);
 	
-	void editarLibro(LibroEditarDto libroDto);
+	void editarLibro(LibroDto libroDto);
 	
-	LibroBuscarDto buscarLibroPorId(Long id);
+	LibroDto buscarLibroPorId(Long id);
 	
-	LibroBuscarDto buscarLibroPorTitulo(String titulo);
+	LibroDto buscarLibroPorTitulo(String titulo);
 	
-	LibroBuscarDto buscarLibroPorAutor(String autor);
+	LibroDto buscarLibroPorAutor(String autor);
 	
-	LibroBuscarDto buscarLibroPorIsbn(String isbn);
+	LibroDto buscarLibroPorIsbn(String isbn);
 	
 	long librosSize();
 }
