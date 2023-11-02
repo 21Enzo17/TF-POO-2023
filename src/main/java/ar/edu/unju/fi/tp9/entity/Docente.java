@@ -18,6 +18,9 @@ public class Docente extends Miembro{
         logger.info("Docente: "+nombre+" creado");
     }
 
+    public Docente() {
+    }
+
     public String getLegajo() {
         return this.legajo;
     }
@@ -36,5 +39,13 @@ public class Docente extends Miembro{
         return super.toString() + " legajo=" + legajo + "}";
     }
 
+    @Override
+    public boolean isAlumno(){
+        return false;
+    }
 
+    @Override
+    public boolean isDocente(){
+        return true;
+    }
 }

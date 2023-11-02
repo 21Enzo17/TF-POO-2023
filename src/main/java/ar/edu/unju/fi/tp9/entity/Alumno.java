@@ -47,6 +47,14 @@ public class Alumno extends Miembro{
         return super.toString() + " libretaUniversitaria=" + libretaUniversitaria + "}";
     }
     
+    
+    @Override
+    public boolean isAlumno(){
+        return true;
+    }
 
-
+    @Override
+    public boolean isDocente(){
+        return false;
+    }
 }

@@ -1,44 +1,13 @@
-package ar.edu.unju.fi.tp9.entity;
+package ar.edu.unju.fi.tp9.dto;
 
 import java.io.Serializable;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "miembros")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo")
-public class Miembro implements Serializable {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MiembroDto implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Integer id;
-
-    @Column(name = "nombre")
     private String nombre;
-
-    @Column(name = "correo")
     private String correo;
-
-    @Column(name = "numeroTelefonico")
     private String numeroTelefonico;
-
-    private static Integer numeroMiembroActual = 0;
-
-    @Column(name = "numeroMiembro")
-    private Integer numeroMiembro;
-
-
-
-    public Miembro(String nombre, String correo, String numeroTelefonico) {
-        this.nombre = nombre;
-        this.correo = correo;
-        this.numeroTelefonico = numeroTelefonico;
-        this.numeroMiembro = numeroMiembroActual++;
-    }
-
-    public Miembro() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -72,22 +41,22 @@ public class Miembro implements Serializable {
         this.numeroTelefonico = numeroTelefonico;
     }
 
-    public Miembro id(Integer id) {
+    public MiembroDto id(Integer id) {
         setId(id);
         return this;
     }
 
-    public Miembro nombre(String nombre) {
+    public MiembroDto nombre(String nombre) {
         setNombre(nombre);
         return this;
     }
 
-    public Miembro correo(String correo) {
+    public MiembroDto correo(String correo) {
         setCorreo(correo);
         return this;
     }
 
-    public Miembro numeroTelefonico(String numeroTelefonico) {
+    public MiembroDto numeroTelefonico(String numeroTelefonico) {
         setNumeroTelefonico(numeroTelefonico);
         return this;
     }
@@ -98,8 +67,8 @@ public class Miembro implements Serializable {
             " id='" + getId() + "'" +
             ", nombre='" + getNombre() + "'" +
             ", correo='" + getCorreo() + "'" +
-            ", numeroTelefonico='" + getNumeroTelefonico() + "'" 
-            ;
+            ", numeroTelefonico='" + getNumeroTelefonico() + "'" +
+            "}";
     }
 
     public boolean isAlumno(){
@@ -109,5 +78,6 @@ public class Miembro implements Serializable {
     public boolean isDocente(){
         return false;
     }
+    
     
 }
