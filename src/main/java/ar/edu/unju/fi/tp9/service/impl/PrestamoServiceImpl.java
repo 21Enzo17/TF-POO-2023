@@ -1,77 +1,102 @@
 package ar.edu.unju.fi.tp9.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.apache.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ar.edu.unju.fi.tp9.dto.LibroGuardarDto;
+import ar.edu.unju.fi.tp9.dto.PrestamoDto;
+import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.entity.Prestamo;
+import ar.edu.unju.fi.tp9.entity.util.EstadoPrestamo;
 import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
 import ar.edu.unju.fi.tp9.service.PrestamoService;
+import ar.edu.unju.fi.tp9.util.EstadoLibro;
 import jakarta.persistence.EntityNotFoundException;
 
-//FIXME Aplicar DTO.
 @Service
 public class PrestamoServiceImpl implements PrestamoService{
-
 	@Autowired
 	PrestamoRepository prestamoRepository;
 	
 	private static Logger logger = Logger.getLogger(PrestamoServiceImpl.class);
+	ModelMapper mapper = new ModelMapper();
 	
-	/**
-	 * guarda prestamo pasado por parametro.
-	 */
-	@Override
-	public void guardarPrestamo(Prestamo prestamo) {
-		logger.info("Guardando prestamo...");
-		prestamoRepository.save(prestamo);
+	private static DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+	
+	private void transferirDatosAPrestamo(Prestamo prestamo, PrestamoDto prestamoDto) {
+		prestamo.setId(prestamo.getId());
+		prestamo.setEstado(prestamoDto.getEstado());
+		mapper.map(prestamoDto.getLibro(), prestamo.getLibro());
+		prestamo.setFechaPrestamo(LocalDateTime.parse(prestamoDto.getFechaPrestamo(), formatoFecha));
+		prestamo.setFechaDevolucion(LocalDateTime.parse(prestamoDto.getFechaDevolucion(), formatoFecha));
+	}
+	
+	private void transferirDatosADto(Prestamo prestamo, PrestamoDto prestamoDto) {
+		prestamoDto.setId(prestamo.getId());
+		prestamoDto.setEstado(prestamo.getEstado());
+		mapper.map(prestamo.getLibro(), prestamoDto.getLibro());
+		prestamoDto.setFechaPrestamo(prestamo.getFechaPrestamo().toString());
+		prestamoDto.setFechaDevolucion(prestamo.getFechaDevolucion().toString());
 	}
 
-	/**
-	 * edita un prestamo pasado por parametro, si el id no esta registrado devuelve error.
-	 */
+	//FIXME error de persist con libro.
 	@Override
-	public void editarPrestamo(Prestamo prestamo) {
-		if( !prestamoRepository.existsById(prestamo.getId()) ) {
-			logger.error("Prestamo con id: " + prestamo.getId() + " no registrado.");
-			throw new EntityNotFoundException("Prestamo con id: " + prestamo.getId() + " no registrado.");
-		}
-		else {
-			logger.info("Prestamo con id: " + prestamo.getId() + "modificado.");
-			prestamoRepository.save(prestamo);
-		}
-	}
-
-	/**
-	 * elimina un prestamo buscado por id, sino devuelve error.
-	 */
-	@Override
-	public void eliminarPrestamo(Long id) {
-		Optional<Prestamo> prestamoEliminar = prestamoRepository.findById(id);
+	public void guardarPrestamo(PrestamoDto prestamoDto) {
+		Prestamo prestamoGuardar = new Prestamo();
 		
-		if(prestamoEliminar.isEmpty()) {
-			logger.error("Prestamo con id: " + id + " no esta registrado para ningun prestamo.");
-			throw new EntityNotFoundException("La id: " + id + "ingresada no esta registrada para ningun prestamo.");
+		prestamoDto.setEstado(EstadoPrestamo.PRESTADO.toString());
+		transferirDatosAPrestamo(prestamoGuardar, prestamoDto);
+		
+		logger.info("Prestamo del miembro ... registrado.");
+		prestamoRepository.save(prestamoGuardar);
+	}
+
+	@Override
+	public void devolverPrestamo(PrestamoDto prestamoDto) {
+		Prestamo prestamoDevolver = new Prestamo();
+		
+		if(prestamoRepository.existsById(prestamoDto.getId())) {
+			prestamoDto.setEstado(EstadoPrestamo.DEVUELTO.toString());
+			transferirDatosAPrestamo(prestamoDevolver, prestamoDto);
+			
+			logger.info("Prestamo de miembro ... devuelto");
+			prestamoRepository.save(prestamoDevolver);
 		}
 		else {
-			prestamoRepository.delete(prestamoEliminar.get());
-			logger.info("Prestamo con id: " + id + " eliminado correctamente.");
+			logger.error("Prestamo con id: " + prestamoDto.getId() + " no ah sido registrado.");
+			throw new EntityNotFoundException("Prestamo con id: " + prestamoDto.getId() + " no ah sido registrado.");
 		}
 	}
 
-	/**
-	 * Devuelve prestamo buscado por id, si no duelve null.
-	 */
 	@Override
-	public Prestamo buscarPrestamoPorId(Long id) {
+	public PrestamoDto buscarPrestamoPorId(Long id) {
 		Optional<Prestamo> prestamoBuscado = prestamoRepository.findById(id);
+		PrestamoDto prestamoDto = new PrestamoDto();
 		
-		if(prestamoBuscado.isEmpty())
+		if(prestamoBuscado.isEmpty()) 
 			return null;
-		else
-			return prestamoBuscado.get();
+		else {
+			transferirDatosADto(prestamoBuscado.get(), prestamoDto);
+			return prestamoDto;
+		}
+	}
+	
+	public long getPrestamosSize() {
+		return prestamoRepository.count();
 	}
 
+	@Override
+	public void eliminarPrestamo(PrestamoDto prestamoDto) {
+		Prestamo prestamoEliminar = new Prestamo();
+		transferirDatosAPrestamo(prestamoEliminar, prestamoDto);
+		
+		prestamoRepository.delete(prestamoEliminar);
+	}
+	
 }

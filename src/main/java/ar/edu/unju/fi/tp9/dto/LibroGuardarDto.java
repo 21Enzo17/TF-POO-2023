@@ -1,6 +1,6 @@
 package ar.edu.unju.fi.tp9.dto;
 
-public class LibroSaveDto extends LibroBaseDto{
+public class LibroGuardarDto extends LibroBaseDto{
 	
 	private String autor;
 	

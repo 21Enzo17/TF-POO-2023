@@ -2,12 +2,12 @@ package ar.edu.unju.fi.tp9.dto;
 
 import ar.edu.unju.fi.tp9.util.EstadoLibro;
 
-public class LibroSearchDto extends LibroBaseDto{
+public class LibroBuscarDto extends LibroBaseDto{
 	private String autor;
 	
 	public String isbn;
 
-	public EstadoLibro estado;
+	public String estado;
 
 	public String getAutor() {
 		return autor;
@@ -25,11 +25,11 @@ public class LibroSearchDto extends LibroBaseDto{
 		this.isbn = isbn;
 	}
 
-	public EstadoLibro getEstado() {
+	public String getEstado() {
 		return estado;
 	}
 
-	public void setEstado(EstadoLibro estado) {
+	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 }

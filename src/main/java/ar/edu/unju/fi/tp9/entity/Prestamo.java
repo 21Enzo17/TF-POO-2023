@@ -2,14 +2,15 @@ package ar.edu.unju.fi.tp9.entity;
 
 import java.time.LocalDateTime;
 
-import ar.edu.unju.fi.tp9.entity.util.EstadoPrestamo;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,7 +23,9 @@ public class Prestamo {
 	
 	//TODO Relacion con miembro.
 	
-	//TODO Relacion con libro.
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id_libro")
+	private Libro libro = new Libro();
 	
 	@Column(name = "fecha_prestamo")
 	private LocalDateTime fechaPrestamo;
@@ -30,26 +33,30 @@ public class Prestamo {
 	@Column(name = "fecha_devolucion")
 	private LocalDateTime fechaDevolucion;
 
-	@Enumerated(EnumType.STRING)
-	private EstadoPrestamo estado;
+	private String estado;
 
-	////////// Constructores //////////
+	////////// Constructores /////////////
 	
 	public Prestamo() {
 	}
-
-	public Prestamo(LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion, EstadoPrestamo estado) {
+	
+	public Prestamo(Long id, Libro libro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion) {
+		this.id = id;
+		this.libro = libro;
 		this.fechaPrestamo = fechaPrestamo;
 		this.fechaDevolucion = fechaDevolucion;
-		this.estado = estado;
 	}
-
-	//////////Getters y Setters //////////
+	
+	////////// Getters y Setters //////////
 	
 	public Long getId() {
 		return id;
 	}
-
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
 	public LocalDateTime getFechaPrestamo() {
 		return fechaPrestamo;
 	}
@@ -66,11 +73,19 @@ public class Prestamo {
 		this.fechaDevolucion = fechaDevolucion;
 	}
 
-	public EstadoPrestamo getEstado() {
+	public Libro getLibro() {
+		return libro;
+	}
+
+	public void setLibro(Libro libro) {
+		this.libro = libro;
+	}
+
+	public String getEstado() {
 		return estado;
 	}
 
-	public void setEstado(EstadoPrestamo estado) {
+	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 }

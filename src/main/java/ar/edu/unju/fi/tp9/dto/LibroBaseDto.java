@@ -1,6 +1,8 @@
 package ar.edu.unju.fi.tp9.dto;
 
-public abstract class LibroBaseDto {
+import ar.edu.unju.fi.tp9.entity.Prestamo;
+
+public class LibroBaseDto {
 	private Long id;
 
 	private String titulo;

@@ -1,14 +1,16 @@
 package ar.edu.unju.fi.tp9.service;
 
-import ar.edu.unju.fi.tp9.entity.Prestamo;
+import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 
 public interface PrestamoService {
 	
-	void guardarPrestamo(Prestamo prestamo);
+	void guardarPrestamo(PrestamoDto prestamoDto);
 	
-	void editarPrestamo(Prestamo prestamo);
+	void devolverPrestamo(PrestamoDto prestamoDto);
 	
-	void eliminarPrestamo(Long id);
+	PrestamoDto buscarPrestamoPorId(Long id);
 	
-	Prestamo buscarPrestamoPorId(Long id);
+	public long getPrestamosSize();
+	
+	public void eliminarPrestamo(PrestamoDto prestamoDto);
 }

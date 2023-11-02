@@ -7,10 +7,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ar.edu.unju.fi.tp9.dto.LibroDeleteDto;
-import ar.edu.unju.fi.tp9.dto.LibroEditDto;
-import ar.edu.unju.fi.tp9.dto.LibroSaveDto;
-import ar.edu.unju.fi.tp9.dto.LibroSearchDto;
+import ar.edu.unju.fi.tp9.dto.LibroEliminarDto;
+import ar.edu.unju.fi.tp9.dto.LibroEditarDto;
+import ar.edu.unju.fi.tp9.dto.LibroGuardarDto;
+import ar.edu.unju.fi.tp9.dto.LibroBuscarDto;
 import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.LibroRepository;
@@ -32,7 +32,7 @@ public class LibroServiceImpl implements LibroService{
 	 * Guarda un libro DTO pasado por parametro, verificando que su ISBN y numero de inventario no hayan sido registrado previamente.
 	 */
 	@Override
-	public void guardarLibro(LibroSaveDto libroDto) throws ManagerException {
+	public void guardarLibro(LibroGuardarDto libroDto) throws ManagerException {
 		Libro nuevoLibro = new Libro();
 		mapper.map(libroDto, nuevoLibro);
 
@@ -55,7 +55,7 @@ public class LibroServiceImpl implements LibroService{
 	 * Recibe un libro DTO por parametro, mapeo un libro y verifica que exista previamente antes de eliminarlo.
 	 */
 	@Override
-	public void eliminarLibro(LibroDeleteDto libroDto) {
+	public void eliminarLibro(LibroEliminarDto libroDto) {
 		Libro eliminarLibro = new Libro();
 		mapper.map(libroDto, eliminarLibro);
 		
@@ -73,7 +73,7 @@ public class LibroServiceImpl implements LibroService{
 	 * Recibe un libro DTO por parametro, es mapeado un libro y verifica que exista previamente antes de editarlo.
 	 */
 	@Override
-	public void editarLibro(LibroEditDto libroDto) {
+	public void editarLibro(LibroEditarDto libroDto) {
 		Libro editarLibro = new Libro();
 		mapper.map(libroDto, editarLibro);
 		
@@ -91,9 +91,9 @@ public class LibroServiceImpl implements LibroService{
 	 * Busca un libro por id pasado por parametro, si existe lo mapea a libro DTO y lo devuelve, de lo contrario devuelve null.
 	 */
 	@Override
-	public LibroSearchDto buscarLibroPorId(Long id) {
+	public LibroBuscarDto buscarLibroPorId(Long id) {
 		
-		LibroSearchDto libroDto = new LibroSearchDto();
+		LibroBuscarDto libroDto = new LibroBuscarDto();
 		Optional<Libro> libroBuscado = libroRepository.findById(id);
 		
 		if(libroBuscado.isEmpty())
@@ -109,8 +109,8 @@ public class LibroServiceImpl implements LibroService{
 	 * Busca un libro por titulo, 
 	 */
 	@Override
-	public LibroSearchDto buscarLibroPorTitulo(String titulo) {
-		LibroSearchDto libroDto = new LibroSearchDto();
+	public LibroBuscarDto buscarLibroPorTitulo(String titulo) {
+		LibroBuscarDto libroDto = new LibroBuscarDto();
 		Libro libroBuscado = libroRepository.findByTitulo(titulo);
 		
 		if(libroBuscado == null)
@@ -125,8 +125,8 @@ public class LibroServiceImpl implements LibroService{
 	 * Busca un libro por autor pasado por parametro y lo mapea a DTO, si no existe, devuelve null.
 	 */
 	@Override
-	public LibroSearchDto buscarLibroPorAutor(String autor) {
-		LibroSearchDto libroDto = new LibroSearchDto();
+	public LibroBuscarDto buscarLibroPorAutor(String autor) {
+		LibroBuscarDto libroDto = new LibroBuscarDto();
 		Libro libroBuscado = libroRepository.findByAutor(autor);
 		
 		if(libroBuscado == null)
@@ -141,8 +141,8 @@ public class LibroServiceImpl implements LibroService{
 	 * Busca un 
 	 */
 	@Override
-	public LibroSearchDto buscarLibroPorIsbn(String isbn) {
-		LibroSearchDto libroDto = new LibroSearchDto();
+	public LibroBuscarDto buscarLibroPorIsbn(String isbn) {
+		LibroBuscarDto libroDto = new LibroBuscarDto();
 		Libro libroBuscado = libroRepository.findByIsbn(isbn);
 		
 		if(libroBuscado == null)

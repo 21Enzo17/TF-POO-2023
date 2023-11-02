@@ -14,10 +14,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import ar.edu.unju.fi.tp9.dto.LibroDeleteDto;
-import ar.edu.unju.fi.tp9.dto.LibroEditDto;
-import ar.edu.unju.fi.tp9.dto.LibroSaveDto;
-import ar.edu.unju.fi.tp9.dto.LibroSearchDto;
+import ar.edu.unju.fi.tp9.dto.LibroEliminarDto;
+import ar.edu.unju.fi.tp9.dto.LibroEditarDto;
+import ar.edu.unju.fi.tp9.dto.LibroGuardarDto;
+import ar.edu.unju.fi.tp9.dto.LibroBuscarDto;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.LibroService;
 import ar.edu.unju.fi.tp9.util.EstadoLibro;
@@ -30,36 +30,36 @@ public class LibroServiceTest {
 	
 	ModelMapper mapper = new ModelMapper();
 	
-	LibroSaveDto libroGuardarDto;
-	LibroSaveDto libroThrowDto1;
-	LibroSaveDto libroThrowDto2;
-	LibroDeleteDto libroEliminarDto;
-	LibroSearchDto libroGuardadoDto;
-	LibroEditDto libroEditarDto;
+	LibroGuardarDto libroGuardarDto;
+	LibroGuardarDto libroThrowDto1;
+	LibroGuardarDto libroThrowDto2;
+	LibroEliminarDto libroEliminarDto;
+	LibroBuscarDto libroGuardadoDto;
+	LibroEditarDto libroEditarDto;
 	
 	@BeforeEach
 	void iniciarVariables() {
-		libroGuardarDto = new LibroSaveDto();
+		libroGuardarDto = new LibroGuardarDto();
 		libroGuardarDto.setTitulo("Un libro");
 		libroGuardarDto.setAutor("autor");
 		libroGuardarDto.setIsbn("ISBN-10-1234567890");
 		libroGuardarDto.setNumeroInventario(111l);
 		
-		libroThrowDto1 = new LibroSaveDto();
+		libroThrowDto1 = new LibroGuardarDto();
 		libroThrowDto1.setTitulo("Otro libro");
 		libroThrowDto1.setAutor("autor");
 		libroThrowDto1.setIsbn("ISBN-10-1234567890");
 		libroThrowDto1.setNumeroInventario(222l);
 		
-		libroThrowDto2 = new LibroSaveDto();
+		libroThrowDto2 = new LibroGuardarDto();
 		libroThrowDto2.setTitulo("Otro libro");
 		libroThrowDto2.setAutor("autor");
 		libroThrowDto2.setIsbn("ISBN-10-0987654321");
 		libroThrowDto2.setNumeroInventario(111l);
 		
-		libroEliminarDto = new LibroDeleteDto();
-		libroGuardadoDto = new LibroSearchDto();
-		libroEditarDto = new LibroEditDto();
+		libroEliminarDto = new LibroEliminarDto();
+		libroGuardadoDto = new LibroBuscarDto();
+		libroEditarDto = new LibroEditarDto();
 	}
 	
 	@AfterEach
@@ -81,7 +81,7 @@ public class LibroServiceTest {
 		assertEquals(6, libroService.librosSize());
 		
 		//Lo busca y verifica que no sea null, y el isbn sea correcto.
-		LibroSearchDto libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
+		LibroBuscarDto libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
 		assertNotNull(libroGuardadoDto);
 		assertEquals(libroGuardadoDto.getIsbn(), "ISBN-10-1234567890");
 		

@@ -2,7 +2,7 @@ package ar.edu.unju.fi.tp9.dto;
 
 import ar.edu.unju.fi.tp9.util.EstadoLibro;
 
-public class LibroEditDto extends LibroBaseDto{
+public class LibroEditarDto extends LibroBaseDto{
 	
 	private String autor;
 	
