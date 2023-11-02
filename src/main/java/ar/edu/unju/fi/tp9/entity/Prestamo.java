@@ -10,20 +10,26 @@ import java.time.LocalDateTime;
 public class Prestamo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name = "id")
     private Integer id;
+
     @OneToOne
     @JoinColumn(name="id_miembro")
     private Miembro miembro;
-    /*@OneToOne
+
+    @OneToOne
     @JoinColumn(name="id_libro")
-    private Libro libro;*/
+    private Libro libro = new Libro();
+
     @Column(name = "fecha_prestamo")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime fechaPrestamo;
+
     @Column(name = "fecha_devolucion")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime fechaDevolucion;
+
     @Column(name = "estado")
     private Estado estado;
 
@@ -58,13 +64,13 @@ public class Prestamo {
         this.miembro = miembro;
     }
 
-   /* public Libro getLibro() {
+    public Libro getLibro() {
         return libro;
     }
 
     public void setLibro(Libro libro) {
         this.libro = libro;
-    }*/
+    }
 
     public LocalDateTime getFechaPrestamo() {
         return fechaPrestamo;

@@ -30,6 +30,7 @@ public class Miembro implements Serializable {
 
 
 
+
     public Miembro(String nombre, String correo, String numeroTelefonico) {
         this.nombre = nombre;
         this.correo = correo;

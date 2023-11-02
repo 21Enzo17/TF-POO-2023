@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -16,14 +15,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
-import ar.edu.unju.fi.tp9.service.LibroService;
+import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.util.EstadoLibro;
 
 @SpringBootTest
 public class LibroServiceTest {
 	
 	@Autowired
-	LibroService libroService;
+	ILibroService libroService;
 	
 	ModelMapper mapper = new ModelMapper();
 	

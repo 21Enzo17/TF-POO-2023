@@ -1,4 +1,4 @@
-package ar.edu.unju.fi.tp9.service.impl;
+package ar.edu.unju.fi.tp9.service.imp;
 
 import java.util.Optional;
 
@@ -11,17 +11,17 @@ import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.LibroRepository;
-import ar.edu.unju.fi.tp9.service.LibroService;
+import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.util.EstadoLibro;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class LibroServiceImpl implements LibroService{
+public class LibroServiceImp implements ILibroService{
 
 	@Autowired
 	LibroRepository libroRepository;
 	
-	private static Logger logger = Logger.getLogger(LibroServiceImpl.class);
+	private static Logger logger = Logger.getLogger(LibroServiceImp.class);
 
 	private static ModelMapper mapper = new ModelMapper();
 	
@@ -164,5 +164,31 @@ public class LibroServiceImpl implements LibroService{
 	@Override
 	public long librosSize() {
 		return libroRepository.count();
+	}
+
+
+	/**
+	 * Metodo que transforma un libro a libroDto
+	 * @param libro
+	 * @return libroDto
+	 */
+	@Override
+	public LibroDto libroALibroDto(Libro libro) {
+		LibroDto libroDto = new LibroDto();
+        mapper.map(libro, libroDto);
+		return libroDto;
+	}
+
+
+	/**
+	 * Metodo que transforma un libroDto a libro
+	 * @param libroDto
+	 * @return libro
+	 */
+	@Override
+	public Libro libroDtoALibro(LibroDto libroDto) {
+		Libro libro = new Libro();
+		mapper.map(libroDto, libro);
+		return libro;
 	}
 }

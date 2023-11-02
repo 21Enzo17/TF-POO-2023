@@ -1,9 +1,10 @@
 package ar.edu.unju.fi.tp9.service;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
+import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 
-public interface LibroService {
+public interface ILibroService {
 	void guardarLibro(LibroDto libroDto) throws ManagerException;
 	
 	void eliminarLibro(LibroDto libroDto);
@@ -19,4 +20,8 @@ public interface LibroService {
 	LibroDto buscarLibroPorIsbn(String isbn);
 	
 	long librosSize();
+
+	LibroDto libroALibroDto(Libro libro);
+
+	Libro libroDtoALibro(LibroDto libroDto);
 }

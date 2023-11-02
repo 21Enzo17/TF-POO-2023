@@ -4,13 +4,13 @@ import java.io.Serializable;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import ar.edu.unju.fi.tp9.service.imp.MiembroServiceImp;
 
 public class PrestamoDto implements Serializable {
     static Logger logger = LogManager.getLogger(PrestamoDto.class);
     private static final long serialVersionUID = 1L;
     private Integer id;
     private MiembroDto miembroDto;
+    private LibroDto libroDto;
     private String fechaPrestamo;
     private String fechaDevolucion;
     private String estado;
@@ -22,6 +22,14 @@ public class PrestamoDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public LibroDto getLibroDto() {
+        return this.libroDto;
+    }
+
+    public void setLibroDto(LibroDto libroDto){
+        this.libroDto = libroDto;
     }
 
     public MiembroDto getMiembroDto() {
