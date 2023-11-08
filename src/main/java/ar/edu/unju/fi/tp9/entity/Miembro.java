@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.tp9.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -93,15 +94,6 @@ public class Miembro implements Serializable {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", nombre='" + getNombre() + "'" +
-            ", correo='" + getCorreo() + "'" +
-            ", numeroTelefonico='" + getNumeroTelefonico() + "'" 
-            ;
-    }
 
     public boolean isAlumno(){
         return false;
