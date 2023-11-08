@@ -10,6 +10,8 @@ Java 17
 * Spring-Boot-Starter-Test
 * Log4j
 * Junit
+* javax-mail
+- spring-Boot-Starter-Mail
 ### Integrantes
 - Enzo Nicolás Meneghini
 - Mauricio Miranda
@@ -60,4 +62,4 @@ equipo. Deben crear un nuevo proyecto gitlab con la nueva distribución de grupo
 - Implemente los patrones de diseño Service Layer, DTO, DI
 
 ## Diagrama UML
-![UML]( UMLTP9.jpg)
+![UML]( UML.jpg)
