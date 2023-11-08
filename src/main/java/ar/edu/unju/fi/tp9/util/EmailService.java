@@ -14,7 +14,7 @@ import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
-    static Logger logger = LogManager.getLogger(EmailService.class);
+    static Logger logger = Logger.getLogger(EmailService.class);
     private JavaMailSender mailSender;
 
     public EmailService(JavaMailSender mailSender) {
