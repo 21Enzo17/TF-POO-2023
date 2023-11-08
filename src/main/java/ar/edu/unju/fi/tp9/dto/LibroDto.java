@@ -1,9 +1,10 @@
 package ar.edu.unju.fi.tp9.dto;
 
-import jakarta.transaction.Transactional;
+import java.io.Serializable;
 
-@Transactional
-public class LibroDto {
+public class LibroDto implements Serializable{
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 
 	private String titulo;

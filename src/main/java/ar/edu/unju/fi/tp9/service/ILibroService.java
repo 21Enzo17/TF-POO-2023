@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.tp9.service;
 
+import java.util.List;
+
 import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
@@ -7,7 +9,7 @@ import ar.edu.unju.fi.tp9.exception.ManagerException;
 public interface ILibroService {
 	void guardarLibro(LibroDto libroDto) throws ManagerException;
 	
-	void eliminarLibro(LibroDto libroDto);
+	void eliminarLibro(Long id);
 	
 	void editarLibro(LibroDto libroDto);
 	
@@ -15,7 +17,7 @@ public interface ILibroService {
 	
 	LibroDto buscarLibroPorTitulo(String titulo);
 	
-	LibroDto buscarLibroPorAutor(String autor);
+	List<LibroDto> buscarLibroPorAutor(String autor);
 	
 	LibroDto buscarLibroPorIsbn(String isbn);
 	

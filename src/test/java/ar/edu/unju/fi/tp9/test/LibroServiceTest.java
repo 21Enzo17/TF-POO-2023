@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +33,7 @@ public class LibroServiceTest {
 	LibroDto libroThrowDto1;
 	LibroDto libroThrowDto2;
 	LibroDto libroGuardadoDto;
+	List<LibroDto> librosPorAutor;
 	
 	@BeforeEach
 	void iniciarVariables() {
@@ -52,6 +56,7 @@ public class LibroServiceTest {
 		libroThrowDto2.setNumeroInventario(111l);
 		
 		libroGuardadoDto = new LibroDto();
+		librosPorAutor = new ArrayList<>();
 	}
 	
 	@AfterEach
@@ -60,6 +65,7 @@ public class LibroServiceTest {
 		libroThrowDto1 = null;
 		libroThrowDto2 = null;
 		libroGuardadoDto = null;
+		librosPorAutor = null;
 	}
 	
 	@Test
@@ -75,7 +81,7 @@ public class LibroServiceTest {
 		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto1));
 		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto2));
 		
-		libroService.eliminarLibro(libroGuardadoDto);
+		libroService.eliminarLibro(libroGuardadoDto.getId());
 	}
 	
 	@Test
@@ -84,7 +90,7 @@ public class LibroServiceTest {
 		libroService.guardarLibro(libroGuardarDto);
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
 		
-		libroService.eliminarLibro(libroGuardadoDto);
+		libroService.eliminarLibro(libroGuardadoDto.getId());
 		assertEquals(5, libroService.librosSize());
 		
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
@@ -100,20 +106,20 @@ public class LibroServiceTest {
 		libroGuardadoDto.setEstado(EstadoLibro.PRESTADO.toString());
 		libroService.editarLibro(libroGuardadoDto);
 		
-		libroGuardadoDto = libroService.buscarLibroPorAutor("Stephen King");
-		assertNotNull(libroGuardadoDto);
-		assertEquals(libroGuardadoDto.getTitulo(), "Moby dick");
-		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.PRESTADO.toString());
+		librosPorAutor = libroService.buscarLibroPorAutor("Stephen King");
+		assertEquals(librosPorAutor.size(), 1);
+		assertEquals(librosPorAutor.get(0).getTitulo(), "Moby dick");
+		assertEquals(librosPorAutor.get(0).getEstado(), EstadoLibro.PRESTADO.toString());
 	}
 	
 	@Test
 	@DisplayName("Test Buscar Libro por Autor")
 	void buscarLibroAutorTest() {
-		libroGuardadoDto = libroService.buscarLibroPorAutor("J.K Rowling");
-		assertNotNull(libroGuardadoDto);
+		librosPorAutor = libroService.buscarLibroPorAutor("J.K Rowling");
+		assertEquals(librosPorAutor.size(), 1);
 		
-		assertEquals(libroGuardadoDto.getTitulo(), "Harry Potter y la piedra filosofal");
-		assertEquals(libroGuardadoDto.getEstado(), EstadoLibro.DISPONIBLE.toString());
+		assertEquals(librosPorAutor.get(0).getTitulo(), "Harry Potter y la piedra filosofal");
+		assertEquals(librosPorAutor.get(0).getEstado(), EstadoLibro.DISPONIBLE.toString());
 	}
 	
 	@Test

@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 
 @Entity
 @Table(name = "libros")
-@Transactional
 public class Libro {
 	
 	@Id
@@ -28,30 +27,24 @@ public class Libro {
 	@Column(name = "isbn")
 	private String isbn;
 	
-	
 	@Column(name = "num_inventario")
 	private Long numeroInventario;
 	
 	@Column(name = "estado")
 	private String estado;
 	
-	@OneToOne(mappedBy = "libro")
-	private Prestamo prestamo;
-	
 	////////// Constructores //////////
 	
 	public Libro() {
 	}
 	
-	public Libro(Long id, String titulo, String autor, String isbn, Long numeroInventario, String estado,
-			Prestamo prestamo) {
+	public Libro(Long id, String titulo, String autor, String isbn, Long numeroInventario, String estado) {
 		this.id = id;
 		this.titulo = titulo;
 		this.autor = autor;
 		this.isbn = isbn;
 		this.numeroInventario = numeroInventario;
 		this.estado = estado;
-		this.prestamo = prestamo;
 	}
 
 	////////// Getters y Setters //////////
