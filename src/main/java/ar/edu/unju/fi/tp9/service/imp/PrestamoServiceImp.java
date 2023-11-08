@@ -26,7 +26,7 @@ import ar.edu.unju.fi.tp9.util.EmailService;
 
 @Service
 public class PrestamoServiceImp implements IPrestamoService {
-    static Logger logger = LogManager.getLogger(PrestamoServiceImp.class);
+    static Logger logger = Logger.getLogger(PrestamoServiceImp.class);
 
     ModelMapper modelMapper = new ModelMapper();
 
