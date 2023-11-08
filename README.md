@@ -60,6 +60,19 @@ devolución, estado del préstamo (prestado o devuelto).
 equipo. Deben crear un nuevo proyecto gitlab con la nueva distribución de grupos de alumnos
 
 - Implemente los patrones de diseño Service Layer, DTO, DI
+# TP10 - Sprint 2
+## Especificación de requerimientos
+El registro de un préstamo debe incluir lo siguiente:
+* Agregue el atributo email a los miembros
+* Envío de correo electrónico: realizar el envío de un correo electrónico al miembro que
+recibió el préstamo, el mismo debe incluir toda la información relevante de la operación
+realizada. El correo debe enviarse en formato HTML y debe incluir en la firma el logo de
+biblioteca
+Consideraciones
+- Todas las transacciones deben contar con los logs correctamente diseñados.
+- Debe realizar la implementación de este sprint creando ramas features convenientemente
+organizadas
+- Valide las funcionalidades con pruebas unitarias.
 
 ## Diagrama UML
 ![UML]( UML.jpg)
