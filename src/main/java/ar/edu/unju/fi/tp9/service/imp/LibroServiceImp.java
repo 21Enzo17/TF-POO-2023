@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.log4j.Logger;
@@ -132,15 +134,16 @@ public class LibroServiceImp implements ILibroService{
 	 * Busca un libro por autor pasado por parametro y lo mapea a DTO, si no existe, devuelve null.
 	 */
 	@Override
-	public LibroDto buscarLibroPorAutor(String autor) {
-		LibroDto libroDto = new LibroDto();
-		Libro libroBuscado = libroRepository.findByAutor(autor);
+	public List<LibroDto> buscarLibroPorAutor(String autor) {
+		List<LibroDto> librosDto = new ArrayList<>();
+		List<Libro> libroBuscado = libroRepository.findAllByAutor(autor);
 		
-		if(libroBuscado == null)
-			return null;
+		if(libroBuscado.size() == 0)
+			return librosDto;
 		else {
-			mapper.map(libroBuscado, libroDto);
-			return libroDto;
+			for(Libro p : libroBuscado)
+				librosDto.add(libroALibroDto(p));
+			return librosDto;
 		}
 	}
 
@@ -164,8 +167,7 @@ public class LibroServiceImp implements ILibroService{
 	public long librosSize() {
 		return libroRepository.count();
 	}
-
-
+	
 	/**
 	 * Metodo que transforma un libro a libroDto
 	 * @param libro
