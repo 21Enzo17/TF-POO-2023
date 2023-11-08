@@ -75,7 +75,7 @@ public class LibroServiceTest {
 		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto1));
 		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto2));
 		
-		libroService.eliminarLibro(libroGuardadoDto);
+		libroService.eliminarLibro(libroGuardadoDto.getId());
 	}
 	
 	@Test
@@ -84,7 +84,7 @@ public class LibroServiceTest {
 		libroService.guardarLibro(libroGuardarDto);
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
 		
-		libroService.eliminarLibro(libroGuardadoDto);
+		libroService.eliminarLibro(libroGuardadoDto.getId());
 		assertEquals(5, libroService.librosSize());
 		
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");

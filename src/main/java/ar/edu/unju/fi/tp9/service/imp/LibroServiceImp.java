@@ -59,20 +59,19 @@ public class LibroServiceImp implements ILibroService{
 	}
 
 	/**
-	 * Recibe un libro DTO por parametro, mapeo un libro y verifica que exista previamente antes de eliminarlo.
+	 * Recibe un id por parametro y verifica que exista previamente antes de eliminarlo.
 	 */
 	@Override
-	public void eliminarLibro(LibroDto libroDto) {
-		Libro eliminarLibro = new Libro();
+	public void eliminarLibro(Long id) {
+		Optional<Libro> libro = libroRepository.findById(id);
 		
-		if(libroRepository.existsById(libroDto.getId())) {
-			mapper.map(libroDto, eliminarLibro);
-			libroRepository.delete(eliminarLibro);
-			logger.info("El libro "+ eliminarLibro.getTitulo() + " ah sido eliminado.");
+		if(libro.isEmpty()) {
+			logger.error("Libro con id: " + id + " no ah sido registrado.");
+			throw new EntityNotFoundException("Libro con id: " + id + " no ah sido registrado.");
 		}
 		else {
-			logger.error("Libro con id: " + libroDto.getId() + " no ah sido registrado.");
-			throw new EntityNotFoundException("Libro con id: " + libroDto.getId() + " no ah sido registrado.");
+			libroRepository.delete(libro.get());
+			logger.info("El libro con id: "+ id + " ah sido eliminado.");
 		}
 	}
 

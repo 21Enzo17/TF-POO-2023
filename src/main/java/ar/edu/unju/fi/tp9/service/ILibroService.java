@@ -7,7 +7,7 @@ import ar.edu.unju.fi.tp9.exception.ManagerException;
 public interface ILibroService {
 	void guardarLibro(LibroDto libroDto) throws ManagerException;
 	
-	void eliminarLibro(LibroDto libroDto);
+	void eliminarLibro(Long id);
 	
 	void editarLibro(LibroDto libroDto);
 	
