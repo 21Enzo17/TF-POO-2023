@@ -10,12 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.edu.unju.fi.tp9.dto.AlumnoDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
 
 @SpringBootTest
-public class IPrestamoServiceTest {
+class IPrestamoServiceTest {
 
     @Autowired
     IPrestamoService target;
@@ -31,19 +32,19 @@ public class IPrestamoServiceTest {
     static PrestamoDto prestamo2;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws ManagerException {
         prestamo = new PrestamoDto();
         prestamo.setEstado("PRESTADO");
-        prestamo.setFechaDevolucion("2023-06-05T18:00");
-        prestamo.setFechaPrestamo("2023-06-10T18:00");
-        prestamo.setLibroDto(libroService.buscarLibroPorTitulo("IT"));
+        prestamo.setFechaDevolucion("10/06/2023 - 18:00");
+        prestamo.setFechaPrestamo("05/06/2023 - 18:00");
+        prestamo.setIdLibroDto(libroService.buscarLibroPorTitulo("IT").getId());
 
         prestamo2 = new PrestamoDto();
         prestamo2.setEstado("PRESTADO");
-        prestamo2.setFechaDevolucion("2023-06-05T18:00");
-        prestamo2.setFechaPrestamo("2023-06-10T18:00");
-        prestamo2.setMiembroDto(miembroService.obtenerMiembroByCorreo("roberto@gmail.com"));
-        prestamo2.setLibroDto(libroService.buscarLibroPorTitulo("El camino de los reyes"));
+        prestamo2.setFechaDevolucion("10/06/2023 - 18:00");
+        prestamo2.setFechaPrestamo("05/06/2023 - 18:00");
+        prestamo2.setIdMiembroDto(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com").getId());
+        prestamo2.setIdLibroDto(libroService.buscarLibroPorTitulo("El camino de los reyes").getId());
 
     }
 
@@ -57,25 +58,25 @@ public class IPrestamoServiceTest {
     }
 
     @Test
-    public void guardarPrestamoTest() {
+    void guardarPrestamoTest() throws ManagerException {
         alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Juan Perez");
-        alumnoDto.setCorreo("juan@gmail.com");
+        alumnoDto.setCorreo("enzo.meneghini@fi.unju.edu.ar");
         alumnoDto.setNumeroTelefonico("123456789");
         alumnoDto.setLibretaUniversitaria("1234");
         miembroService.guardarMiembro(alumnoDto);
-        prestamo.setMiembroDto(miembroService.obtenerMiembroByCorreo("juan@gmail.com"));
+        prestamo.setIdMiembroDto(miembroService.obtenerMiembroByCorreo("enzo.meneghini@fi.unju.edu.ar").getId());
         target.guardarPrestamo(prestamo);
-        assertEquals(prestamo.getMiembroDto().getCorreo(), 
-        target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("juan@gmail.com")).getMiembroDto().getCorreo());
+        assertEquals(prestamo.getIdMiembroDto(), 
+        target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@fi.unju.edu.ar")).getIdMiembroDto());
     }
 
     @Test
-    public void devolverLibro(){
+    void devolverLibro() throws ManagerException{
         target.guardarPrestamo(prestamo2);
-        prestamo2 = target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("roberto@gmail.com"));
+        prestamo2 = target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com"));
         target.devolucionPrestamo(prestamo2);
-        assertEquals("DEVUELTO", target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("roberto@gmail.com")).getEstado());
+        assertEquals("DEVUELTO", target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com")).getEstado());
     }
 
 }

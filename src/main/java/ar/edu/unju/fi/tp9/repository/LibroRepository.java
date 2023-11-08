@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.tp9.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +16,7 @@ public interface LibroRepository extends CrudRepository<Libro, Long>{
 	
 	Libro findByTitulo(String titulo);
 	
-	Libro findByAutor(String autor);
+	List<Libro> findAllByAutor(String autor);
 	
 	Libro findByIsbn(String isbn);
 }

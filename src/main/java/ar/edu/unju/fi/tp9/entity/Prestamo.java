@@ -14,13 +14,13 @@ public class Prestamo {
     @Column(name = "id")
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="id_miembro")
     private Miembro miembro;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="id_libro")
-    private Libro libro = new Libro();
+    private Libro libro;
 
     @Column(name = "fecha_prestamo")
     @Temporal(TemporalType.TIMESTAMP)
@@ -36,11 +36,11 @@ public class Prestamo {
     public Prestamo() {
     }
 
-    public Prestamo(Miembro miembro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion, Estado estado) {
+    public Prestamo(Miembro miembro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion) {
         this.miembro = miembro;
         this.fechaPrestamo = fechaPrestamo;
         this.fechaDevolucion = fechaDevolucion;
-        this.estado = estado;
+        this.estado = Estado.PRESTADO;
     }
 
     public String formatearFecha(LocalDateTime fecha) {

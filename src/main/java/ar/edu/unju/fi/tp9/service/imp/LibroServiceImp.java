@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.log4j.Logger;
@@ -59,20 +61,19 @@ public class LibroServiceImp implements ILibroService{
 	}
 
 	/**
-	 * Recibe un libro DTO por parametro, mapeo un libro y verifica que exista previamente antes de eliminarlo.
+	 * Recibe un id por parametro y verifica que exista previamente antes de eliminarlo.
 	 */
 	@Override
-	public void eliminarLibro(LibroDto libroDto) {
-		Libro eliminarLibro = new Libro();
+	public void eliminarLibro(Long id) {
+		Optional<Libro> libro = libroRepository.findById(id);
 		
-		if(libroRepository.existsById(libroDto.getId())) {
-			mapper.map(libroDto, eliminarLibro);
-			libroRepository.delete(eliminarLibro);
-			logger.info("El libro "+ eliminarLibro.getTitulo() + " ah sido eliminado.");
+		if(libro.isEmpty()) {
+			logger.error("Libro con id: " + id + " no ah sido registrado.");
+			throw new EntityNotFoundException("Libro con id: " + id + " no ah sido registrado.");
 		}
 		else {
-			logger.error("Libro con id: " + libroDto.getId() + " no ah sido registrado.");
-			throw new EntityNotFoundException("Libro con id: " + libroDto.getId() + " no ah sido registrado.");
+			libroRepository.delete(libro.get());
+			logger.info("El libro con id: "+ id + " ah sido eliminado.");
 		}
 	}
 
@@ -133,15 +134,16 @@ public class LibroServiceImp implements ILibroService{
 	 * Busca un libro por autor pasado por parametro y lo mapea a DTO, si no existe, devuelve null.
 	 */
 	@Override
-	public LibroDto buscarLibroPorAutor(String autor) {
-		LibroDto libroDto = new LibroDto();
-		Libro libroBuscado = libroRepository.findByAutor(autor);
+	public List<LibroDto> buscarLibroPorAutor(String autor) {
+		List<LibroDto> librosDto = new ArrayList<>();
+		List<Libro> libroBuscado = libroRepository.findAllByAutor(autor);
 		
-		if(libroBuscado == null)
-			return null;
+		if(libroBuscado.size() == 0)
+			return librosDto;
 		else {
-			mapper.map(libroBuscado, libroDto);
-			return libroDto;
+			for(Libro p : libroBuscado)
+				librosDto.add(libroALibroDto(p));
+			return librosDto;
 		}
 	}
 
@@ -165,8 +167,7 @@ public class LibroServiceImp implements ILibroService{
 	public long librosSize() {
 		return libroRepository.count();
 	}
-
-
+	
 	/**
 	 * Metodo que transforma un libro a libroDto
 	 * @param libro
@@ -190,5 +191,16 @@ public class LibroServiceImp implements ILibroService{
 		Libro libro = new Libro();
 		mapper.map(libroDto, libro);
 		return libro;
+	}
+
+	@Override
+	public void cambiarEstado(Long id, String estado) throws ManagerException {
+		Libro libro = libroRepository.findById(id).orElse(null);
+		if(libro != null) {
+			libro.setEstado(estado);
+			libroRepository.save(libro);
+		}else{
+			throw new ManagerException("No existe el libro");
+		}
 	}
 }

@@ -1,19 +1,18 @@
 package ar.edu.unju.fi.tp9.dto;
 
 import java.io.Serializable;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import java.util.Objects;
 
 
 public class PrestamoDto implements Serializable {
-    static Logger logger = LogManager.getLogger(PrestamoDto.class);
     private static final long serialVersionUID = 1L;
     private Integer id;
-    private MiembroDto miembroDto;
-    private LibroDto libroDto;
+    private Integer idMiembroDto;
+    private Long idLibroDto;
     private String fechaPrestamo;
     private String fechaDevolucion;
     private String estado;
+
 
 
     public Integer getId() {
@@ -24,20 +23,20 @@ public class PrestamoDto implements Serializable {
         this.id = id;
     }
 
-    public LibroDto getLibroDto() {
-        return this.libroDto;
+    public Integer getIdMiembroDto() {
+        return this.idMiembroDto;
     }
 
-    public void setLibroDto(LibroDto libroDto){
-        this.libroDto = libroDto;
+    public void setIdMiembroDto(Integer idMiembroDto) {
+        this.idMiembroDto = idMiembroDto;
     }
 
-    public MiembroDto getMiembroDto() {
-        return this.miembroDto;
+    public Long getIdLibroDto() {
+        return this.idLibroDto;
     }
 
-    public void setMiembroDto(MiembroDto miembroDto) {
-        this.miembroDto = miembroDto;
+    public void setIdLibroDto(Long idLibroDto) {
+        this.idLibroDto = idLibroDto;
     }
 
     public String getFechaPrestamo() {
@@ -63,6 +62,39 @@ public class PrestamoDto implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public PrestamoDto id(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    public PrestamoDto idMiembroDto(Integer idMiembroDto) {
+        setIdMiembroDto(idMiembroDto);
+        return this;
+    }
+
+    public PrestamoDto idLibroDto(Long idLibroDto) {
+        setIdLibroDto(idLibroDto);
+        return this;
+    }
+
+    public PrestamoDto fechaPrestamo(String fechaPrestamo) {
+        setFechaPrestamo(fechaPrestamo);
+        return this;
+    }
+
+    public PrestamoDto fechaDevolucion(String fechaDevolucion) {
+        setFechaDevolucion(fechaDevolucion);
+        return this;
+    }
+
+    public PrestamoDto estado(String estado) {
+        setEstado(estado);
+        return this;
+    }
+
+   
+    
 
 
 }

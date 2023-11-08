@@ -13,11 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ar.edu.unju.fi.tp9.dto.AlumnoDto;
 import ar.edu.unju.fi.tp9.dto.DocenteDto;
 import ar.edu.unju.fi.tp9.dto.MiembroDto;
-import ar.edu.unju.fi.tp9.exceptions.ModelException;
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 
 @SpringBootTest
-public class IMiembroServiceTest {
+class IMiembroServiceTest {
     static Logger logger = LogManager.getLogger(IMiembroServiceTest.class);
 
     @Autowired
@@ -59,39 +59,39 @@ public class IMiembroServiceTest {
      * correctamente, ademas se testea que no se pueda guardar un miembro con el mismo correo.
      */
     @Test
-    public void testGuardarMiembro() {
+    void testGuardarMiembro() throws ManagerException {
         logger.info("IMiembroServiceTest: testGuardarMiembro");
         target.guardarMiembro(alumnoDto);
         target.guardarMiembro(docenteDto);
         assertEquals(alumnoDto.getCorreo(), target.obtenerMiembroByCorreo(alumnoDto.getCorreo()).getCorreo());
         assertEquals(docenteDto.getCorreo(), target.obtenerMiembroByCorreo(docenteDto.getCorreo()).getCorreo());
         // Intento guardar el mismo alumno otra vez, para controlar la exepcion
-        assertThrows(ModelException.class, () -> target.guardarMiembro(alumnoDto));
-        target.eliminarMiembro(alumnoDto);
-        target.eliminarMiembro(docenteDto);
+        assertThrows(ManagerException.class, () -> target.guardarMiembro(alumnoDto));
+        target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
+        target.eliminarMiembroPorCorreo(docenteDto.getCorreo());
     }
 
     /**
      * Este test prueba eliminar un miembro de la base de datos, luego se verifica que se haya eliminado correctamente,
      */
     @Test
-    public void testEliminarMiembro(){
+    void testEliminarMiembro() throws ManagerException{
         logger.info("IMiembroServiceTest: testEliminarMiembro");
         target.guardarMiembro(alumnoDto);
         assertEquals(alumnoDto.getCorreo(), target.obtenerMiembroByCorreo(alumnoDto.getCorreo()).getCorreo());
-        target.eliminarMiembro(alumnoDto);
-        assertThrows(ModelException.class, () -> target.obtenerMiembroByCorreo(alumnoDto.getCorreo()));
+        target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
+        assertThrows(ManagerException.class, () -> target.obtenerMiembroByCorreo(alumnoDto.getCorreo()));
     }
 
     /**
      * Este test prueba obtener un miembro de la base de datos por su correo.
      */
     @Test
-    public void testObtenerMiembroByCorreo(){
+    void testObtenerMiembroByCorreo() throws ManagerException{
         logger.info("IMiembroServiceTest: testObtenerMiembroByCorreo");
         target.guardarMiembro(alumnoDto);
         assertEquals(alumnoDto.getCorreo(), target.obtenerMiembroByCorreo(alumnoDto.getCorreo()).getCorreo());
-        target.eliminarMiembro(alumnoDto);
+        target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
     }
 
 
@@ -101,7 +101,7 @@ public class IMiembroServiceTest {
      * el correo, este no exista en la base de datos
      */
     @Test
-    public void modificarMiembro(){
+    void modificarMiembro() throws ManagerException{
         logger.info("IMiembroServiceTest: modificarMiembro");
         target.guardarMiembro(alumnoDto);
         target.guardarMiembro(docenteDto);
@@ -112,9 +112,9 @@ public class IMiembroServiceTest {
         assertEquals(alumnoDto.getCorreo(),target.obtenerMiembroById(alumnoDto.getId()).getCorreo());
         aux = (DocenteDto) target.obtenerMiembroByCorreo(docenteDto.getCorreo()); // obtengo el id
         aux.setCorreo("enzo@gmail.com"); // cambio el correo
-        assertThrows(ModelException.class, () -> target.modificarMiembro(aux)); 
-        target.eliminarMiembro(alumnoDto);
-        target.eliminarMiembro(docenteDto);
+        assertThrows(ManagerException.class, ()->target.modificarMiembro(aux)); 
+        target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
+        target.eliminarMiembroPorCorreo(docenteDto.getCorreo());
 
     }
 
