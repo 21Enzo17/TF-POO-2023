@@ -3,11 +3,15 @@ package ar.edu.unju.fi.tp9.service.imp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Service;
 
+import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.dto.MiembroDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 import ar.edu.unju.fi.tp9.entity.Prestamo;
@@ -18,9 +22,12 @@ import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
+import ar.edu.unju.fi.tp9.util.EmailService;
 
 @Service
 public class PrestamoServiceImp implements IPrestamoService {
+    static Logger logger = LogManager.getLogger(PrestamoServiceImp.class);
+
     ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
@@ -30,6 +37,8 @@ public class PrestamoServiceImp implements IPrestamoService {
     IMiembroService miembroService;
     @Autowired
     ILibroService libroService;
+    @Autowired
+    EmailService emailService;
 
 
     /**
@@ -45,7 +54,36 @@ public class PrestamoServiceImp implements IPrestamoService {
         }catch(ManagerException e){
             throw new ManagerException("No se pudo cambiar el estado del libro");
         }
+        
         prestamoRepository.save(prestamoGuardar);
+        enviarCorreo(prestamo);
+    }
+
+
+    public void enviarCorreo(PrestamoDto prestamo){
+        MiembroDto miembroDto = miembroService.obtenerMiembroById(prestamo.getIdMiembroDto());
+        LibroDto libroDto = libroService.buscarLibroPorId(prestamo.getIdLibroDto());
+        String to = miembroDto.getCorreo();
+        String subject = "Prestamo: " + libroDto.getTitulo();
+
+        String htmlBody = "<html><body><div style='text-align: center;'>" +
+            "<h1>Bibliowlteca</h1>" +
+            "<img src=\"cid:logo\" style=\"width: 200px; display: block; margin: 0 auto; border-radius: 20px;\" />"  +
+            "<h2>Informacion del prestamo</h2>"  +
+            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
+            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
+            "<p><b>Fecha de prestamo:</b> "+ prestamo.getFechaPrestamo()  + "</p>" +
+            "<p><b>Fecha de devolucion:</b> "+ prestamo.getFechaDevolucion() + "</p>" +
+            "<h6>Correo generado automaticamente</h6>" + 
+            "</div></body></html>";
+
+        try{ 
+            InputStreamSource inputStream = new FileSystemResource("src/main/resources/images/Bibliowlteca.png");
+            emailService.send("poo2023correo@gmail.com",to, subject, htmlBody,inputStream);
+            logger.info("Correo enviado correctamente");
+        }catch(Exception e){
+            logger.error("Error al enviar el correo: " + e.getMessage());
+        }
     }
 
     /**
