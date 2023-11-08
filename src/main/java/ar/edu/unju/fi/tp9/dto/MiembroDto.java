@@ -61,16 +61,6 @@ public class MiembroDto implements Serializable {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", nombre='" + getNombre() + "'" +
-            ", correo='" + getCorreo() + "'" +
-            ", numeroTelefonico='" + getNumeroTelefonico() + "'" +
-            "}";
-    }
-
     public boolean isAlumno(){
         return false;
     }

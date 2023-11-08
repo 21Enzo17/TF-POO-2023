@@ -1,14 +1,11 @@
 package ar.edu.unju.fi.tp9.entity;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue(value = "alumno")
 public class Alumno extends Miembro{
-    private static Logger logger = LogManager.getLogger(Miembro.class);
 
     @Column(name = "libretaUniversitaria")
     private String libretaUniversitaria;
@@ -18,7 +15,6 @@ public class Alumno extends Miembro{
     public Alumno(String nombre, String correo, String numeroTelefonico, String libretaUniversitaria) {
         super(nombre, correo, numeroTelefonico);
         this.libretaUniversitaria = libretaUniversitaria;
-        logger.info("Alumno: "+nombre+" creado");
     }
 
 

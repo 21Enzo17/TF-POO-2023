@@ -192,4 +192,15 @@ public class LibroServiceImp implements ILibroService{
 		mapper.map(libroDto, libro);
 		return libro;
 	}
+
+	@Override
+	public void cambiarEstado(Long id, String estado) throws ManagerException {
+		Libro libro = libroRepository.findById(id).orElse(null);
+		if(libro != null) {
+			libro.setEstado(estado);
+			libroRepository.save(libro);
+		}else{
+			throw new ManagerException("No existe el libro");
+		}
+	}
 }
