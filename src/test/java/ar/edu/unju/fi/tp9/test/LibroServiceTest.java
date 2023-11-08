@@ -17,9 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
+import ar.edu.unju.fi.tp9.enums.EstadoLibro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.ILibroService;
-import ar.edu.unju.fi.tp9.util.EstadoLibro;
+ 
 
 @SpringBootTest
 public class LibroServiceTest {

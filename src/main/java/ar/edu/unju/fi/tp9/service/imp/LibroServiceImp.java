@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.entity.Libro;
+import ar.edu.unju.fi.tp9.enums.EstadoLibro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.LibroRepository;
 import ar.edu.unju.fi.tp9.service.ILibroService;
-import ar.edu.unju.fi.tp9.util.EstadoLibro;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
