@@ -43,7 +43,7 @@ class IPrestamoServiceTest {
         prestamo2.setEstado("PRESTADO");
         prestamo2.setFechaDevolucion("05/06/2023 - 18:00");
         prestamo2.setFechaPrestamo("10/06/2023 - 18:00");
-        prestamo2.setIdMiembroDto(miembroService.obtenerMiembroByCorreo("roberto@gmail.com").getId());
+        prestamo2.setIdMiembroDto(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com").getId());
         prestamo2.setIdLibroDto(libroService.buscarLibroPorTitulo("El camino de los reyes").getId());
 
     }
@@ -61,22 +61,22 @@ class IPrestamoServiceTest {
     void guardarPrestamoTest() throws ManagerException {
         alumnoDto = new AlumnoDto();
         alumnoDto.setNombre("Juan Perez");
-        alumnoDto.setCorreo("juan@gmail.com");
+        alumnoDto.setCorreo("enzo.meneghini@fi.unju.edu.ar");
         alumnoDto.setNumeroTelefonico("123456789");
         alumnoDto.setLibretaUniversitaria("1234");
         miembroService.guardarMiembro(alumnoDto);
-        prestamo.setIdMiembroDto(miembroService.obtenerMiembroByCorreo("juan@gmail.com").getId());
+        prestamo.setIdMiembroDto(miembroService.obtenerMiembroByCorreo("enzo.meneghini@fi.unju.edu.ar").getId());
         target.guardarPrestamo(prestamo);
         assertEquals(prestamo.getIdMiembroDto(), 
-        target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("juan@gmail.com")).getIdMiembroDto());
+        target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@fi.unju.edu.ar")).getIdMiembroDto());
     }
 
     @Test
     void devolverLibro() throws ManagerException{
         target.guardarPrestamo(prestamo2);
-        prestamo2 = target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("roberto@gmail.com"));
+        prestamo2 = target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com"));
         target.devolucionPrestamo(prestamo2);
-        assertEquals("DEVUELTO", target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("roberto@gmail.com")).getEstado());
+        assertEquals("DEVUELTO", target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com")).getEstado());
     }
 
 }
