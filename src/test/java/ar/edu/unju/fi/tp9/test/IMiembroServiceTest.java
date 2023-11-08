@@ -18,7 +18,7 @@ import ar.edu.unju.fi.tp9.service.IMiembroService;
 
 @SpringBootTest
 class IMiembroServiceTest {
-    static Logger logger = LogManager.getLogger(IMiembroServiceTest.class);
+    static Logger logger = Logger.getLogger(IMiembroServiceTest.class);
 
     @Autowired
     IMiembroService target;

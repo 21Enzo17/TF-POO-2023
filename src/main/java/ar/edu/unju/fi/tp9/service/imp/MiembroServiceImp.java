@@ -19,7 +19,7 @@ import ar.edu.unju.fi.tp9.service.IMiembroService;
 
 @Service
 public class MiembroServiceImp implements IMiembroService {
-    static Logger logger = LogManager.getLogger(MiembroServiceImp.class);
+    static Logger logger = Logger.getLogger(MiembroServiceImp.class);
     
     @Autowired
     MiembroRepository miembroRepository;
