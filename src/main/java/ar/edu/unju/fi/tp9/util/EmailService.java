@@ -20,7 +20,18 @@ public class EmailService {
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
-
+    
+    /**
+     * Este metodo se encarga de setear y enviar el correo, seteando en true 
+     * la etiqueta de contenido html, ademas de enviando la imagen para que 
+     * el html pueda leerla en el correo.
+     * @param emisor
+     * @param para
+     * @param tema
+     * @param cuerpo
+     * @param imagen
+     * @throws MessagingException
+     */
     public void send(String emisor, String para, String tema, String cuerpo, InputStreamSource imagen) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
