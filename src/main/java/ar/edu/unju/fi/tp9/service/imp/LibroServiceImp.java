@@ -85,7 +85,7 @@ public class LibroServiceImp implements ILibroService{
 		Libro editarLibro = new Libro();
 		
 		
-		if(libroRepository.existsById(libroDto.getId())) {
+		if( libroRepository.existsById(libroDto.getId()) ) {
 			mapper.map(libroDto, editarLibro);
 			libroRepository.save(editarLibro);
 			logger.info("Libro con id: " + editarLibro.getId() + " ah sido modificado.");
