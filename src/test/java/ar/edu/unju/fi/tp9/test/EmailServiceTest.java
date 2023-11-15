@@ -11,20 +11,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
 
-import ar.edu.unju.fi.tp9.util.EmailService;
+import ar.edu.unju.fi.tp9.service.IEmailService;
 
 @SpringBootTest
 class EmailServiceTest {
 
     @Autowired
-    EmailService target;
+    IEmailService target;
     String para;
     String tema;
     String htmlBody;
 
     @BeforeEach
     public void setUp(){
-        para = "mauri6030@gmail.com";
+        para = "enzo.meneghinifenix@gmail.com";
         tema = "Prestamo: " + "Titulo1";
 
         htmlBody = "<html><body><div style='text-align: center;'>" +

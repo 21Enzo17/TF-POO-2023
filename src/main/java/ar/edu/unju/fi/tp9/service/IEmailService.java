@@ -1,7 +1,6 @@
-package ar.edu.unju.fi.tp9.util;
+package ar.edu.unju.fi.tp9.service;
 
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,11 +12,11 @@ import jakarta.mail.internet.MimeMessage;
 
 
 @Service
-public class EmailService {
-    static Logger logger = Logger.getLogger(EmailService.class);
+public class IEmailService {
+    static Logger logger = Logger.getLogger(IEmailService.class);
     private JavaMailSender mailSender;
 
-    public EmailService(JavaMailSender mailSender) {
+    public IEmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
     
@@ -33,6 +32,7 @@ public class EmailService {
      * @throws MessagingException
      */
     public void send(String emisor, String para, String tema, String cuerpo, InputStreamSource imagen) throws MessagingException {
+        logger.info("Enviando correo a:" + para);
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setFrom(emisor);

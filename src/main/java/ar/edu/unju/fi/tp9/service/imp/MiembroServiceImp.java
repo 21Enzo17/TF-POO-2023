@@ -73,6 +73,7 @@ public class MiembroServiceImp implements IMiembroService {
         if(miembro == null){
             throw new ManagerException("No existe el miembro");
         }
+        logger.debug(miembro.getNumeroMiembro() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
     }
 
@@ -114,6 +115,7 @@ public class MiembroServiceImp implements IMiembroService {
             miembroDto = modelMapper.map(miembro, DocenteDto.class);
         }
         miembroDto.setFechaBloqueo(dateFormatter.transformarFechaNatural(miembro.getFechaBloqueo().toString()));
+        logger.debug("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
         return miembroDto;
     }
 
@@ -164,6 +166,7 @@ public class MiembroServiceImp implements IMiembroService {
     public void eliminarMiembroPorId(Integer id) throws ManagerException {
         try{
             miembroRepository.deleteById(id);
+            logger.debug("Miembro con id: " + id + " eliminado con exito");
         }catch(Exception e){
             throw new ManagerException("Error al eliminar miembro, miembro no encontrado");
         }
@@ -179,7 +182,7 @@ public class MiembroServiceImp implements IMiembroService {
     public Miembro crearUnMiembro(Miembro miembro){
         miembro.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0));
         miembro.setNumeroMiembro(miembro.generarNumeroMiembro());
+        logger.debug("Miembro: " + miembro.getNombre() + " creado con exito");
         return miembro;
-
     }
 }
