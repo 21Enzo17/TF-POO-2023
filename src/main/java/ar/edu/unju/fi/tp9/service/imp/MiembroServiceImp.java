@@ -189,15 +189,13 @@ public class MiembroServiceImp implements IMiembroService {
     
     @Override
     //FIXME Docuemntar
-    public boolean verificarMiembroSancionado(Integer id) throws ManagerException{
+    public void verificarMiembroSancionado(Integer id) throws ManagerException{
     	MiembroDto miembroBuscado = obtenerMiembroById(id);
     	
     	LocalDateTime fechaSancion = dateFormatter.fechDateTime(miembroBuscado.getFechaBloqueo());
     	
     	if(LocalDateTime.now().isBefore(fechaSancion))
     		throw new ManagerException("El miembro " + miembroBuscado.getNombre() + " esta sancionado hasta la fecha " + miembroBuscado.getFechaBloqueo());
-    	else
-    		return false;
     }
     
     @Override

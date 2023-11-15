@@ -206,16 +206,14 @@ public class LibroServiceImp implements ILibroService{
 	}
 
 	@Override
-	public boolean verificarLibroDisponible(Long id) throws ManagerException {
+	public void verificarLibroDisponible(Long id) throws ManagerException {
 		LibroDto libroBuscado = buscarLibroPorId(id);
 		if(libroBuscado == null) {
 			logger.error("Libro no registrado");
 			throw new ManagerException("Libro no registrado");
 		}
 		else {
-			if( libroBuscado.getEstado().equals(EstadoLibro.DISPONIBLE.toString()) )
-				return true;
-			else
+			if( !libroBuscado.getEstado().equals(EstadoLibro.DISPONIBLE.toString()) )
 				throw new ManagerException("El libro " + libroBuscado.getTitulo() + " ya ha sido prestado.");
 		}
 	}

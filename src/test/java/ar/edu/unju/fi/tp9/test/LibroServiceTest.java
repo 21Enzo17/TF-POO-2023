@@ -20,7 +20,6 @@ import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.enums.EstadoLibro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.ILibroService;
- 
 
 @SpringBootTest
 public class LibroServiceTest {

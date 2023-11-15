@@ -198,10 +198,9 @@ public class PrestamoServiceImp implements IPrestamoService {
         return estadoEnum;
     }
     
-    private boolean validarPrestamo(PrestamoDto prestamoDto) throws ManagerException {
+    private void validarPrestamo(PrestamoDto prestamoDto) throws ManagerException {
     	miembroService.verificarMiembroSancionado(prestamoDto.getIdMiembroDto());
     	libroService.verificarLibroDisponible(prestamoDto.getIdLibroDto());
-    	return true;
     }
     
     private int calcularDiasDeSancion(long dias) {

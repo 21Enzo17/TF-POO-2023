@@ -75,8 +75,7 @@ class IPrestamoServiceTest {
     void devolverLibro() throws ManagerException{
         target.guardarPrestamo(prestamo2);
         prestamo2 = target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com"));
-        target.devolucionPrestamo(prestamo2);
+        target.devolucionPrestamo(prestamo2.getId());
         assertEquals("DEVUELTO", target.buscarPrestamoPorMiembro(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com")).getEstado());
     }
-
 }

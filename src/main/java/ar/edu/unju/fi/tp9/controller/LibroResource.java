@@ -62,7 +62,7 @@ public class LibroResource {
 			
 		}catch (NoSuchElementException e) {
 			response.put("Mensaje", "No existe libro guardado con el id enviado");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 			
 		}catch (DataAccessException e) {
 			response.put("Mensaje", "Error al guardar el objeto");

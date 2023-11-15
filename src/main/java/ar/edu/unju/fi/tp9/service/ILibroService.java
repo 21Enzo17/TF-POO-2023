@@ -29,5 +29,5 @@ public interface ILibroService {
 
 	void cambiarEstado(Long id, String estado) throws ManagerException;
 	
-	boolean verificarLibroDisponible(Long id) throws ManagerException;
+	void verificarLibroDisponible(Long id) throws ManagerException;
 }
