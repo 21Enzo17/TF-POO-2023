@@ -1,9 +1,6 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +19,7 @@ import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
+import ar.edu.unju.fi.tp9.util.DateFormatter;
 import ar.edu.unju.fi.tp9.util.EmailService;
 
 @Service
@@ -39,7 +37,8 @@ public class PrestamoServiceImp implements IPrestamoService {
     ILibroService libroService;
     @Autowired
     EmailService emailService;
-
+    @Autowired
+    DateFormatter dateFormatter;
 
     /**
      * Metodo que guarda un prestamo en la bd
@@ -60,7 +59,7 @@ public class PrestamoServiceImp implements IPrestamoService {
     }
 
 
-    public void enviarCorreo(PrestamoDto prestamo){
+    public void enviarCorreo(PrestamoDto prestamo) throws ManagerException{
         MiembroDto miembroDto = miembroService.obtenerMiembroById(prestamo.getIdMiembroDto());
         LibroDto libroDto = libroService.buscarLibroPorId(prestamo.getIdLibroDto());
         String to = miembroDto.getCorreo();
@@ -120,8 +119,8 @@ public class PrestamoServiceImp implements IPrestamoService {
         PrestamoDto prestamoDto = new PrestamoDto();
         prestamoDto.setId(prestamo.getId());
         prestamoDto.setEstado(prestamo.getEstado().toString());
-        prestamoDto.setFechaDevolucion(transformarFechaNatural(prestamo.getFechaDevolucion().toString()));
-        prestamoDto.setFechaPrestamo(transformarFechaNatural(prestamo.getFechaPrestamo().toString()));
+        prestamoDto.setFechaDevolucion(dateFormatter.transformarFechaNatural(prestamo.getFechaDevolucion().toString()));
+        prestamoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(prestamo.getFechaPrestamo().toString()));
         prestamoDto.setIdMiembroDto(prestamo.getMiembro().getId());
         prestamoDto.setIdLibroDto(prestamo.getLibro().getId());
         
@@ -135,7 +134,7 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @param prestamoDto
      * @return
      */
-    public Prestamo prestamoDtoAPrestamo(PrestamoDto prestamoDto){
+    public Prestamo prestamoDtoAPrestamo(PrestamoDto prestamoDto) throws ManagerException{
         Prestamo prestamo = new Prestamo();
 
         if(prestamoDto.getId() == null){
@@ -144,8 +143,8 @@ public class PrestamoServiceImp implements IPrestamoService {
             prestamo.setId(prestamoDto.getId());
         }
         
-        prestamo.setFechaDevolucion(fechDateTime(prestamoDto.getFechaDevolucion()));
-        prestamo.setFechaPrestamo(fechDateTime(prestamoDto.getFechaDevolucion()));
+        prestamo.setFechaDevolucion(dateFormatter.fechDateTime(prestamoDto.getFechaDevolucion()));
+        prestamo.setFechaPrestamo(dateFormatter.fechDateTime(prestamoDto.getFechaDevolucion()));
         prestamo.setEstado(obtenerEstado(prestamoDto.getEstado()));
         prestamo.setMiembro(miembroService.miembroDtoAMiembro(miembroService.obtenerMiembroById(prestamoDto.getIdMiembroDto())));
         prestamo.setLibro(libroService.libroDtoALibro(libroService.buscarLibroPorId(prestamoDto.getIdLibroDto())));
@@ -174,18 +173,6 @@ public class PrestamoServiceImp implements IPrestamoService {
         return estadoEnum;
     }
 
-    public String transformarFechaNatural(String input) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        LocalDateTime dateTime = LocalDateTime.parse(input, inputFormatter);
-    
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
-    
-        return dateTime.format(outputFormatter);
-    }
 
-    public LocalDateTime fechDateTime(String input) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
-        return LocalDateTime.parse(input, inputFormatter);
-    }
     
 }
