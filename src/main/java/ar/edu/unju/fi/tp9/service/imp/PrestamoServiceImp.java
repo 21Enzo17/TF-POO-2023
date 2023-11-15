@@ -16,11 +16,11 @@ import ar.edu.unju.fi.tp9.enums.Estado;
 import ar.edu.unju.fi.tp9.enums.EstadoLibro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
+import ar.edu.unju.fi.tp9.service.IEmailService;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
-import ar.edu.unju.fi.tp9.util.EmailService;
 
 @Service
 public class PrestamoServiceImp implements IPrestamoService {
@@ -36,7 +36,7 @@ public class PrestamoServiceImp implements IPrestamoService {
     @Autowired
     ILibroService libroService;
     @Autowired
-    EmailService emailService;
+    IEmailService emailService;
     @Autowired
     DateFormatter dateFormatter;
 
@@ -54,7 +54,8 @@ public class PrestamoServiceImp implements IPrestamoService {
             throw new ManagerException("No se pudo cambiar el estado del libro");
         }
         
-        prestamoRepository.save(prestamoGuardar);
+        prestamoGuardar = prestamoRepository.save(prestamoGuardar);
+        logger.debug("Prestamo: " + prestamoGuardar.getId() +"guardado con exito");
         enviarCorreo(prestamo);
     }
 
@@ -65,16 +66,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         String to = miembroDto.getCorreo();
         String subject = "Prestamo: " + libroDto.getTitulo();
 
-        String htmlBody = "<html><body><div style='text-align: center;'>" +
-            "<h1>Bibliowlteca</h1>" +
-            "<img src=\"cid:logo\" style=\"width: 200px; display: block; margin: 0 auto; border-radius: 20px;\" />"  +
-            "<h2>Informacion del prestamo</h2>"  +
-            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
-            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
-            "<p><b>Fecha de prestamo:</b> "+ prestamo.getFechaPrestamo()  + "</p>" +
-            "<p><b>Fecha de devolucion:</b> "+ prestamo.getFechaDevolucion() + "</p>" +
-            "<h6>Correo generado automaticamente</h6>" + 
-            "</div></body></html>";
+        String htmlBody = generarBody(libroDto, prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion());
 
         try{ 
             InputStreamSource inputStream = new FileSystemResource("src/main/resources/images/Bibliowlteca.png");
@@ -85,12 +77,28 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
     }
 
+    public String generarBody(LibroDto libroDto, String fechaPrestamo, String fechaDevolucion){
+        String htmlBody = "<html><body><div style='text-align: center;'>" +
+            "<h1>Bibliowlteca</h1>" +
+            "<img src=\"cid:logo\" style=\"width: 200px; display: block; margin: 0 auto; border-radius: 20px;\" />"  +
+            "<h2>Informacion del prestamo</h2>"  +
+            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
+            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
+            "<p><b>Fecha de prestamo:</b> "+ fechaPrestamo  + "</p>" +
+            "<p><b>Fecha de devolucion:</b> "+ fechaDevolucion + "</p>" +
+            "<h6>Correo generado automaticamente</h6>" + 
+            "</div></body></html>";
+            logger.info("Body generado correctamente");
+        return htmlBody;
+    }
+
     /**
      * Metodo que busca un prestamo por miembro
      * @param miembroDto
      */
     @Override
     public PrestamoDto buscarPrestamoPorMiembro(MiembroDto miembroDto) {
+        // FIXME: Deberia retornar una lista de miembros, ademas solo es necesario el id del miembro
         Prestamo prestamo = prestamoRepository.findByMiembro(miembroService.miembroDtoAMiembro(miembroDto));
         return prestamoAPrestamoDto(prestamo);
     }
@@ -102,12 +110,14 @@ public class PrestamoServiceImp implements IPrestamoService {
     public void devolucionPrestamo(PrestamoDto prestamoDto) throws ManagerException{
         Prestamo prestamo = prestamoDtoAPrestamo(prestamoDto);
         prestamo.setEstado(Estado.DEVUELTO);
+
         try{
             libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
         }catch(ManagerException e){
             throw new ManagerException("No se pudo cambiar el estado del libro");
         }
         prestamoRepository.save(prestamo);
+        logger.debug(prestamo.getId() + " devuelto con exito");
     }
 
     /**
@@ -124,7 +134,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoDto.setIdMiembroDto(prestamo.getMiembro().getId());
         prestamoDto.setIdLibroDto(prestamo.getLibro().getId());
         
-        
+        logger.info("Prestamo mapeado con exito");
         return prestamoDto;
     }
 
@@ -148,6 +158,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamo.setEstado(obtenerEstado(prestamoDto.getEstado()));
         prestamo.setMiembro(miembroService.miembroDtoAMiembro(miembroService.obtenerMiembroById(prestamoDto.getIdMiembroDto())));
         prestamo.setLibro(libroService.libroDtoALibro(libroService.buscarLibroPorId(prestamoDto.getIdLibroDto())));
+        logger.info("Prestamo mapeado con exito");
         return prestamo;
     }
 

@@ -56,7 +56,7 @@ public class LibroServiceImp implements ILibroService{
 			mapper.map(libroDto, nuevoLibro);
 			nuevoLibro.setEstado(EstadoLibro.DISPONIBLE.toString());
 			libroRepository.save(nuevoLibro);
-			logger.info("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
+			logger.debug("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
 		}
 	}
 
@@ -73,7 +73,7 @@ public class LibroServiceImp implements ILibroService{
 		}
 		else {
 			libroRepository.delete(libro.get());
-			logger.info("El libro con id: "+ id + " ah sido eliminado.");
+			logger.debug("El libro con id: "+ id + " ah sido eliminado.");
 		}
 	}
 
@@ -88,11 +88,11 @@ public class LibroServiceImp implements ILibroService{
 		if(libroRepository.existsById(libroDto.getId())) {
 			mapper.map(libroDto, editarLibro);
 			libroRepository.save(editarLibro);
-			logger.info("Libro con id: " + editarLibro.getId() + " ah sido modificado.");
+			logger.debug("Libro con id: " + editarLibro.getId() + " ha sido modificado.");
 		}
 		else {
-			logger.error("Libron con id: " + libroDto.getId() + " no ah sido registrado.");
-			throw new EntityNotFoundException("Libron con id: " + libroDto.getId() + " no ah sido registrado.");
+			logger.error("Libron con id: " + libroDto.getId() + " no ha sido registrado.");
+			throw new EntityNotFoundException("Libron con id: " + libroDto.getId() + " no ha sido registrado.");
 		}
 	}
 
@@ -109,7 +109,7 @@ public class LibroServiceImp implements ILibroService{
 			return null;
 		else {
 			mapper.map(libroBuscado.get(), libroDto);
-			logger.info("Devolviendo el libro " + libroDto.getTitulo());
+			logger.debug("Devolviendo el libro " + libroDto.getTitulo());
 			return libroDto;
 		}
 	}

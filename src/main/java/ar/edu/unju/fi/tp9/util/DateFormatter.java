@@ -3,9 +3,9 @@ package ar.edu.unju.fi.tp9.util;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class DateFormatter {
 
     public String transformarFechaNatural(String input) {
