@@ -2,12 +2,27 @@ package ar.edu.unju.fi.tp9.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME, 
+  include = JsonTypeInfo.As.PROPERTY, 
+  property = "tipo")
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = AlumnoDto.class, name = "alumno"),
+  @JsonSubTypes.Type(value = DocenteDto.class, name = "docente")
+})
 public class MiembroDto implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer id;
+    private Integer numeroMiembro;
     private String nombre;
     private String correo;
     private String numeroTelefonico;
+    private String fechaBloqueo;
+
+
 
     public Integer getId() {
         return this.id;
@@ -15,6 +30,14 @@ public class MiembroDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getNumeroMiembro(){
+        return this.numeroMiembro;
+    }
+
+    public void setNumeroMiembro(Integer numeroMiembro){
+        this.numeroMiembro = numeroMiembro;
     }
 
     public String getNombre() {
@@ -39,6 +62,14 @@ public class MiembroDto implements Serializable {
 
     public void setNumeroTelefonico(String numeroTelefonico) {
         this.numeroTelefonico = numeroTelefonico;
+    }
+
+    public String getFechaBloqueo() {
+        return this.fechaBloqueo;
+    }
+
+    public void setFechaBloqueo(String fechaBloqueo) {
+        this.fechaBloqueo = fechaBloqueo;
     }
 
     public MiembroDto id(Integer id) {

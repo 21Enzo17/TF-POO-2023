@@ -23,7 +23,7 @@ class IMiembroServiceTest {
     @Autowired
     IMiembroService target;
     
-    static AlumnoDto alumnoDto;
+     AlumnoDto alumnoDto;
     static DocenteDto docenteDto;
     static MiembroDto aux;
     
@@ -34,12 +34,14 @@ class IMiembroServiceTest {
         alumnoDto.setCorreo("juan@gmail.com");
         alumnoDto.setNumeroTelefonico("123456789");
         alumnoDto.setLibretaUniversitaria("1234");
+        alumnoDto.setFechaBloqueo("10/11/2023 - 18:00"); 
         
         docenteDto = new DocenteDto();
         docenteDto.setNombre("Manuel Lopez");
         docenteDto.setCorreo("manuel@gmail.com");
         docenteDto.setNumeroTelefonico("987654321");
         docenteDto.setLegajo("4567");
+        docenteDto.setFechaBloqueo("12/11/2023 - 14:00");
 
         aux = new MiembroDto();
     }
@@ -61,10 +63,8 @@ class IMiembroServiceTest {
     @Test
     void testGuardarMiembro() throws ManagerException {
         logger.info("IMiembroServiceTest: testGuardarMiembro");
-        target.guardarMiembro(alumnoDto);
-        target.guardarMiembro(docenteDto);
-        assertEquals(alumnoDto.getCorreo(), target.obtenerMiembroByCorreo(alumnoDto.getCorreo()).getCorreo());
-        assertEquals(docenteDto.getCorreo(), target.obtenerMiembroByCorreo(docenteDto.getCorreo()).getCorreo());
+        assertEquals(alumnoDto.getCorreo(), target.guardarMiembro(alumnoDto).getCorreo());
+        assertEquals(docenteDto.getCorreo(), target.guardarMiembro(docenteDto).getCorreo());
         // Intento guardar el mismo alumno otra vez, para controlar la exepcion
         assertThrows(ManagerException.class, () -> target.guardarMiembro(alumnoDto));
         target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
@@ -77,8 +77,7 @@ class IMiembroServiceTest {
     @Test
     void testEliminarMiembro() throws ManagerException{
         logger.info("IMiembroServiceTest: testEliminarMiembro");
-        target.guardarMiembro(alumnoDto);
-        assertEquals(alumnoDto.getCorreo(), target.obtenerMiembroByCorreo(alumnoDto.getCorreo()).getCorreo());
+        assertEquals(alumnoDto.getCorreo(), target.guardarMiembro(alumnoDto).getCorreo());
         target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
         assertThrows(ManagerException.class, () -> target.obtenerMiembroByCorreo(alumnoDto.getCorreo()));
     }
@@ -89,8 +88,7 @@ class IMiembroServiceTest {
     @Test
     void testObtenerMiembroByCorreo() throws ManagerException{
         logger.info("IMiembroServiceTest: testObtenerMiembroByCorreo");
-        target.guardarMiembro(alumnoDto);
-        assertEquals(alumnoDto.getCorreo(), target.obtenerMiembroByCorreo(alumnoDto.getCorreo()).getCorreo());
+        assertEquals(alumnoDto.getCorreo(), target.guardarMiembro(alumnoDto).getCorreo());
         target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
     }
 
@@ -103,14 +101,10 @@ class IMiembroServiceTest {
     @Test
     void modificarMiembro() throws ManagerException{
         logger.info("IMiembroServiceTest: modificarMiembro");
-        target.guardarMiembro(alumnoDto);
-        target.guardarMiembro(docenteDto);
-        assertEquals(alumnoDto.getCorreo(), target.obtenerMiembroByCorreo(alumnoDto.getCorreo()).getCorreo());
-        alumnoDto = (AlumnoDto)  target.obtenerMiembroByCorreo(alumnoDto.getCorreo()); // obtengo el id
+        alumnoDto = (AlumnoDto) target.guardarMiembro(alumnoDto);
+        aux = (DocenteDto) target.guardarMiembro(docenteDto);
         alumnoDto.setCorreo("enzo@gmail.com"); // cambio el correo
         target.modificarMiembro(alumnoDto); // modifico
-        assertEquals(alumnoDto.getCorreo(),target.obtenerMiembroById(alumnoDto.getId()).getCorreo());
-        aux = (DocenteDto) target.obtenerMiembroByCorreo(docenteDto.getCorreo()); // obtengo el id
         aux.setCorreo("enzo@gmail.com"); // cambio el correo
         assertThrows(ManagerException.class, ()->target.modificarMiembro(aux)); 
         target.eliminarMiembroPorCorreo(alumnoDto.getCorreo());
