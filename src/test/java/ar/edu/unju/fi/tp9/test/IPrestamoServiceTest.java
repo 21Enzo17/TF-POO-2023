@@ -37,14 +37,14 @@ class IPrestamoServiceTest {
         prestamo.setEstado("PRESTADO");
         prestamo.setFechaDevolucion("10/06/2023 - 18:00");
         prestamo.setFechaPrestamo("05/06/2023 - 18:00");
-        prestamo.setIdLibroDto(libroService.buscarLibroPorTitulo("IT").getId());
+        prestamo.setIdLibroDto(libroService.buscarLibroPorTitulo("Harry Potter y la piedra filosofal").getId());
 
         prestamo2 = new PrestamoDto();
         prestamo2.setEstado("PRESTADO");
         prestamo2.setFechaDevolucion("10/06/2023 - 18:00");
         prestamo2.setFechaPrestamo("05/06/2023 - 18:00");
         prestamo2.setIdMiembroDto(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com").getId());
-        prestamo2.setIdLibroDto(libroService.buscarLibroPorTitulo("El camino de los reyes").getId());
+        prestamo2.setIdLibroDto(libroService.buscarLibroPorTitulo("IT").getId());
 
     }
 

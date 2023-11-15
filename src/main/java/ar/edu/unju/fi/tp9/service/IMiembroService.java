@@ -32,4 +32,8 @@ public interface IMiembroService {
     public Miembro miembroDtoAMiembro(MiembroDto miembroDto);
 
     public MiembroDto miembroAMiembroDto(Miembro miembro);
+    
+    public boolean verificarMiembroSancionado(Integer id) throws ManagerException;
+    
+    public void sancionarMiembro(Integer id, int dias) throws ManagerException;
 }

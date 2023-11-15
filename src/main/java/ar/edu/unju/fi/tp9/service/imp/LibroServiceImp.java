@@ -43,7 +43,6 @@ public class LibroServiceImp implements ILibroService{
 	public void guardarLibro(LibroDto libroDto) throws ManagerException {
 		Libro nuevoLibro = new Libro();
 		
-
 		if(estaIsbnRegistrado(libroDto.getIsbn())) {
 			logger.error("ISBN: " + libroDto.getIsbn() + " ya ah sido registrado.");
 			throw new ManagerException("ISBN: " + libroDto.getIsbn() + " ya ah sido registrado.");
@@ -163,8 +162,10 @@ public class LibroServiceImp implements ILibroService{
 		}
 	}
 
+	
 	@Override
 	public long librosSize() {
+		logger.info("devolviendo cantidad de libros registrados.");
 		return libroRepository.count();
 	}
 	
@@ -201,6 +202,21 @@ public class LibroServiceImp implements ILibroService{
 			libroRepository.save(libro);
 		}else{
 			throw new ManagerException("No existe el libro");
+		}
+	}
+
+	@Override
+	public boolean verificarLibroDisponible(Long id) throws ManagerException {
+		LibroDto libroBuscado = buscarLibroPorId(id);
+		if(libroBuscado == null) {
+			logger.error("Libro no registrado");
+			throw new ManagerException("Libro no registrado");
+		}
+		else {
+			if( libroBuscado.getEstado().equals(EstadoLibro.DISPONIBLE.toString()) )
+				return true;
+			else
+				throw new ManagerException("El libro " + libroBuscado.getTitulo() + " ya ah sido prestado.");
 		}
 	}
 }

@@ -2,6 +2,7 @@ package ar.edu.unju.fi.tp9.service.imp;
 
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -184,5 +185,29 @@ public class MiembroServiceImp implements IMiembroService {
         miembro.setNumeroMiembro(miembro.generarNumeroMiembro());
         logger.debug("Miembro: " + miembro.getNombre() + " creado con exito");
         return miembro;
+    }
+    
+    @Override
+    //FIXME Docuemntar
+    public boolean verificarMiembroSancionado(Integer id) throws ManagerException{
+    	MiembroDto miembroBuscado = obtenerMiembroById(id);
+    	
+    	LocalDateTime fechaSancion = dateFormatter.fechDateTime(miembroBuscado.getFechaBloqueo());
+    	
+    	if(LocalDateTime.now().isBefore(fechaSancion))
+    		throw new ManagerException("El miembro " + miembroBuscado.getNombre() + " esta sancionado hasta la fecha " + miembroBuscado.getFechaBloqueo());
+    	else
+    		return false;
+    }
+    
+    @Override
+    public void sancionarMiembro(Integer id, int dias) throws ManagerException {
+    	MiembroDto miembroSancionar = obtenerMiembroById(id);
+    	
+    	Miembro miembroGuardar = miembroDtoAMiembro(miembroSancionar);
+    	miembroGuardar.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0).plusDays(dias));
+    	
+    	logger.info("Miembro" + miembroSancionar.getNombre() + "ah sido sancionado por " + dias + " dias");
+    	miembroRepository.save(miembroGuardar);
     }
 }

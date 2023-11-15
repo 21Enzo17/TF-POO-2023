@@ -1,6 +1,9 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,8 @@ public class PrestamoServiceImp implements IPrestamoService {
     public void guardarPrestamo(PrestamoDto prestamo)throws ManagerException {
         Prestamo prestamoGuardar;
         prestamoGuardar = prestamoDtoAPrestamo(prestamo);
+        
+        validarPrestamo(prestamo);
         try{
             libroService.cambiarEstado(prestamo.getIdLibroDto(),EstadoLibro.PRESTADO.toString());
         }catch(ManagerException e){
@@ -97,6 +102,7 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @param miembroDto
      */
     @Override
+    
     public PrestamoDto buscarPrestamoPorMiembro(MiembroDto miembroDto) {
         // FIXME: Deberia retornar una lista de miembros, ademas solo es necesario el id del miembro
         Prestamo prestamo = prestamoRepository.findByMiembro(miembroService.miembroDtoAMiembro(miembroDto));
@@ -106,18 +112,17 @@ public class PrestamoServiceImp implements IPrestamoService {
     /**
      * Metodo que devuelve un prestamo
      */
-    @Override
+    @Override 
     public void devolucionPrestamo(PrestamoDto prestamoDto) throws ManagerException{
         Prestamo prestamo = prestamoDtoAPrestamo(prestamoDto);
         prestamo.setEstado(Estado.DEVUELTO);
-
-        try{
-            libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
-        }catch(ManagerException e){
-            throw new ManagerException("No se pudo cambiar el estado del libro");
-        }
+        libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
         prestamoRepository.save(prestamo);
         logger.debug(prestamo.getId() + " devuelto con exito");
+        
+        if(prestamo.getFechaDevolucion().isBefore(LocalDateTime.now())) {
+        	miembroService.sancionarMiembro(prestamo.getMiembro().getId(), calcularDiasDeSancion(ChronoUnit.DAYS.between(prestamo.getFechaDevolucion(), LocalDateTime.now())));
+        }
     }
 
     /**
@@ -183,7 +188,23 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
         return estadoEnum;
     }
-
-
+    
+    private boolean validarPrestamo(PrestamoDto prestamoDto) throws ManagerException {
+    	miembroService.verificarMiembroSancionado(prestamoDto.getIdMiembroDto());
+    	libroService.verificarLibroDisponible(prestamoDto.getIdLibroDto());
+    	return true;
+    }
+    
+    private int calcularDiasDeSancion(long dias) {
+        if (dias > 0 && dias <= 2) {
+            return 3;
+        } else if (dias <= 5) {
+            return 5;
+        } else if (dias > 5) {
+            return 20;
+        } else {
+            return 0;
+        }
+    }
     
 }
