@@ -50,7 +50,7 @@ public class PrestamoServiceImp implements IPrestamoService {
     @Override
     public void guardarPrestamo(PrestamoDto prestamo)throws ManagerException {
         Prestamo prestamoGuardar;
-        prestamoGuardar = prestamoDtoAPrestamo(prestamo);
+        prestamoGuardar = prestamoDtoAPrestamo(crearPrestamo(prestamo));
         
         validarPrestamo(prestamo);
         try{
@@ -60,10 +60,17 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
         
         prestamoGuardar = prestamoRepository.save(prestamoGuardar);
-        logger.debug("Prestamo: " + prestamoGuardar.getId() +"guardado con exito");
+        logger.debug("Prestamo: " + prestamoGuardar.getId() +" guardado con exito");
         enviarCorreo(prestamo);
     }
 
+    private PrestamoDto crearPrestamo(PrestamoDto prestamoDto){
+        prestamoDto.setEstado(Estado.PRESTADO.toString());
+        prestamoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(LocalDateTime.now().withSecond(0).withNano(0).toString()));
+        prestamoDto.setFechaDevolucion(dateFormatter.transformarFechaNatural(LocalDateTime.now().withSecond(0).withNano(0).plusDays(7).toString()));
+        logger.info("Prestamo creado con exito con estado: " + prestamoDto.getEstado());
+        return prestamoDto;
+    }
 
     public void enviarCorreo(PrestamoDto prestamo) throws ManagerException{
         MiembroDto miembroDto = miembroService.obtenerMiembroById(prestamo.getIdMiembroDto());
@@ -113,10 +120,11 @@ public class PrestamoServiceImp implements IPrestamoService {
      * Metodo que devuelve un prestamo
      */
     @Override 
-    public void devolucionPrestamo(PrestamoDto prestamoDto) throws ManagerException{
-        Prestamo prestamo = prestamoDtoAPrestamo(prestamoDto);
+    public void devolucionPrestamo(Integer id) throws ManagerException{
+        Prestamo prestamo = prestamoDtoAPrestamo(obtenerPrestamoById(id));
         prestamo.setEstado(Estado.DEVUELTO);
         libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
+        prestamo.setFechaDevolucion(LocalDateTime.now().withSecond(0).withNano(0));
         prestamoRepository.save(prestamo);
         logger.debug(prestamo.getId() + " devuelto con exito");
         
@@ -186,6 +194,7 @@ public class PrestamoServiceImp implements IPrestamoService {
                 estadoEnum = null;
                 break;
         }
+        logger.debug("Se devuelve el estado: "+ estadoEnum);
         return estadoEnum;
     }
     
@@ -205,6 +214,17 @@ public class PrestamoServiceImp implements IPrestamoService {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public PrestamoDto obtenerPrestamoById(Integer id) throws ManagerException {
+        Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
+        if(prestamo == null){
+            throw new ManagerException("No existe el prestamo");
+        }
+        logger.debug(prestamo.getId() + " encontrado con exito");
+        return prestamoAPrestamoDto(prestamo);
+
     }
     
 }

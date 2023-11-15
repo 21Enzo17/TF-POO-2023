@@ -44,12 +44,12 @@ public class LibroServiceImp implements ILibroService{
 		Libro nuevoLibro = new Libro();
 		
 		if(estaIsbnRegistrado(libroDto.getIsbn())) {
-			logger.error("ISBN: " + libroDto.getIsbn() + " ya ah sido registrado.");
-			throw new ManagerException("ISBN: " + libroDto.getIsbn() + " ya ah sido registrado.");
+			logger.error("ISBN: " + libroDto.getIsbn() + " ya ha sido registrado.");
+			throw new ManagerException("ISBN: " + libroDto.getIsbn() + " ya ha sido registrado.");
 		}
 		else if(estaNumeroInventarioRegistrado(libroDto.getNumeroInventario())) {
-			logger.error("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ah sido registrado.");
-			throw new ManagerException("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ah sido registrado.");
+			logger.error("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ha sido registrado.");
+			throw new ManagerException("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ha sido registrado.");
 		}
 		else {
 			mapper.map(libroDto, nuevoLibro);
@@ -67,12 +67,12 @@ public class LibroServiceImp implements ILibroService{
 		Optional<Libro> libro = libroRepository.findById(id);
 		
 		if(libro.isEmpty()) {
-			logger.error("Libro con id: " + id + " no ah sido registrado.");
-			throw new EntityNotFoundException("Libro con id: " + id + " no ah sido registrado.");
+			logger.error("Libro con id: " + id + " no ha sido registrado.");
+			throw new EntityNotFoundException("Libro con id: " + id + " no ha sido registrado.");
 		}
 		else {
 			libroRepository.delete(libro.get());
-			logger.debug("El libro con id: "+ id + " ah sido eliminado.");
+			logger.debug("El libro con id: "+ id + " ha sido eliminado.");
 		}
 	}
 
@@ -108,7 +108,7 @@ public class LibroServiceImp implements ILibroService{
 			return null;
 		else {
 			mapper.map(libroBuscado.get(), libroDto);
-			logger.debug("Devolviendo el libro " + libroDto.getTitulo());
+			logger.debug("Libro Encontrado " + libroDto.getTitulo());
 			return libroDto;
 		}
 	}
@@ -216,7 +216,7 @@ public class LibroServiceImp implements ILibroService{
 			if( libroBuscado.getEstado().equals(EstadoLibro.DISPONIBLE.toString()) )
 				return true;
 			else
-				throw new ManagerException("El libro " + libroBuscado.getTitulo() + " ya ah sido prestado.");
+				throw new ManagerException("El libro " + libroBuscado.getTitulo() + " ya ha sido prestado.");
 		}
 	}
 }

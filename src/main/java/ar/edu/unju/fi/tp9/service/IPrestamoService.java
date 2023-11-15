@@ -13,6 +13,8 @@ public interface IPrestamoService {
 
     public PrestamoDto buscarPrestamoPorMiembro(MiembroDto miembroDto);
 
-    public void devolucionPrestamo(PrestamoDto prestamoDto) throws ManagerException;
+    public void devolucionPrestamo(Integer id) throws ManagerException;
+
+    public PrestamoDto obtenerPrestamoById(Integer id) throws ManagerException;
 
 }
