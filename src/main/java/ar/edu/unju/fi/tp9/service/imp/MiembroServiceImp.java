@@ -191,7 +191,12 @@ public class MiembroServiceImp implements IMiembroService {
     }
     
     @Override
-    //FIXME Documentar
+    /**
+     * Metodo que veridica si un miembro existe y si esta sancionado, en caso de estar sancionado
+     * lanza una excepcion personalizada
+     * @param id
+     * @throws ManagerException
+     */
     public void verificarMiembroSancionado(Long id) throws ManagerException{
     	MiembroDto miembroBuscado = obtenerMiembroById(id);
     	
@@ -202,7 +207,13 @@ public class MiembroServiceImp implements IMiembroService {
     		throw new ManagerException("El miembro " + miembroBuscado.getNombre() + " esta sancionado hasta la fecha " + miembroBuscado.getFechaBloqueo());
         }
     }
-    
+
+    /**
+     * Metodo que sanciona a un miembro por una cantidad de dias
+     * @param id
+     * @param dias
+     * @throws ManagerException
+     */
     @Override
     public void sancionarMiembro(Long id, int dias) throws ManagerException {
     	MiembroDto miembroSancionar = obtenerMiembroById(id);

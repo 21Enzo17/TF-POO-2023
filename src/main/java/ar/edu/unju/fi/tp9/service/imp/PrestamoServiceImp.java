@@ -63,6 +63,13 @@ public class PrestamoServiceImp implements IPrestamoService {
         return prestamoAInfoDto(prestamoGuardar);
     }
 
+    /**
+     * Metodo que crea un prestamo, asignando el estado inicial y las fechas de prestamo y devolucion
+     * @param idMiembro
+     * @param idLibro
+     * @return PrestamoDto
+     * @throws ManagerException
+     */
     private PrestamoDto crearPrestamo(Long idMiembro, Long idLibro){
         PrestamoDto prestamoDto = new PrestamoDto();
         prestamoDto.setIdMiembroDto(idMiembro);
@@ -74,6 +81,11 @@ public class PrestamoServiceImp implements IPrestamoService {
         return prestamoDto;
     }
 
+    /**
+     * Metodo encargado de enviar el correo al miembro
+     * @param prestamo
+     * @throws ManagerException
+     */
     public void enviarCorreo(PrestamoDto prestamo) throws ManagerException{
         MiembroDto miembroDto = miembroService.obtenerMiembroById(prestamo.getIdMiembroDto());
         LibroDto libroDto = libroService.buscarLibroPorId(prestamo.getIdLibroDto());
@@ -91,6 +103,13 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
     }
 
+    /**
+     * Metodo que genera el body del correo
+     * @param libroDto
+     * @param fechaPrestamo
+     * @param fechaDevolucion
+     * @return
+     */
     public String generarBody(LibroDto libroDto, String fechaPrestamo, String fechaDevolucion){
         String htmlBody = "<html><body><div style='text-align: center;'>" +
             "<h1>Bibliowlteca</h1>" +
@@ -109,6 +128,8 @@ public class PrestamoServiceImp implements IPrestamoService {
 
     /**
      * Metodo que devuelve un prestamo
+     * @param id
+     * @throws ManagerException
      */
     @Override 
     public void devolucionPrestamo(Long id) throws ManagerException{
@@ -166,6 +187,12 @@ public class PrestamoServiceImp implements IPrestamoService {
         return prestamo;
     }
 
+
+    /**
+     * Metodo que convierte un prestamo a prestamoInfoDto
+     * @param prestamo
+     * @return PrestamoInfoDto
+     */
     private PrestamoInfoDto prestamoAInfoDto(Prestamo prestamo){
         PrestamoInfoDto prestamoInfoDto = new PrestamoInfoDto();
         prestamoInfoDto.setId(prestamo.getId());
@@ -176,6 +203,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         logger.info("Se mapeo el prestamoInfoDto con exito");
         return prestamoInfoDto;
     }
+
     /**
      * Metodo que obtiene el estado de un prestamo
      * @param estado
@@ -198,11 +226,21 @@ public class PrestamoServiceImp implements IPrestamoService {
         return estadoEnum;
     }
     
+    /**
+     * Metodo que valida que el miembro no este sancionado y que el libro este disponible
+     * @param prestamoDto
+     * @throws ManagerException
+     */
     private void validarPrestamo(PrestamoDto prestamoDto) throws ManagerException {
     	miembroService.verificarMiembroSancionado(prestamoDto.getIdMiembroDto());
     	libroService.verificarLibroDisponible(prestamoDto.getIdLibroDto());
     }
     
+    /**
+     * Metodo que calcula los dias de sancion
+     * @param dias
+     * @return
+     */
     private int calcularDiasDeSancion(long dias) {
         if (dias > 0 && dias <= 2) {
             return 3;
@@ -215,6 +253,12 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
     }
 
+    /**
+     * Metodo encargado de encontrar un prestamo por ID
+     * @param id
+     * @return PrestamoDto
+     * @throws ManagerException
+     */
     @Override
     public PrestamoDto obtenerPrestamoById(Long id) throws ManagerException {
         Prestamo prestamo = prestamoRepository.findById(id).orElse(null);

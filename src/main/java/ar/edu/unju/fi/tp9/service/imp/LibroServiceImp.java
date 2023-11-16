@@ -197,6 +197,12 @@ public class LibroServiceImp implements ILibroService{
 		return libro;
 	}
 
+	/**
+	 * Metodo que le cambia el estado a un libro por id
+	 * @param id
+	 * @param estado
+	 * @throws ManagerException
+	 */
 	@Override
 	public void cambiarEstado(Long id, String estado) throws ManagerException {
 		Libro libro = libroRepository.findById(id).orElse(null);
@@ -210,6 +216,13 @@ public class LibroServiceImp implements ILibroService{
 		}
 	}
 
+
+	/**
+	 * Metodo que se encarga de verificar si un libro esta disponible, en caso de no estarlo
+	 * lanza una excepcion personalizada
+	 * @param id
+	 * @throws ManagerException
+	 */
 	@Override
 	public void verificarLibroDisponible(Long id) throws ManagerException {
 		LibroDto libroBuscado = buscarLibroPorId(id);

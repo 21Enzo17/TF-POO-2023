@@ -61,7 +61,13 @@ class IPrestamoServiceTest {
         target = null;
 
     }
-
+    /**
+     * Este test prueba guardar un prestamo en la base de datos, luego se verifica que se haya guardado,
+     * ademas se verifica en el assertDoesNotThrow que no se haya lanzado ninguna excepcion para el correo.
+     * Tambien verifica que no se pueda guardar un prestamo con el mismo libro (estando prestado).
+     * Y que no se pueda prestar un libro a un miembro bloqueado.
+     * @throws ManagerException
+     */
     @Test
     void guardarPrestamoTest() throws ManagerException {
         alumnoDto = new AlumnoDto();
@@ -79,6 +85,10 @@ class IPrestamoServiceTest {
         assertThrows(ManagerException.class, ()->target.guardarPrestamo(2l,libroService.buscarLibroPorTitulo("IT").getId()));
     }
 
+    /***
+     * Este test prueba la devolucion de un libro, luego se verifica que se haya devuelto correctamente,
+     * @throws ManagerException
+     */
     @Test
     void devolverLibro() throws ManagerException{
         prestamoInfo = target.guardarPrestamo(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com").getId(),libroService.buscarLibroPorTitulo("IT").getId());
