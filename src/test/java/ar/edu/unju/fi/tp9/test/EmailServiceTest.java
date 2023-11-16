@@ -52,5 +52,4 @@ class EmailServiceTest {
         InputStreamSource inputStream = new FileSystemResource("src/main/resources/images/Bibliowlteca.png");
         assertDoesNotThrow(()->target.send("poo2023correo@gmail.com",para, tema, htmlBody,inputStream));
     }
-
 }
