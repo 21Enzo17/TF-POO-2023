@@ -153,7 +153,7 @@ public class MiembroServiceImp implements IMiembroService {
      * @throws ManagerException
      */
     @Override
-    public MiembroDto obtenerMiembroById(Integer id)  throws ManagerException{
+    public MiembroDto obtenerMiembroById(Long id)  throws ManagerException{
         Miembro miembro;
         miembro = miembroRepository.findById(id).orElse(null);
         if(miembro == null){
@@ -164,7 +164,7 @@ public class MiembroServiceImp implements IMiembroService {
     }
 
     @Override
-    public void eliminarMiembroPorId(Integer id) throws ManagerException {
+    public void eliminarMiembroPorId(Long id) throws ManagerException {
         try{
             miembroRepository.deleteById(id);
             logger.debug("Miembro con id: " + id + " eliminado con exito");
@@ -188,24 +188,26 @@ public class MiembroServiceImp implements IMiembroService {
     }
     
     @Override
-    //FIXME Docuemntar
-    public void verificarMiembroSancionado(Integer id) throws ManagerException{
+    //FIXME Documentar
+    public void verificarMiembroSancionado(Long id) throws ManagerException{
     	MiembroDto miembroBuscado = obtenerMiembroById(id);
     	
     	LocalDateTime fechaSancion = dateFormatter.fechDateTime(miembroBuscado.getFechaBloqueo());
     	
-    	if(LocalDateTime.now().isBefore(fechaSancion))
+    	if(LocalDateTime.now().isBefore(fechaSancion)){
+            logger.error("El miembro esta sancionado");
     		throw new ManagerException("El miembro " + miembroBuscado.getNombre() + " esta sancionado hasta la fecha " + miembroBuscado.getFechaBloqueo());
+        }
     }
     
     @Override
-    public void sancionarMiembro(Integer id, int dias) throws ManagerException {
+    public void sancionarMiembro(Long id, int dias) throws ManagerException {
     	MiembroDto miembroSancionar = obtenerMiembroById(id);
     	
     	Miembro miembroGuardar = miembroDtoAMiembro(miembroSancionar);
     	miembroGuardar.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0).plusDays(dias));
     	
-    	logger.info("Miembro" + miembroSancionar.getNombre() + "ah sido sancionado por " + dias + " dias");
+    	logger.info("Miembro" + miembroSancionar.getNombre() + "ha sido sancionado por " + dias + " dias");
     	miembroRepository.save(miembroGuardar);
     }
 }

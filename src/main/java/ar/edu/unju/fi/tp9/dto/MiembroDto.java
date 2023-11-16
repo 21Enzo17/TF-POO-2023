@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public class MiembroDto implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer id;
+    private Long id;
     private Integer numeroMiembro;
     private String nombre;
     private String correo;
@@ -24,11 +24,11 @@ public class MiembroDto implements Serializable {
 
 
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,26 +70,6 @@ public class MiembroDto implements Serializable {
 
     public void setFechaBloqueo(String fechaBloqueo) {
         this.fechaBloqueo = fechaBloqueo;
-    }
-
-    public MiembroDto id(Integer id) {
-        setId(id);
-        return this;
-    }
-
-    public MiembroDto nombre(String nombre) {
-        setNombre(nombre);
-        return this;
-    }
-
-    public MiembroDto correo(String correo) {
-        setCorreo(correo);
-        return this;
-    }
-
-    public MiembroDto numeroTelefonico(String numeroTelefonico) {
-        setNumeroTelefonico(numeroTelefonico);
-        return this;
     }
 
     public boolean isAlumno(){

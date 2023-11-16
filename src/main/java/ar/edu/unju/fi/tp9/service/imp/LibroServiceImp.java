@@ -213,8 +213,10 @@ public class LibroServiceImp implements ILibroService{
 			throw new ManagerException("Libro no registrado");
 		}
 		else {
-			if( !libroBuscado.getEstado().equals(EstadoLibro.DISPONIBLE.toString()) )
+			if( !libroBuscado.getEstado().equals(EstadoLibro.DISPONIBLE.toString()) ){
+				logger.error("El libro no esta disponible");
 				throw new ManagerException("El libro " + libroBuscado.getTitulo() + " ya ha sido prestado.");
+			}
 		}
 	}
 }

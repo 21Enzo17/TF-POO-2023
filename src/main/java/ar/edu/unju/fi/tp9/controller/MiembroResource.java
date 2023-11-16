@@ -46,7 +46,7 @@ public class MiembroResource {
     }
 
     @GetMapping("/miembros/{id}")
-    public ResponseEntity<?> obtenerMiembroPorId(@PathVariable Integer id){
+    public ResponseEntity<?> obtenerMiembroPorId(@PathVariable Long id){
         Map<String, Object> response = new HashMap<String, Object>();
         try{
             MiembroDto miembro = miembroService.obtenerMiembroById(id);
@@ -88,7 +88,7 @@ public class MiembroResource {
     }
 
     @DeleteMapping("/miembros/{id}")
-    public ResponseEntity<?> eliminarMiembro(@PathVariable Integer id){
+    public ResponseEntity<?> eliminarMiembro(@PathVariable Long id){
         Map<String, Object> response = new HashMap<String, Object>();
         try{
             miembroService.eliminarMiembroPorId(id);

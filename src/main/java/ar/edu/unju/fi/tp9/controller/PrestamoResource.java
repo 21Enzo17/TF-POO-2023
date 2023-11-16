@@ -1,10 +1,9 @@
 package ar.edu.unju.fi.tp9.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -31,11 +30,11 @@ public class PrestamoResource {
     IPrestamoService prestamoService;
 
     @PostMapping("/prestamos")
-    public ResponseEntity<?> guardarPrestmo(@RequestBody PrestamoDto prestamoDto){
+    public ResponseEntity<?> guardarPrestmo(@RequestParam Long idMiembro,@RequestParam Long idLibro){
         logger.debug("Agregando Prestamo");
         Map<String, Object> response = new HashMap<String, Object>();
         try{
-            prestamoService.guardarPrestamo(prestamoDto);
+            response.put("PrestamoInfo",prestamoService.guardarPrestamo(idMiembro, idLibro));
             response.put("Mensaje", "Prestamo guardado con exito");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
         }catch(Exception e){
@@ -46,7 +45,7 @@ public class PrestamoResource {
     }
 
     @GetMapping("/prestamos/{id}")
-    public ResponseEntity<?> obtenerPrestamo(@PathVariable Integer id){
+    public ResponseEntity<?> obtenerPrestamo(@PathVariable Long id){
         Map<String, Object> response = new HashMap<String, Object>();
         try{
             PrestamoDto prestamo = prestamoService.obtenerPrestamoById(id);
@@ -59,8 +58,8 @@ public class PrestamoResource {
         }
     }
 
-    @PutMapping("/prestamos/{id}")
-    public ResponseEntity<?> devolverPrestamo(@PathVariable Integer id){
+    @PatchMapping("/prestamos/{id}")
+    public ResponseEntity<?> devolverPrestamo(@PathVariable Long id){
         Map<String, Object> response = new HashMap<String, Object>();
         try{
             prestamoService.devolucionPrestamo(id);

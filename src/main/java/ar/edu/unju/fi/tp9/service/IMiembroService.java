@@ -21,19 +21,19 @@ public interface IMiembroService {
      */
     public void eliminarMiembroPorCorreo(String correo) throws ManagerException;
 
-    public void eliminarMiembroPorId(Integer id) throws ManagerException;
+    public void eliminarMiembroPorId(Long id) throws ManagerException;
 
     public MiembroDto modificarMiembro(MiembroDto miembro) throws ManagerException;
     
     public MiembroDto obtenerMiembroByCorreo(String correo) throws ManagerException;
 
-    public MiembroDto obtenerMiembroById(Integer id) throws ManagerException;
+    public MiembroDto obtenerMiembroById(Long id) throws ManagerException;
 
     public Miembro miembroDtoAMiembro(MiembroDto miembroDto);
 
     public MiembroDto miembroAMiembroDto(Miembro miembro);
     
-    public void verificarMiembroSancionado(Integer id) throws ManagerException;
+    public void verificarMiembroSancionado(Long id) throws ManagerException;
     
-    public void sancionarMiembro(Integer id, int dias) throws ManagerException;
+    public void sancionarMiembro(Long id, int dias) throws ManagerException;
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.dto.MiembroDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
+import ar.edu.unju.fi.tp9.dto.PrestamoInfoDto;
 import ar.edu.unju.fi.tp9.entity.Prestamo;
 import ar.edu.unju.fi.tp9.enums.Estado;
 import ar.edu.unju.fi.tp9.enums.EstadoLibro;
@@ -48,10 +49,10 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @param prestamo
      */
     @Override
-    public void guardarPrestamo(PrestamoDto prestamo)throws ManagerException {
+    public PrestamoInfoDto guardarPrestamo(Long idMiembro, Long idLibro)throws ManagerException {
         Prestamo prestamoGuardar;
-        prestamoGuardar = prestamoDtoAPrestamo(crearPrestamo(prestamo));
-        
+        PrestamoDto prestamo = crearPrestamo(idMiembro, idLibro);
+        prestamoGuardar = prestamoDtoAPrestamo(prestamo);
         validarPrestamo(prestamo);
         try{
             libroService.cambiarEstado(prestamo.getIdLibroDto(),EstadoLibro.PRESTADO.toString());
@@ -62,9 +63,13 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoGuardar = prestamoRepository.save(prestamoGuardar);
         logger.debug("Prestamo: " + prestamoGuardar.getId() +" guardado con exito");
         enviarCorreo(prestamo);
+        return prestamoAInfoDto(prestamoGuardar);
     }
 
-    private PrestamoDto crearPrestamo(PrestamoDto prestamoDto){
+    private PrestamoDto crearPrestamo(Long idMiembro, Long idLibro){
+        PrestamoDto prestamoDto = new PrestamoDto();
+        prestamoDto.setIdMiembroDto(idMiembro);
+        prestamoDto.setIdLibroDto(idLibro); 
         prestamoDto.setEstado(Estado.PRESTADO.toString());
         prestamoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(LocalDateTime.now().withSecond(0).withNano(0).toString()));
         prestamoDto.setFechaDevolucion(dateFormatter.transformarFechaNatural(LocalDateTime.now().withSecond(0).withNano(0).plusDays(7).toString()));
@@ -104,23 +109,12 @@ public class PrestamoServiceImp implements IPrestamoService {
         return htmlBody;
     }
 
-    /**
-     * Metodo que busca un prestamo por miembro
-     * @param miembroDto
-     */
-    @Override
-    
-    public PrestamoDto buscarPrestamoPorMiembro(MiembroDto miembroDto) {
-        // FIXME: Deberia retornar una lista de miembros, ademas solo es necesario el id del miembro
-        Prestamo prestamo = prestamoRepository.findByMiembro(miembroService.miembroDtoAMiembro(miembroDto));
-        return prestamoAPrestamoDto(prestamo);
-    }
 
     /**
      * Metodo que devuelve un prestamo
      */
     @Override 
-    public void devolucionPrestamo(Integer id) throws ManagerException{
+    public void devolucionPrestamo(Long id) throws ManagerException{
         Prestamo prestamo = prestamoDtoAPrestamo(obtenerPrestamoById(id));
         prestamo.setEstado(Estado.DEVUELTO);
         libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
@@ -175,7 +169,16 @@ public class PrestamoServiceImp implements IPrestamoService {
         return prestamo;
     }
 
-
+    private PrestamoInfoDto prestamoAInfoDto(Prestamo prestamo){
+        PrestamoInfoDto prestamoInfoDto = new PrestamoInfoDto();
+        prestamoInfoDto.setId(prestamo.getId());
+        prestamoInfoDto.setNombreMiembro(prestamo.getMiembro().getNombre());
+        prestamoInfoDto.setTituloLibro(prestamo.getLibro().getTitulo());
+        prestamoInfoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(prestamo.getFechaPrestamo().toString()));
+        prestamoInfoDto.setFechaDevolucion(dateFormatter.transformarFechaNatural(prestamo.getFechaDevolucion().toString()));
+        logger.info("Se mapeo el prestamoInfoDto con exito");
+        return prestamoInfoDto;
+    }
     /**
      * Metodo que obtiene el estado de un prestamo
      * @param estado
@@ -216,7 +219,7 @@ public class PrestamoServiceImp implements IPrestamoService {
     }
 
     @Override
-    public PrestamoDto obtenerPrestamoById(Integer id) throws ManagerException {
+    public PrestamoDto obtenerPrestamoById(Long id) throws ManagerException {
         Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
         if(prestamo == null){
             throw new ManagerException("No existe el prestamo");

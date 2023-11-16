@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,9 +15,13 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailServiceImp implements IEmailService {
 	static Logger logger = Logger.getLogger(IEmailService.class);
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
-    
+    @Autowired
+    public EmailServiceImp(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
     /**
      * Este metodo se encarga de setear y enviar el correo, seteando en true 
      * la etiqueta de contenido html, ademas de enviando la imagen para que 

@@ -13,7 +13,7 @@ public class Miembro implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "nombre")
     private String nombre;
@@ -47,11 +47,11 @@ public class Miembro implements Serializable {
     public Miembro() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -98,7 +98,7 @@ public class Miembro implements Serializable {
         this.fechaBloqueo = fechaBloqueo;
     }
 
-    public Miembro id(Integer id) {
+    public Miembro id(Long id) {
         setId(id);
         return this;
     }
