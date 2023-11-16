@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
-import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 
 @RestController

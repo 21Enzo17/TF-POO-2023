@@ -12,8 +12,6 @@ public interface LibroRepository extends CrudRepository<Libro, Long>{
 	
 	boolean existsByIsbn(String isbn);
 	
-	boolean existsByNumeroInventario(Long numeroInventario);
-	
 	Libro findByTitulo(String titulo);
 	
 	List<Libro> findAllByAutor(String autor);

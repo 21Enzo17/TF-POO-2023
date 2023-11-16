@@ -2,7 +2,6 @@ package ar.edu.unju.fi.tp9.service.imp;
 
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -57,6 +56,7 @@ public class MiembroServiceImp implements IMiembroService {
             miembroRepository.delete(miembroBuscado);
             logger.debug(miembroBuscado.getNombre() + " eliminado con exito");
         } else {
+        	logger.error("No se encontró ningún miembro con el correo especificado");
             throw new ManagerException("No se encontró ningún miembro con el correo especificado");
         }
         
@@ -72,7 +72,8 @@ public class MiembroServiceImp implements IMiembroService {
         Miembro miembro;
         miembro = miembroRepository.findByCorreo(correo).orElse(null);
         if(miembro == null){
-            throw new ManagerException("No existe el miembro");
+        	logger.error("No existe el miembro registrado con el correo " + correo);
+            throw new ManagerException("No existe el miembro registrado con el correo " + correo);
         }
         logger.debug(miembro.getNumeroMiembro() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
@@ -135,7 +136,7 @@ public class MiembroServiceImp implements IMiembroService {
         }else{
             Miembro miembroEncontrado = miembroRepository.findByCorreo(miembro.getCorreo()).orElse(null);
             if(miembroEncontrado != null && !miembroEncontrado.getId().equals(miembro.getId()) ){
-                logger.error("No se pudo guardar con exito");
+                logger.error("Error al modificar miembro, correo repetido");
                 throw new ManagerException("Error al modificar miembro, correo repetido");
             }else{
                 retorno =  miembroRepository.save(miembroDtoAMiembro(miembro));
@@ -157,7 +158,8 @@ public class MiembroServiceImp implements IMiembroService {
         Miembro miembro;
         miembro = miembroRepository.findById(id).orElse(null);
         if(miembro == null){
-            throw new ManagerException("No existe el miembro");
+        	logger.error("No existe el miembro con id: " + id);
+            throw new ManagerException("No existe el miembro con id: " + id);
         }
         logger.debug(miembro.getNumeroMiembro() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
@@ -169,6 +171,7 @@ public class MiembroServiceImp implements IMiembroService {
             miembroRepository.deleteById(id);
             logger.debug("Miembro con id: " + id + " eliminado con exito");
         }catch(Exception e){
+        	logger.error("Error al eliminar miembro, miembro no encontrado");
             throw new ManagerException("Error al eliminar miembro, miembro no encontrado");
         }
     }

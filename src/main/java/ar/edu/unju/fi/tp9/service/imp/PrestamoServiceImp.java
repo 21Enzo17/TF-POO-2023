@@ -53,12 +53,9 @@ public class PrestamoServiceImp implements IPrestamoService {
         Prestamo prestamoGuardar;
         PrestamoDto prestamo = crearPrestamo(idMiembro, idLibro);
         prestamoGuardar = prestamoDtoAPrestamo(prestamo);
+        
         validarPrestamo(prestamo);
-        try{
-            libroService.cambiarEstado(prestamo.getIdLibroDto(),EstadoLibro.PRESTADO.toString());
-        }catch(ManagerException e){
-            throw new ManagerException("No se pudo cambiar el estado del libro");
-        }
+        libroService.cambiarEstado(prestamo.getIdLibroDto(),EstadoLibro.PRESTADO.toString());
         
         prestamoGuardar = prestamoRepository.save(prestamoGuardar);
         logger.debug("Prestamo: " + prestamoGuardar.getId() +" guardado con exito");
@@ -222,7 +219,8 @@ public class PrestamoServiceImp implements IPrestamoService {
     public PrestamoDto obtenerPrestamoById(Long id) throws ManagerException {
         Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
         if(prestamo == null){
-            throw new ManagerException("No existe el prestamo");
+        	logger.error("No existe el prestamo con id " + id);
+            throw new ManagerException("No existe el prestamo con id " + id);
         }
         logger.debug(prestamo.getId() + " encontrado con exito");
         return prestamoAPrestamoDto(prestamo);

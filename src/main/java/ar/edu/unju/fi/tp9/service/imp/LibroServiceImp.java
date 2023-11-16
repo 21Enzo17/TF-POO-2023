@@ -32,10 +32,6 @@ public class LibroServiceImp implements ILibroService{
 		return libroRepository.existsByIsbn(isbn);
 	}
 	
-	private boolean estaNumeroInventarioRegistrado(Long numeroInventario) {
-		return libroRepository.existsByNumeroInventario(numeroInventario);
-	}
-	
 	/**
 	 * Guarda un libro DTO pasado por parametro, verificando que su ISBN y numero de inventario no hayan sido registrado previamente.
 	 */
@@ -43,20 +39,16 @@ public class LibroServiceImp implements ILibroService{
 	public void guardarLibro(LibroDto libroDto) throws ManagerException {
 		Libro nuevoLibro = new Libro();
 		
-		if(estaIsbnRegistrado(libroDto.getIsbn())) {
-			logger.error("ISBN: " + libroDto.getIsbn() + " ya ha sido registrado.");
-			throw new ManagerException("ISBN: " + libroDto.getIsbn() + " ya ha sido registrado.");
-		}
-		else if(estaNumeroInventarioRegistrado(libroDto.getNumeroInventario())) {
-			logger.error("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ha sido registrado.");
-			throw new ManagerException("Numero de inventario: " + libroDto.getNumeroInventario() + " ya ha sido registrado.");
-		}
-		else {
+		if(estaIsbnRegistrado(libroDto.getIsbn()))
+			if(buscarLibroPorIsbn(libroDto.getIsbn()).getNumeroInventario() == libroDto.getNumeroInventario()) {
+				logger.error("Libro con ISBN " + libroDto.getIsbn() + " y numero de inventario " + libroDto.getNumeroInventario() + " ya registrado");
+				throw new ManagerException("Libro con ISBN " + libroDto.getIsbn() + " y numero de inventario " + libroDto.getNumeroInventario() + " ya registrado");
+			}
+				
 			mapper.map(libroDto, nuevoLibro);
 			nuevoLibro.setEstado(EstadoLibro.DISPONIBLE.toString());
 			libroRepository.save(nuevoLibro);
 			logger.debug("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
-		}
 	}
 
 	/**
@@ -121,10 +113,13 @@ public class LibroServiceImp implements ILibroService{
 		LibroDto libroDto = new LibroDto();
 		Libro libroBuscado = libroRepository.findByTitulo(titulo);
 		
-		if(libroBuscado == null)
+		if(libroBuscado == null) {
+			logger.info("Libro buscado por titulo no encontrado, devolviendo null");
 			return null;
+		}
 		else {
 			mapper.map(libroBuscado, libroDto);
+			logger.info("Devolviendo libro buscado por titulo");
 			return libroDto;
 		}
 	}
@@ -137,11 +132,14 @@ public class LibroServiceImp implements ILibroService{
 		List<LibroDto> librosDto = new ArrayList<>();
 		List<Libro> libroBuscado = libroRepository.findAllByAutor(autor);
 		
-		if(libroBuscado.size() == 0)
+		if(libroBuscado.size() == 0) {
+			logger.info("No hay libros de " + autor + " devolviendo lista vacia");
 			return librosDto;
+		}
 		else {
 			for(Libro p : libroBuscado)
 				librosDto.add(libroALibroDto(p));
+			logger.info("Devolviendo los librosDto del autor " + autor);
 			return librosDto;
 		}
 	}
@@ -154,10 +152,13 @@ public class LibroServiceImp implements ILibroService{
 		LibroDto libroDto = new LibroDto();
 		Libro libroBuscado = libroRepository.findByIsbn(isbn);
 		
-		if(libroBuscado == null)
+		if(libroBuscado == null) {
+			logger.info("Libro por isbn no encontrado, devolviendo null");
 			return null;
+		}
 		else {
 			mapper.map(libroBuscado, libroDto);
+			logger.info("Devolviendo libro buscado por ISBN");
 			return libroDto;
 		}
 	}
@@ -178,6 +179,7 @@ public class LibroServiceImp implements ILibroService{
 	public LibroDto libroALibroDto(Libro libro) {
 		LibroDto libroDto = new LibroDto();
         mapper.map(libro, libroDto);
+        logger.info("Devolviendo libroDto mapeado.");
 		return libroDto;
 	}
 
@@ -191,6 +193,7 @@ public class LibroServiceImp implements ILibroService{
 	public Libro libroDtoALibro(LibroDto libroDto) {
 		Libro libro = new Libro();
 		mapper.map(libroDto, libro);
+		logger.info("Devolviendo libro mapeado.");
 		return libro;
 	}
 
@@ -200,8 +203,10 @@ public class LibroServiceImp implements ILibroService{
 		if(libro != null) {
 			libro.setEstado(estado);
 			libroRepository.save(libro);
+			logger.info("Se cambio el estado a libro.");
 		}else{
-			throw new ManagerException("No existe el libro");
+			logger.error("No existe el libro con id: " + id);
+			throw new ManagerException("No existe el libro con id: " + id);
 		}
 	}
 

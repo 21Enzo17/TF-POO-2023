@@ -100,6 +100,4 @@ public class MiembroResource {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 }

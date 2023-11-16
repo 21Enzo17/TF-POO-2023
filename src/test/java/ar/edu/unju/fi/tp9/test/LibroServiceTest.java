@@ -30,8 +30,7 @@ public class LibroServiceTest {
 	ModelMapper mapper = new ModelMapper();
 	
 	LibroDto libroGuardarDto;
-	LibroDto libroThrowDto1;
-	LibroDto libroThrowDto2;
+	LibroDto libroThrowDto;
 	LibroDto libroGuardadoDto;
 	List<LibroDto> librosPorAutor;
 	
@@ -43,17 +42,11 @@ public class LibroServiceTest {
 		libroGuardarDto.setIsbn("ISBN-10-1234567890");
 		libroGuardarDto.setNumeroInventario(111l);
 		
-		libroThrowDto1 = new LibroDto();
-		libroThrowDto1.setTitulo("Otro libro");
-		libroThrowDto1.setAutor("autor");
-		libroThrowDto1.setIsbn("ISBN-10-1234567890");
-		libroThrowDto1.setNumeroInventario(222l);
-		
-		libroThrowDto2 = new LibroDto();
-		libroThrowDto2.setTitulo("Otro libro");
-		libroThrowDto2.setAutor("autor");
-		libroThrowDto2.setIsbn("ISBN-10-0987654321");
-		libroThrowDto2.setNumeroInventario(111l);
+		libroThrowDto = new LibroDto();
+		libroThrowDto.setTitulo("Otro libro");
+		libroThrowDto.setAutor("autor");
+		libroThrowDto.setIsbn("ISBN-10-1234567890");
+		libroThrowDto.setNumeroInventario(111l);
 		
 		libroGuardadoDto = new LibroDto();
 		librosPorAutor = new ArrayList<>();
@@ -62,8 +55,7 @@ public class LibroServiceTest {
 	@AfterEach
 	void resetearVariables() {
 		libroGuardarDto = null;
-		libroThrowDto1 = null;
-		libroThrowDto2 = null;
+		libroThrowDto = null;
 		libroGuardadoDto = null;
 		librosPorAutor = null;
 	}
@@ -78,8 +70,7 @@ public class LibroServiceTest {
 		assertNotNull(libroGuardadoDto);
 		assertEquals(libroGuardadoDto.getIsbn(), "ISBN-10-1234567890");
 		
-		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto1));
-		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto2));
+		assertThrows(ManagerException.class,()->libroService.guardarLibro(libroThrowDto));
 		
 		libroService.eliminarLibro(libroGuardadoDto.getId());
 	}
