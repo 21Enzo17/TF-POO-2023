@@ -1,7 +1,8 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
 
-import org.apache.log4j.LogManager;
+import java.time.LocalDateTime;
+
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import ar.edu.unju.fi.tp9.entity.Miembro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.MiembroRepository;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
+import ar.edu.unju.fi.tp9.util.DateFormatter;
 
 @Service
 public class MiembroServiceImp implements IMiembroService {
@@ -23,20 +25,23 @@ public class MiembroServiceImp implements IMiembroService {
     
     @Autowired
     MiembroRepository miembroRepository;
+    @Autowired
+    DateFormatter dateFormatter;
 
     /**
      * Este metodo guarda un miembro en la base de datos, comprobando antes que no se repita el correo.
      * @param miembroDto
      */
     @Override
-    public void guardarMiembro(MiembroDto miembro) throws ManagerException {
+    public MiembroDto guardarMiembro(MiembroDto miembro) throws ManagerException {
+        Miembro miembroReturn;
         if(miembroRepository.findByCorreo(miembro.getCorreo()).orElse(null) != null){
             throw new ManagerException("Error al guardar alumno, correo repetido");
         }else{
-            miembroRepository.save(miembroDtoAMiembro(miembro));
+            miembroReturn = miembroRepository.save(crearUnMiembro(miembroDtoAMiembro(miembro)));
             logger.debug("Miembro: " + miembro.getNombre() + " guardado con exito");
         }
-        
+        return miembroAMiembroDto(miembroReturn);
     }
 
     /**
@@ -51,6 +56,7 @@ public class MiembroServiceImp implements IMiembroService {
             miembroRepository.delete(miembroBuscado);
             logger.debug(miembroBuscado.getNombre() + " eliminado con exito");
         } else {
+        	logger.error("No se encontró ningún miembro con el correo especificado");
             throw new ManagerException("No se encontró ningún miembro con el correo especificado");
         }
         
@@ -66,8 +72,10 @@ public class MiembroServiceImp implements IMiembroService {
         Miembro miembro;
         miembro = miembroRepository.findByCorreo(correo).orElse(null);
         if(miembro == null){
-            throw new ManagerException("No existe el miembro");
+        	logger.error("No existe el miembro registrado con el correo " + correo);
+            throw new ManagerException("No existe el miembro registrado con el correo " + correo);
         }
+        logger.debug(miembro.getNumeroMiembro() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
     }
 
@@ -80,11 +88,17 @@ public class MiembroServiceImp implements IMiembroService {
     public Miembro miembroDtoAMiembro(MiembroDto miembroDto){
         Miembro miembro;
         ModelMapper modelMapper = new ModelMapper();
+        // Se mappea de acuerdo al tipo de miembro
         if(miembroDto.isAlumno()){
-            miembro = modelMapper.map(miembroDto, Alumno.class);   
+            miembro = modelMapper.map(miembroDto, Alumno.class);         
         }else{
             miembro = modelMapper.map(miembroDto, Docente.class);
         }
+        // Asigno fecha de bloqueo actual o uso la existente
+        if(miembroDto.getFechaBloqueo() != null){
+            miembro.setFechaBloqueo(dateFormatter.fechDateTime(miembroDto.getFechaBloqueo()));
+        }
+        logger.debug("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
         return miembro;
     }
 
@@ -102,6 +116,8 @@ public class MiembroServiceImp implements IMiembroService {
         }else{
             miembroDto = modelMapper.map(miembro, DocenteDto.class);
         }
+        miembroDto.setFechaBloqueo(dateFormatter.transformarFechaNatural(miembro.getFechaBloqueo().toString()));
+        logger.debug("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
         return miembroDto;
     }
 
@@ -113,20 +129,22 @@ public class MiembroServiceImp implements IMiembroService {
      * @throws ManagerException
      */
     @Override
-    public void modificarMiembro(MiembroDto miembro) throws ManagerException {
+    public MiembroDto modificarMiembro(MiembroDto miembro) throws ManagerException {
+        Miembro retorno;
         if(!miembroRepository.existsById(miembro.getId())){
             throw new ManagerException("Error al modificar miembro, miembro no encontrado");
         }else{
             Miembro miembroEncontrado = miembroRepository.findByCorreo(miembro.getCorreo()).orElse(null);
             if(miembroEncontrado != null && !miembroEncontrado.getId().equals(miembro.getId()) ){
-                logger.error("Nose pudo guardar con exito");
+                logger.error("Error al modificar miembro, correo repetido");
                 throw new ManagerException("Error al modificar miembro, correo repetido");
             }else{
-                miembroRepository.save(miembroDtoAMiembro(miembro));
+                retorno =  miembroRepository.save(miembroDtoAMiembro(miembro));
                 logger.debug("Miembro: " + miembro.getNombre() + " modificado con exito");
             }
 
         }
+        return miembroAMiembroDto(retorno);
     }
     
     /**
@@ -136,10 +154,74 @@ public class MiembroServiceImp implements IMiembroService {
      * @throws ManagerException
      */
     @Override
-    public MiembroDto obtenerMiembroById(Integer id) {
+    public MiembroDto obtenerMiembroById(Long id)  throws ManagerException{
         Miembro miembro;
         miembro = miembroRepository.findById(id).orElse(null);
-        
+        if(miembro == null){
+        	logger.error("No existe el miembro con id: " + id);
+            throw new ManagerException("No existe el miembro con id: " + id);
+        }
+        logger.debug(miembro.getNumeroMiembro() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
+    }
+
+    @Override
+    public void eliminarMiembroPorId(Long id) throws ManagerException {
+        try{
+            miembroRepository.deleteById(id);
+            logger.debug("Miembro con id: " + id + " eliminado con exito");
+        }catch(Exception e){
+        	logger.error("Error al eliminar miembro, miembro no encontrado");
+            throw new ManagerException("Error al eliminar miembro, miembro no encontrado");
+        }
+    }
+
+
+    /**
+     * Este metodo asigna un numero de miembro y una fecha actual al miembro.
+     * La fecha se setea en la hora actual, para que por defecto el usuario no este bloqueado 
+     * @param miembro
+     * @return
+     */
+    public Miembro crearUnMiembro(Miembro miembro){
+        miembro.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0));
+        miembro.setNumeroMiembro(miembro.generarNumeroMiembro());
+        logger.debug("Miembro: " + miembro.getNombre() + " creado con exito");
+        return miembro;
+    }
+    
+    @Override
+    /**
+     * Metodo que veridica si un miembro existe y si esta sancionado, en caso de estar sancionado
+     * lanza una excepcion personalizada
+     * @param id
+     * @throws ManagerException
+     */
+    public void verificarMiembroSancionado(Long id) throws ManagerException{
+    	MiembroDto miembroBuscado = obtenerMiembroById(id);
+    	
+    	LocalDateTime fechaSancion = dateFormatter.fechDateTime(miembroBuscado.getFechaBloqueo());
+    	
+    	if(LocalDateTime.now().isBefore(fechaSancion)){
+            logger.error("El miembro esta sancionado");
+    		throw new ManagerException("El miembro " + miembroBuscado.getNombre() + " esta sancionado hasta la fecha " + miembroBuscado.getFechaBloqueo());
+        }
+    }
+
+    /**
+     * Metodo que sanciona a un miembro por una cantidad de dias
+     * @param id
+     * @param dias
+     * @throws ManagerException
+     */
+    @Override
+    public void sancionarMiembro(Long id, int dias) throws ManagerException {
+    	MiembroDto miembroSancionar = obtenerMiembroById(id);
+    	
+    	Miembro miembroGuardar = miembroDtoAMiembro(miembroSancionar);
+    	miembroGuardar.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0).plusDays(dias));
+    	
+    	logger.info("Miembro" + miembroSancionar.getNombre() + "ha sido sancionado por " + dias + " dias");
+    	miembroRepository.save(miembroGuardar);
     }
 }

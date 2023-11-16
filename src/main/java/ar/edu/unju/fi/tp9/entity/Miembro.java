@@ -1,7 +1,7 @@
 package ar.edu.unju.fi.tp9.entity;
 
 import java.io.Serializable;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
@@ -13,7 +13,7 @@ public class Miembro implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "nombre")
     private String nombre;
@@ -29,6 +29,10 @@ public class Miembro implements Serializable {
     @Column(name = "numeroMiembro")
     private Integer numeroMiembro;
 
+    @Column(name = "fechaBloqueo")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime fechaBloqueo;
+
 
 
 
@@ -37,17 +41,29 @@ public class Miembro implements Serializable {
         this.correo = correo;
         this.numeroTelefonico = numeroTelefonico;
         this.numeroMiembro = numeroMiembroActual++;
+        this.fechaBloqueo = LocalDateTime.now(); // Se le asigna la fecha actual, para que el bloqueo este desactivado por defecto
     }
 
     public Miembro() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+
+    public Integer getNumeroMiembro(){
+        return this.numeroMiembro;
+    } 
+
+    public void setNumeroMiembro(Integer numeroMiembro){
+        if(numeroMiembro != null){
+            this.numeroMiembro = numeroMiembro;
+        }
     }
 
     public String getNombre() {
@@ -74,7 +90,15 @@ public class Miembro implements Serializable {
         this.numeroTelefonico = numeroTelefonico;
     }
 
-    public Miembro id(Integer id) {
+    public LocalDateTime getFechaBloqueo() {
+        return this.fechaBloqueo;
+    }
+
+    public void setFechaBloqueo(LocalDateTime fechaBloqueo) {
+        this.fechaBloqueo = fechaBloqueo;
+    }
+
+    public Miembro id(Long id) {
         setId(id);
         return this;
     }
@@ -103,4 +127,7 @@ public class Miembro implements Serializable {
         return false;
     }
     
+    public Integer generarNumeroMiembro(){
+        return numeroMiembroActual++;
+    }
 }

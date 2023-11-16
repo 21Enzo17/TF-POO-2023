@@ -2,19 +2,42 @@ package ar.edu.unju.fi.tp9.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME, 
+  include = JsonTypeInfo.As.PROPERTY, 
+  property = "tipo")
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = AlumnoDto.class, name = "alumno"),
+  @JsonSubTypes.Type(value = DocenteDto.class, name = "docente")
+})
 public class MiembroDto implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer id;
+    private Long id;
+    private Integer numeroMiembro;
     private String nombre;
     private String correo;
     private String numeroTelefonico;
+    private String fechaBloqueo;
 
-    public Integer getId() {
+
+
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getNumeroMiembro(){
+        return this.numeroMiembro;
+    }
+
+    public void setNumeroMiembro(Integer numeroMiembro){
+        this.numeroMiembro = numeroMiembro;
     }
 
     public String getNombre() {
@@ -41,24 +64,12 @@ public class MiembroDto implements Serializable {
         this.numeroTelefonico = numeroTelefonico;
     }
 
-    public MiembroDto id(Integer id) {
-        setId(id);
-        return this;
+    public String getFechaBloqueo() {
+        return this.fechaBloqueo;
     }
 
-    public MiembroDto nombre(String nombre) {
-        setNombre(nombre);
-        return this;
-    }
-
-    public MiembroDto correo(String correo) {
-        setCorreo(correo);
-        return this;
-    }
-
-    public MiembroDto numeroTelefonico(String numeroTelefonico) {
-        setNumeroTelefonico(numeroTelefonico);
-        return this;
+    public void setFechaBloqueo(String fechaBloqueo) {
+        this.fechaBloqueo = fechaBloqueo;
     }
 
     public boolean isAlumno(){
