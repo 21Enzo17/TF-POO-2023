@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.tp9.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,6 +68,20 @@ public class PrestamoResource {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
         }catch(Exception e){
              logger.error("Error al devolver prestamo: "+ e.getMessage());
+            response.put("Mensaje", "Error 404, prestamo no encontrado");
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/prestamos/{id}")
+    public ResponseEntity<?> eliminarPrestamo(@PathVariable Long id){
+        Map<String, Object> response = new HashMap<String, Object>();
+        try{
+            prestamoService.eliminarPrestamoById(id);
+            response.put("Mensaje", "Prestamo eliminado con exito");
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+        }catch(Exception e){
+            logger.error("Error al eliminar prestamo: "+ e.getMessage());
             response.put("Mensaje", "Error 404, prestamo no encontrado");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
         }

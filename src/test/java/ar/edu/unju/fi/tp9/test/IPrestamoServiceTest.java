@@ -95,4 +95,12 @@ class IPrestamoServiceTest {
         target.devolucionPrestamo(prestamoInfo.getId());
         assertEquals("DEVUELTO", target.obtenerPrestamoById(prestamoInfo.getId()).getEstado());
     }
+
+    @Test
+    void eliminarPrestamo() throws ManagerException{
+        prestamoInfo = target.guardarPrestamo(miembroService.obtenerMiembroByCorreo("enzo.meneghini@hotmail.com").getId(),libroService.buscarLibroPorTitulo("Harry Potter y la piedra filosofal").getId());
+        target.devolucionPrestamo(prestamoInfo.getId());
+        target.eliminarPrestamoById(prestamoInfo.getId());
+        assertThrows(ManagerException.class, ()->target.obtenerPrestamoById(prestamoInfo.getId()));
+    }
 }

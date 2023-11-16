@@ -221,7 +221,7 @@ public class MiembroServiceImp implements IMiembroService {
     	Miembro miembroGuardar = miembroDtoAMiembro(miembroSancionar);
     	miembroGuardar.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0).plusDays(dias));
     	
-    	logger.info("Miembro" + miembroSancionar.getNombre() + "ha sido sancionado por " + dias + " dias");
+    	logger.info("Miembro " + miembroSancionar.getNombre() + " ha sido sancionado por " + dias + " dias");
     	miembroRepository.save(miembroGuardar);
     }
 }

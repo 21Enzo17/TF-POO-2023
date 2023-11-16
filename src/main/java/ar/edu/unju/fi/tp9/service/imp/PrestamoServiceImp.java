@@ -136,13 +136,13 @@ public class PrestamoServiceImp implements IPrestamoService {
         Prestamo prestamo = prestamoDtoAPrestamo(obtenerPrestamoById(id));
         prestamo.setEstado(Estado.DEVUELTO);
         libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
+        if(prestamo.getFechaDevolucion().isBefore(LocalDateTime.now())) {
+        	miembroService.sancionarMiembro(prestamo.getMiembro().getId(), calcularDiasDeSancion(ChronoUnit.DAYS.between(prestamo.getFechaDevolucion(), LocalDateTime.now())));
+        }
         prestamo.setFechaDevolucion(LocalDateTime.now().withSecond(0).withNano(0));
         prestamoRepository.save(prestamo);
         logger.debug(prestamo.getId() + " devuelto con exito");
         
-        if(prestamo.getFechaDevolucion().isBefore(LocalDateTime.now())) {
-        	miembroService.sancionarMiembro(prestamo.getMiembro().getId(), calcularDiasDeSancion(ChronoUnit.DAYS.between(prestamo.getFechaDevolucion(), LocalDateTime.now())));
-        }
     }
 
     /**
@@ -158,7 +158,6 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(prestamo.getFechaPrestamo().toString()));
         prestamoDto.setIdMiembroDto(prestamo.getMiembro().getId());
         prestamoDto.setIdLibroDto(prestamo.getLibro().getId());
-        
         logger.info("Prestamo mapeado con exito");
         return prestamoDto;
     }
@@ -179,7 +178,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
         
         prestamo.setFechaDevolucion(dateFormatter.fechDateTime(prestamoDto.getFechaDevolucion()));
-        prestamo.setFechaPrestamo(dateFormatter.fechDateTime(prestamoDto.getFechaDevolucion()));
+        prestamo.setFechaPrestamo(dateFormatter.fechDateTime(prestamoDto.getFechaPrestamo()));
         prestamo.setEstado(obtenerEstado(prestamoDto.getEstado()));
         prestamo.setMiembro(miembroService.miembroDtoAMiembro(miembroService.obtenerMiembroById(prestamoDto.getIdMiembroDto())));
         prestamo.setLibro(libroService.libroDtoALibro(libroService.buscarLibroPorId(prestamoDto.getIdLibroDto())));
@@ -242,15 +241,15 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @return
      */
     private int calcularDiasDeSancion(long dias) {
-        if (dias > 0 && dias <= 2) {
+        logger.debug("Calculando sancion para: " + dias + " dias");
+        if (dias <= 2) {
             return 3;
         } else if (dias <= 5) {
             return 5;
         } else if (dias > 5) {
             return 20;
-        } else {
-            return 0;
-        }
+        } 
+        return 0;
     }
 
     /**
@@ -269,6 +268,23 @@ public class PrestamoServiceImp implements IPrestamoService {
         logger.debug(prestamo.getId() + " encontrado con exito");
         return prestamoAPrestamoDto(prestamo);
 
+    }
+
+
+    /**
+     * Metodo encargado de eliminar un prestamo por ID
+     * @param id
+     * @throws ManagerException
+     */
+    @Override
+    public void eliminarPrestamoById(Long id) throws ManagerException {
+        Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
+        if(prestamo == null){
+        	logger.error("No existe el prestamo con id " + id);
+            throw new ManagerException("No existe el prestamo con id " + id);
+        }
+        prestamoRepository.deleteById(id);
+        logger.debug(prestamo.getId() + " eliminado con exito");
     }
     
 }

@@ -1,0 +1,1113 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "My Project",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "POO2023"
+    },
+    {
+      "name": "POO2023/Miembros"
+    },
+    {
+      "name": "POO2023/Libros"
+    },
+    {
+      "name": "POO2023/Prestamos"
+    }
+  ],
+  "paths": {
+    "/api/v1/miembro/miembros": {
+      "post": {
+        "summary": "Guardar un Miembro",
+        "x-apidog-folder": "POO2023/Miembros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Miembros"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "x-apidog-ignore-properties": [],
+                "x-apidog-orders": []
+              },
+              "example": {
+                "tipo": "alumno",
+                "nombre": "Roberto",
+                "correo": "asdasd@gmail.com",
+                "numeroTelefonico": "381616064",
+                "libretaUniversitaria": "APU4073"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": []
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4673060-run",
+        "security": []
+      },
+      "get": {
+        "summary": "Buscar Por Correo",
+        "x-apidog-folder": "POO2023/Miembros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Miembros"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "correo": {
+                    "type": "string",
+                    "example": "enzo.meneghini@hotmail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Miembro": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "numeroMiembro": {
+                          "type": "integer"
+                        },
+                        "nombre": {
+                          "type": "string"
+                        },
+                        "correo": {
+                          "type": "string"
+                        },
+                        "numeroTelefonico": {
+                          "type": "string"
+                        },
+                        "fechaBloqueo": {
+                          "type": "string"
+                        },
+                        "legajo": {
+                          "type": "string"
+                        },
+                        "alumno": {
+                          "type": "boolean"
+                        },
+                        "docente": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "numeroMiembro",
+                        "nombre",
+                        "correo",
+                        "numeroTelefonico",
+                        "fechaBloqueo",
+                        "legajo",
+                        "alumno",
+                        "docente"
+                      ],
+                      "x-apidog-ignore-properties": [],
+                      "x-apidog-orders": [
+                        "id",
+                        "numeroMiembro",
+                        "nombre",
+                        "correo",
+                        "numeroTelefonico",
+                        "fechaBloqueo",
+                        "legajo",
+                        "alumno",
+                        "docente"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Miembro"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Miembro"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4685972-run",
+        "security": []
+      }
+    },
+    "/api/v1/miembro/miembros/1": {
+      "get": {
+        "summary": "Get por Id",
+        "x-apidog-folder": "POO2023/Miembros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Miembros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Miembro": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "numeroMiembro": {
+                          "type": "integer"
+                        },
+                        "nombre": {
+                          "type": "string"
+                        },
+                        "correo": {
+                          "type": "string"
+                        },
+                        "numeroTelefonico": {
+                          "type": "string"
+                        },
+                        "fechaBloqueo": {
+                          "type": "string"
+                        },
+                        "libretaUniversitaria": {
+                          "type": "string"
+                        },
+                        "alumno": {
+                          "type": "boolean"
+                        },
+                        "docente": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "numeroMiembro",
+                        "nombre",
+                        "correo",
+                        "numeroTelefonico",
+                        "fechaBloqueo",
+                        "libretaUniversitaria",
+                        "alumno",
+                        "docente"
+                      ],
+                      "x-apidog-ignore-properties": [],
+                      "x-apidog-orders": [
+                        "id",
+                        "numeroMiembro",
+                        "nombre",
+                        "correo",
+                        "numeroTelefonico",
+                        "fechaBloqueo",
+                        "libretaUniversitaria",
+                        "alumno",
+                        "docente"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Miembro"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Miembro"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4685958-run",
+        "security": []
+      },
+      "delete": {
+        "summary": "Borrar un Miembro",
+        "x-apidog-folder": "POO2023/Miembros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Miembros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Mensaje"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4686319-run",
+        "security": []
+      }
+    },
+    "/api/v1/miembro/miembros/": {
+      "put": {
+        "summary": "Modificar todo un miembro",
+        "x-apidog-folder": "POO2023/Miembros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Miembros"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "x-apidog-ignore-properties": [],
+                "x-apidog-orders": []
+              },
+              "example": {
+                "tipo": "docente",
+                "id": 1,
+                "numeroMiembro": 15,
+                "nombre": "Enzo",
+                "correo": "enzo.meneghini@hotmail.com",
+                "numeroTelefonico": "3885485126",
+                "fechaBloqueo": "11/11/2023 - 09:00",
+                "legajo": "FI0025"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    },
+                    "Objeto": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "numeroMiembro": {
+                          "type": "integer"
+                        },
+                        "nombre": {
+                          "type": "string"
+                        },
+                        "correo": {
+                          "type": "string"
+                        },
+                        "numeroTelefonico": {
+                          "type": "string"
+                        },
+                        "fechaBloqueo": {
+                          "type": "string"
+                        },
+                        "legajo": {
+                          "type": "string"
+                        },
+                        "docente": {
+                          "type": "boolean"
+                        },
+                        "alumno": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "numeroMiembro",
+                        "nombre",
+                        "correo",
+                        "numeroTelefonico",
+                        "fechaBloqueo",
+                        "legajo",
+                        "docente",
+                        "alumno"
+                      ],
+                      "x-apidog-ignore-properties": [],
+                      "x-apidog-orders": [
+                        "id",
+                        "numeroMiembro",
+                        "nombre",
+                        "correo",
+                        "numeroTelefonico",
+                        "fechaBloqueo",
+                        "legajo",
+                        "docente",
+                        "alumno"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Mensaje",
+                    "Objeto"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje",
+                    "Objeto"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4686372-run",
+        "security": []
+      }
+    },
+    "/api/v1/libro/libros/1": {
+      "get": {
+        "summary": "Buscar Por ID",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    },
+                    "Objeto": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "titulo": {
+                          "type": "string"
+                        },
+                        "autor": {
+                          "type": "string"
+                        },
+                        "isbn": {
+                          "type": "string"
+                        },
+                        "numeroInventario": {
+                          "type": "integer"
+                        },
+                        "estado": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "titulo",
+                        "autor",
+                        "isbn",
+                        "numeroInventario",
+                        "estado"
+                      ],
+                      "x-apidog-ignore-properties": [],
+                      "x-apidog-orders": [
+                        "id",
+                        "titulo",
+                        "autor",
+                        "isbn",
+                        "numeroInventario",
+                        "estado"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Mensaje",
+                    "Objeto"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje",
+                    "Objeto"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694415-run",
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar Por ID",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Mensaje"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694496-run",
+        "security": []
+      }
+    },
+    "/api/v1/libro/libros/titulo/IT": {
+      "get": {
+        "summary": "Buscar Por TItulo",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    },
+                    "Objeto": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "titulo": {
+                          "type": "string"
+                        },
+                        "autor": {
+                          "type": "string"
+                        },
+                        "isbn": {
+                          "type": "string"
+                        },
+                        "numeroInventario": {
+                          "type": "integer"
+                        },
+                        "estado": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "titulo",
+                        "autor",
+                        "isbn",
+                        "numeroInventario",
+                        "estado"
+                      ],
+                      "x-apidog-ignore-properties": [],
+                      "x-apidog-orders": [
+                        "id",
+                        "titulo",
+                        "autor",
+                        "isbn",
+                        "numeroInventario",
+                        "estado"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Mensaje",
+                    "Objeto"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje",
+                    "Objeto"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694416-run",
+        "security": []
+      }
+    },
+    "/api/v1/libro/libros/autor/Stephen%20King": {
+      "get": {
+        "summary": "Buscar Por Autor",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    },
+                    "Objeto": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "titulo": {
+                            "type": "string"
+                          },
+                          "autor": {
+                            "type": "string"
+                          },
+                          "isbn": {
+                            "type": "string"
+                          },
+                          "numeroInventario": {
+                            "type": "integer"
+                          },
+                          "estado": {
+                            "type": "string"
+                          }
+                        },
+                        "x-apidog-ignore-properties": [],
+                        "x-apidog-orders": [
+                          "id",
+                          "titulo",
+                          "autor",
+                          "isbn",
+                          "numeroInventario",
+                          "estado"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "Mensaje",
+                    "Objeto"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje",
+                    "Objeto"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694417-run",
+        "security": []
+      }
+    },
+    "/api/v1/libro/libros/isbn/ISBN-10-0061120082": {
+      "get": {
+        "summary": "Buscar Por ISBN",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    },
+                    "Objeto": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "titulo": {
+                          "type": "string"
+                        },
+                        "autor": {
+                          "type": "string"
+                        },
+                        "isbn": {
+                          "type": "string"
+                        },
+                        "numeroInventario": {
+                          "type": "integer"
+                        },
+                        "estado": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "titulo",
+                        "autor",
+                        "isbn",
+                        "numeroInventario",
+                        "estado"
+                      ],
+                      "x-apidog-ignore-properties": [],
+                      "x-apidog-orders": [
+                        "id",
+                        "titulo",
+                        "autor",
+                        "isbn",
+                        "numeroInventario",
+                        "estado"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Mensaje",
+                    "Objeto"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje",
+                    "Objeto"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694418-run",
+        "security": []
+      }
+    },
+    "/api/v1/libro/libros": {
+      "put": {
+        "summary": "Editar un Libro",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "x-apidog-ignore-properties": [],
+                "x-apidog-orders": []
+              },
+              "example": {
+                "id": 1,
+                "titulo": "IT",
+                "autor": "Stephen King",
+                "isbn": "ISBN-10-0451450523",
+                "numeroInventario": 554,
+                "estado": "DISPONIBLE"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Mensaje"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694499-run",
+        "security": []
+      },
+      "post": {
+        "summary": "Guardar un Libro",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "x-apidog-ignore-properties": [],
+                "x-apidog-orders": []
+              },
+              "example": {
+                "titulo": "La Masacre de Texas",
+                "autor": "Stephen King",
+                "isbn": "ISBN-10-01502848",
+                "numeroInventario": 1,
+                "estado": "DISPONIBLE"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Mensaje"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694521-run",
+        "security": []
+      }
+    },
+    "/api/v1/prestamo/prestamos": {
+      "post": {
+        "summary": "Guardar un Prestamo",
+        "x-apidog-folder": "POO2023/Prestamos",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Prestamos"
+        ],
+        "parameters": [
+          {
+            "name": "idMiembro",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "idLibro",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "x-apidog-ignore-properties": [],
+                "x-apidog-orders": []
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": []
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4695060-run",
+        "security": []
+      }
+    },
+    "/api/v1/prestamo/prestamos/1": {
+      "get": {
+        "summary": "Obtener un prestamo por ID",
+        "x-apidog-folder": "POO2023/Prestamos",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Prestamos"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Prestamo": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "idMiembroDto": {
+                          "type": "integer"
+                        },
+                        "idLibroDto": {
+                          "type": "integer"
+                        },
+                        "fechaPrestamo": {
+                          "type": "string"
+                        },
+                        "fechaDevolucion": {
+                          "type": "string"
+                        },
+                        "estado": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "idMiembroDto",
+                        "idLibroDto",
+                        "fechaPrestamo",
+                        "fechaDevolucion",
+                        "estado"
+                      ],
+                      "x-apidog-ignore-properties": [],
+                      "x-apidog-orders": [
+                        "id",
+                        "idMiembroDto",
+                        "idLibroDto",
+                        "fechaPrestamo",
+                        "fechaDevolucion",
+                        "estado"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Prestamo"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Prestamo"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4695079-run",
+        "security": []
+      },
+      "patch": {
+        "summary": "Devolver Un Prestamo",
+        "x-apidog-folder": "POO2023/Prestamos",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Prestamos"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Mensaje"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4702157-run",
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar un Prestamo en caso de error",
+        "x-apidog-folder": "POO2023/Prestamos",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Prestamos"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Mensaje"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4702168-run",
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": []
+}

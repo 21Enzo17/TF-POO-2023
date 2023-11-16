@@ -23,7 +23,7 @@ import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 
 @RestController
-@RequestMapping("/api/v2/libro")
+@RequestMapping("/api/v1/libro")
 @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
 public class LibroResource {
 	

@@ -16,4 +16,6 @@ public interface IPrestamoService {
 
     public PrestamoDto obtenerPrestamoById(Long id) throws ManagerException;
 
+    public void eliminarPrestamoById(Long id) throws ManagerException;
+
 }
