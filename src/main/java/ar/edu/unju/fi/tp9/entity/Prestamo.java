@@ -10,9 +10,8 @@ import java.time.LocalDateTime;
 public class Prestamo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name="id_miembro")
@@ -48,11 +47,11 @@ public class Prestamo {
 
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -96,14 +95,4 @@ public class Prestamo {
         this.estado = estado;
     }
 
-    @Override
-    public String toString() {
-        return "Prestamo{" +
-                "id=" + id +
-                ", miembro=" + miembro +
-                ", fechaPrestamo=" + fechaPrestamo +
-                ", fechaDevolucion=" + fechaDevolucion +
-                ", estado=" + estado +
-                '}';
-    }
 }

@@ -1,13 +1,12 @@
 package ar.edu.unju.fi.tp9.dto;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 
 public class PrestamoDto implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer id;
-    private Integer idMiembroDto;
+    private Long id;
+    private Long idMiembroDto;
     private Long idLibroDto;
     private String fechaPrestamo;
     private String fechaDevolucion;
@@ -15,19 +14,19 @@ public class PrestamoDto implements Serializable {
 
 
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getIdMiembroDto() {
+    public Long getIdMiembroDto() {
         return this.idMiembroDto;
     }
 
-    public void setIdMiembroDto(Integer idMiembroDto) {
+    public void setIdMiembroDto(Long idMiembroDto) {
         this.idMiembroDto = idMiembroDto;
     }
 
@@ -62,39 +61,4 @@ public class PrestamoDto implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-
-    public PrestamoDto id(Integer id) {
-        setId(id);
-        return this;
-    }
-
-    public PrestamoDto idMiembroDto(Integer idMiembroDto) {
-        setIdMiembroDto(idMiembroDto);
-        return this;
-    }
-
-    public PrestamoDto idLibroDto(Long idLibroDto) {
-        setIdLibroDto(idLibroDto);
-        return this;
-    }
-
-    public PrestamoDto fechaPrestamo(String fechaPrestamo) {
-        setFechaPrestamo(fechaPrestamo);
-        return this;
-    }
-
-    public PrestamoDto fechaDevolucion(String fechaDevolucion) {
-        setFechaDevolucion(fechaDevolucion);
-        return this;
-    }
-
-    public PrestamoDto estado(String estado) {
-        setEstado(estado);
-        return this;
-    }
-
-   
-    
-
-
 }

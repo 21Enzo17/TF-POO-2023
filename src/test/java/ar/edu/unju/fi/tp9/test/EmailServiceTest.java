@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.tp9.test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
 
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IEmailService;
 
 @SpringBootTest
@@ -47,10 +49,16 @@ class EmailServiceTest {
         target = null;
     }
 
+
+    /**
+     * En este test, se testea el correcto envio del mail y el error en caso de pasar un parametro incorrecto.
+     */
     @Test
     void envio(){
         InputStreamSource inputStream = new FileSystemResource("src/main/resources/images/Bibliowlteca.png");
         assertDoesNotThrow(()->target.send("poo2023correo@gmail.com",para, tema, htmlBody,inputStream));
+        para= "123gmail.com"; // Se asigna un correo invalido
+        assertThrows(ManagerException.class, ()-> target.send("poo2023correo@gmail.com",para, tema, htmlBody,inputStream));
+        // Se obtiene una excepcion personalizada
     }
-
 }

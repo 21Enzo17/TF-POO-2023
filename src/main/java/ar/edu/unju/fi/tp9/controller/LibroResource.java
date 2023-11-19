@@ -20,11 +20,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
-import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 
 @RestController
-@RequestMapping("/api/v2/libro")
+@RequestMapping("/api/v1/libro")
 @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
 public class LibroResource {
 	
@@ -62,7 +61,7 @@ public class LibroResource {
 			
 		}catch (NoSuchElementException e) {
 			response.put("Mensaje", "No existe libro guardado con el id enviado");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 			
 		}catch (DataAccessException e) {
 			response.put("Mensaje", "Error al guardar el objeto");
