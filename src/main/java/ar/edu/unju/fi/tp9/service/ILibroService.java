@@ -19,7 +19,7 @@ public interface ILibroService {
 	
 	List<LibroDto> buscarLibroPorAutor(String autor);
 	
-	LibroDto buscarLibroPorIsbn(String isbn);
+	List<LibroDto> buscarLibroPorIsbn(String isbn);
 	
 	long librosSize();
 

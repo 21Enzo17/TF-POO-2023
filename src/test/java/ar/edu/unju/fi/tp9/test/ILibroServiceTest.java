@@ -33,6 +33,7 @@ class ILibroServiceTest {
 	LibroDto libroThrowDto;
 	LibroDto libroGuardadoDto;
 	List<LibroDto> librosPorAutor;
+	List<LibroDto> librosPorIsbn;
 	
 	@BeforeEach
 	void iniciarVariables() {
@@ -50,6 +51,7 @@ class ILibroServiceTest {
 		
 		libroGuardadoDto = new LibroDto();
 		librosPorAutor = new ArrayList<>();
+		librosPorIsbn = new ArrayList<>();
 	}
 	
 	@AfterEach
@@ -126,10 +128,10 @@ class ILibroServiceTest {
 	@Test
 	@DisplayName("Test Buscar Libro por ISBN")
 	void buscarLibroIsbnTest() {
-		libroGuardadoDto = libroService.buscarLibroPorIsbn("ISBN-10-0451524935");
-		assertNotNull(libroGuardadoDto);
+		librosPorIsbn = libroService.buscarLibroPorIsbn("ISBN-10-0451524935");
+		assertEquals(librosPorIsbn.size(), 1);
 		
-		assertEquals(libroGuardadoDto.getAutor(), "J.R.R. Tolkien");
-		assertEquals(libroGuardadoDto.getTitulo(), "El senior de los anillos");
+		assertEquals(librosPorIsbn.get(0).getAutor(), "J.R.R. Tolkien");
+		assertEquals(librosPorIsbn.get(0).getTitulo(), "El senior de los anillos");
 	}
 }

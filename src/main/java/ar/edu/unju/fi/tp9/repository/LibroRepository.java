@@ -9,12 +9,11 @@ import ar.edu.unju.fi.tp9.entity.Libro;
 
 @Repository
 public interface LibroRepository extends CrudRepository<Libro, Long>{
-	
-	boolean existsByIsbn(String isbn);
-	
 	Libro findByTitulo(String titulo);
+	
+	List<Libro> findAllByIsbn(String isbn);
 	
 	List<Libro> findAllByAutor(String autor);
 	
-	Libro findByIsbn(String isbn);
+	Libro findByIsbnAndNumeroInventario(String isbn, Long numeroInventario);
 }
