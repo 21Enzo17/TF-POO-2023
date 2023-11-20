@@ -112,6 +112,7 @@ formato pdf)
 ### Consideraciones
 - Para la generación de reportes en pdf debe utilizar la librería iText
 - Para la generación del resúmen de préstamos realizados utilizar la librería Apache POI.
-
+# LINK VIDEO PRESENTACION
+https://drive.google.com/file/d/1QP9VKBA8Mn_-YVGJIYDAE0PkciRsXm6V/view?usp=sharing
 ## Diagrama UML
 ![UML]( UML.jpg)
