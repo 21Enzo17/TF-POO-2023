@@ -1103,6 +1103,138 @@
         "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4702168-run",
         "security": []
       }
+    },
+    "/api/v1/prestamo/prestamos/comprobante/1": {
+      "get": {
+        "summary": "Generar Comprobante de Prestamo",
+        "x-apidog-folder": "POO2023/Prestamos",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Prestamos"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": []
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4712981-run",
+        "security": []
+      }
+    },
+    "/api/v1/prestamo/prestamos/excel": {
+      "get": {
+        "summary": "Resumen Excel",
+        "x-apidog-folder": "POO2023/Prestamos",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Prestamos"
+        ],
+        "parameters": [
+          {
+            "name": "fechaInicio",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "10/05/2020 - 00:12",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fechaFin",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "20/11/2023 - 00:12",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": []
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4716109-run",
+        "security": []
+      }
+    },
+    "/api/v1/prestamo/prestamos/pdf": {
+      "get": {
+        "summary": "Resumen PDF",
+        "x-apidog-folder": "POO2023/Prestamos",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Prestamos"
+        ],
+        "parameters": [
+          {
+            "name": "fechaInicio",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "10/05/2020 - 00:12",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fechaFin",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "20/11/2023 - 00:12",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": []
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4723819-run",
+        "security": []
+      }
     }
   },
   "components": {

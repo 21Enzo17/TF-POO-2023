@@ -4,8 +4,6 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +38,7 @@ public class ExcelResumenServiceImp implements IResumenService{
     public ResponseEntity<byte[]> realizarResumen(List<PrestamoInfoDto> prestamosDto, String fechaInicio, String fechaFin) throws ManagerException{
     	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     	
+        logger.info("Generando excel");
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Prestamos");
         CreationHelper creationHelper = workbook.getCreationHelper();

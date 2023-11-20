@@ -40,6 +40,29 @@ public  class BodyGenerator {
         return htmlBody;
     }
 
+    /**
+     * Metodo que genera el body del correo
+     * @param libroDto
+     * @param fechaPrestamo
+     * @param fechaDevolucion
+     * @return
+     */
+    public String generarBodyCorreoDevolucion(LibroDto libroDto, String fechaPrestamo, String fechaDevolucion, String fechaSancion){
+        String htmlBody = "<html><body><div style='text-align: center;'>" +
+            "<h1>Bibliowlteca</h1>" +
+            "<img src=\"cid:logo\" style=\"width: 200px; display: block; margin: 0 auto; border-radius: 20px;\" />"  +
+            "<h2>Informacion de la devolucion</h2>"  +
+            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
+            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
+            "<p><b>Fecha de prestamo:</b> "+ fechaPrestamo  + "</p>" +
+            "<p><b>Fecha de devolucion:</b> "+ fechaDevolucion + "</p>" +
+            "<p><b>Gracias por confiar en nosotros!</b></p>"+
+            (fechaSancion!=null ?"<p><b>Fecha de sancion:</b> "+ fechaSancion + "</p>":"")+
+            "<h6>Correo generado automaticamente</h6>" + 
+            "</div></body></html>";
+            logger.info("Body generado correctamente");
+        return htmlBody;
+    }
 
     /**
      * Metodo que genera el body del comprobante

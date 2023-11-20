@@ -14,12 +14,15 @@ import org.springframework.core.io.InputStreamSource;
 
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IEmailService;
+import ar.edu.unju.fi.tp9.service.IPrestamoService;
 
 @SpringBootTest
 class EmailServiceTest {
 
     @Autowired
     IEmailService target;
+    @Autowired
+    IPrestamoService prestamoService;
     String para;
     String tema;
     String htmlBody;
@@ -56,9 +59,9 @@ class EmailServiceTest {
     @Test
     void envio(){
         InputStreamSource inputStream = new FileSystemResource("src/main/resources/images/Bibliowlteca.png");
-        assertDoesNotThrow(()->target.send("poo2023correo@gmail.com",para, tema, htmlBody,inputStream));
+        assertDoesNotThrow(()->target.send("poo2023correo@gmail.com",para, tema, htmlBody,inputStream,prestamoService.generarComprobante(1l)));
         para= "123gmail.com"; // Se asigna un correo invalido
-        assertThrows(ManagerException.class, ()-> target.send("poo2023correo@gmail.com",para, tema, htmlBody,inputStream));
+        assertThrows(ManagerException.class, ()-> target.send("poo2023correo@gmail.com",para, tema, htmlBody,inputStream,prestamoService.generarComprobante(1l)));
         // Se obtiene una excepcion personalizada
     }
 }

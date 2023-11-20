@@ -4,7 +4,6 @@ package ar.edu.unju.fi.tp9.service.imp;
 
 import java.io.ByteArrayOutputStream;
 
-import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -90,7 +89,8 @@ public class PrestamoServiceImp implements IPrestamoService {
         
         prestamoGuardar = prestamoRepository.save(prestamoGuardar);
         logger.debug("Prestamo: " + prestamoGuardar.getId() +" guardado con exito");
-        enviarCorreo(prestamo);
+        prestamo.setId(prestamoGuardar.getId());
+        enviarCorreo(prestamo, null,false);
         return prestamoAInfoDto(prestamoGuardar);
     }
 
@@ -136,17 +136,22 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @param prestamo
      * @throws ManagerException
      */
-    public void enviarCorreo(PrestamoDto prestamo) throws ManagerException{
+    public void enviarCorreo(PrestamoDto prestamo,String fechaSancion, Boolean devolucion) throws ManagerException{
         MiembroDto miembroDto = miembroService.obtenerMiembroById(prestamo.getIdMiembroDto());
         LibroDto libroDto = libroService.buscarLibroPorId(prestamo.getIdLibroDto());
         String to = miembroDto.getCorreo();
         String subject = "Prestamo: " + libroDto.getTitulo();
-
-        String htmlBody = bodyGenerator.generarBodyCorreo(libroDto, prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion());
+        String htmlBody;
+        if(!devolucion){
+            htmlBody = bodyGenerator.generarBodyCorreo(libroDto, prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion());
+        }else{
+            htmlBody = bodyGenerator.generarBodyCorreoDevolucion(libroDto, prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion(), fechaSancion);
+        }
+        
 
         try{ 
             InputStreamSource inputStream = new FileSystemResource("src/main/resources/images/Bibliowlteca.png");
-            emailService.send("poo2023correo@gmail.com",to, subject, htmlBody,inputStream);
+            emailService.send("poo2023correo@gmail.com",to, subject, htmlBody,inputStream, generarComprobante(prestamo.getId()));
             logger.info("Correo enviado correctamente");
         }catch(Exception e){
             logger.error("Error al enviar el correo: " + e.getMessage());
@@ -162,14 +167,19 @@ public class PrestamoServiceImp implements IPrestamoService {
      */
     @Override 
     public void devolucionPrestamo(Long id) throws ManagerException{
+        String fechaSancion = null;
         Prestamo prestamo = prestamoDtoAPrestamo(obtenerPrestamoById(id));
         prestamo.setEstado(Estado.DEVUELTO);
         libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
         if(prestamo.getFechaDevolucion().isBefore(LocalDateTime.now())) {
         	miembroService.sancionarMiembro(prestamo.getMiembro().getId(), calcularDiasDeSancion(ChronoUnit.DAYS.between(prestamo.getFechaDevolucion(), LocalDateTime.now())));
+            fechaSancion = miembroService.obtenerMiembroById(prestamo.getMiembro().getId()).getFechaBloqueo();
+            logger.debug("Miembro sancionado hasta: " + fechaSancion);
         }
+        
         prestamo.setFechaDevolucion(LocalDateTime.now().withSecond(0).withNano(0));
         prestamoRepository.save(prestamo);
+        enviarCorreo(prestamoAPrestamoDto(prestamo), fechaSancion, true);
         logger.debug(prestamo.getId() + " devuelto con exito");
         
     }

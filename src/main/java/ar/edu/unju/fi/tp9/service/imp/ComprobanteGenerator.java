@@ -35,7 +35,8 @@ public class ComprobanteGenerator implements IComprobanteGenerator {
     
         ConverterProperties properties = new ConverterProperties();
         HtmlConverter.convertToPdf(html, pdfDoc, properties);
-    
+        
+        logger.info("Comprobante generado correctamente");
         return outputStream;
     }
 

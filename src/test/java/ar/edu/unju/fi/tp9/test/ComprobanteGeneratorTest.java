@@ -1,13 +1,11 @@
 package ar.edu.unju.fi.tp9.test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
-import ar.edu.unju.fi.tp9.entity.Prestamo;
 import ar.edu.unju.fi.tp9.service.IComprobanteGenerator;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
 @SpringBootTest
-public class PdfGeneratorTest {
+class ComprobanteGeneratorTest {
 
     @Autowired
     IComprobanteGenerator pdfGenerator;

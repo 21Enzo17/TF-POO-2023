@@ -5,9 +5,7 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +50,7 @@ public class PdfResumenServiceImp implements IResumenService {
 	@Override
 	public ResponseEntity<byte[]> realizarResumen(List<PrestamoInfoDto> prestamosDto, String fechaInicio, String fechaFin) throws ManagerException {
 		ByteArrayOutputStream resumen = new ByteArrayOutputStream();
-		
+		logger.info("Generando excel");
 		PdfWriter writer = new PdfWriter(resumen);
 		PdfDocument pdfDoc = new PdfDocument(writer);
 		

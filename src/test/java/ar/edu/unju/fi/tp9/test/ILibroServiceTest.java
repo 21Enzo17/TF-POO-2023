@@ -22,7 +22,7 @@ import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 
 @SpringBootTest
-public class LibroServiceTest {
+class ILibroServiceTest {
 	
 	@Autowired
 	ILibroService libroService;

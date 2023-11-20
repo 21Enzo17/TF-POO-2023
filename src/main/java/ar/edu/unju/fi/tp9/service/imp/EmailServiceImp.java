@@ -1,5 +1,7 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
+import java.io.ByteArrayOutputStream;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
@@ -8,10 +10,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+
+
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IEmailService;
+import jakarta.activation.DataSource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.util.ByteArrayDataSource;
 
 
 @Service
@@ -40,7 +46,7 @@ public class EmailServiceImp implements IEmailService {
      * @catch IllegalArgumentException
      */
     @Override
-    public void send(String emisor, String para, String tema, String cuerpo, InputStreamSource imagen) throws ManagerException {
+    public void send(String emisor, String para, String tema, String cuerpo, InputStreamSource imagen, ByteArrayOutputStream comprobante) throws ManagerException {
         logger.info("Enviando correo a:" + para);
         try{
             MimeMessage message = mailSender.createMimeMessage();
@@ -50,6 +56,9 @@ public class EmailServiceImp implements IEmailService {
             helper.setSubject(tema);
             helper.setText(cuerpo, true);
             helper.addInline("logo", imagen, "image/png");
+            DataSource dataSource = new ByteArrayDataSource(comprobante.toByteArray(), "application/pdf");
+
+            helper.addAttachment("comprobante.pdf", dataSource);
             mailSender.send(message);
         } catch (MailException e) {
             logger.error("Error al enviar el correo: " + e.getMessage());
@@ -63,4 +72,6 @@ public class EmailServiceImp implements IEmailService {
         }
         logger.debug("Correo enviado a: " + para);
     }
+
+
 }
