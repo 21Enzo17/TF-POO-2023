@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.apache.log4j.Logger;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -22,30 +23,29 @@ import com.itextpdf.layout.property.TextAlignment;
 
 import ar.edu.unju.fi.tp9.entity.Prestamo;
 import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
-import ar.edu.unju.fi.tp9.service.IResumenPrestamos;
+import ar.edu.unju.fi.tp9.service.IResumenService;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
-@Service
-public class ResumenPrestamosPdfImp implements IResumenPrestamos{
-	
-	@Autowired
+@Service("pdfService")
+public class PdfResumenServiceImp implements IResumenService {
+    Logger logger =  Logger.getLogger(this.getClass());
+    @Autowired
 	PrestamoRepository prestamoRepository;
 	
 	@Autowired
 	DateFormatter dateFormatter;
 	
 	@Override
-	public ResponseEntity<byte[]> realizarResumen(String fechaInicio, String fechaFinal) throws FileNotFoundException {
-		String dest = "Resumen.pdf";
+	public ResponseEntity<byte[]> realizarResumen(String fechaInicio, String fechaFinal)  {
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayOutputStream resumen = new ByteArrayOutputStream();
 		
 		LocalDateTime fechaInicioFormateada = dateFormatter.fechDateTime(fechaInicio);
 		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFinal);
 		
 		List<Prestamo> prestamos = prestamoRepository.findByFechaPrestamoBetween(fechaInicioFormateada, fechaFinalFormateada);
-		
-		PdfWriter writer = new PdfWriter(dest);
+		logger.debug("Se encontraron " + prestamos.size() + " prestamos");
+		PdfWriter writer = new PdfWriter(resumen);
 		PdfDocument pdfDoc = new PdfDocument(writer);
 		
 		pdfDoc.addNewPage();
@@ -55,7 +55,7 @@ public class ResumenPrestamosPdfImp implements IResumenPrestamos{
 		crearTabla(document, prestamos);	
 		document.close();
 		
-		byte[] pdfBytes = baos.toByteArray();
+		byte[] pdfBytes = resumen.toByteArray();
         return new ResponseEntity<>(pdfBytes, crearHeaders(pdfBytes), HttpStatus.OK);
 	}
 	
@@ -75,7 +75,7 @@ public class ResumenPrestamosPdfImp implements IResumenPrestamos{
 	private void crearTabla(Document document, List<Prestamo> prestamos) {
 		float [] pointColumnWidths = {150F, 150F, 150F, 150F, 150F, 150F};
 		Table table = new Table(pointColumnWidths);
-
+        logger.debug("Creando tabla con " + prestamos.size() + " prestamos");
 		table.addCell(new Cell().add(new Paragraph("Id")));
 		table.addCell(new Cell().add(new Paragraph("Id Miembro")));
 		table.addCell(new Cell().add(new Paragraph("Id Libro")));
@@ -91,12 +91,14 @@ public class ResumenPrestamosPdfImp implements IResumenPrestamos{
 			table.addCell(new Cell().add(new Paragraph(dateFormatter.transformarFechaNatural(prestamo.getFechaDevolucion().toString()))));
 			table.addCell(new Cell().add(new Paragraph(prestamo.getEstado().toString())));
 		}
+        document.add(table);
 	}
-		private HttpHeaders crearHeaders(byte[] pdfBytes) {
-			HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.APPLICATION_PDF);
-	        headers.setContentDispositionFormData("attachment", "Resumen.pdf");
-	        headers.setContentLength(pdfBytes.length);
-	        return headers;
-		}
+
+	private HttpHeaders crearHeaders(byte[] pdfBytes) {
+		HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_PDF);
+	    headers.setContentDispositionFormData("attachment", "Resumen.pdf");
+	    headers.setContentLength(pdfBytes.length);
+	    return headers;
 	}
+}

@@ -1,5 +1,6 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.unju.fi.tp9.entity.Prestamo;
 import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
-import ar.edu.unju.fi.tp9.service.IResumenPrestamos;
+import ar.edu.unju.fi.tp9.service.IResumenService;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
 import java.io.ByteArrayOutputStream;
@@ -19,11 +20,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
-public class ResumenPrestamosExcelImp implements IResumenPrestamos{
 
-	
-	
+@Service("excelService")
+public class ExcelResumenServiceImp implements IResumenService{
     @Autowired
     private PrestamoRepository prestamoRepository; 
     
@@ -44,7 +43,6 @@ public class ResumenPrestamosExcelImp implements IResumenPrestamos{
 
         generarColumnas(sheet);
         copiarDatos(sheet, prestamos);
-        guardarArchivo(workbook);
         cerrarArchivo(workbook, outputStream);
         
         return new ResponseEntity<>(outputStream.toByteArray(), crearHeaders(), 200);
@@ -72,13 +70,6 @@ public class ResumenPrestamosExcelImp implements IResumenPrestamos{
         }
     }
     
-    private void guardarArchivo(Workbook workbook) {
-    	 try (FileOutputStream fileOut = new FileOutputStream("prestamos.xlsx")) {
-             workbook.write(fileOut);
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-    }
     
     private void cerrarArchivo(Workbook workbook, ByteArrayOutputStream outputStream) {
     	try {

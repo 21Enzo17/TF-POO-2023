@@ -97,6 +97,6 @@ public class PrestamoResource {
     @GetMapping("/prestamos/pdf")
     public ResponseEntity<?> resumenPrestamosPdf(@RequestParam String fechaInicio,@RequestParam String fechaFin) throws FileNotFoundException{
     	logger.debug("Creando resumen de prestamos con pdf");	
-    	return prestamoService.realizarResumenExcel(fechaInicio, fechaFin);
+    	return prestamoService.realizarResumenPdf(fechaInicio, fechaFin);
     }
 }

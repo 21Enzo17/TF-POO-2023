@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,9 @@ import ar.edu.unju.fi.tp9.service.IEmailService;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
-import ar.edu.unju.fi.tp9.service.IResumenPrestamos;
+import ar.edu.unju.fi.tp9.service.IResumenService;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
-import ar.edu.unju.fi.tp9.util.GeneradorResumen;
+
 
 @Service
 public class PrestamoServiceImp implements IPrestamoService {
@@ -48,9 +49,12 @@ public class PrestamoServiceImp implements IPrestamoService {
     @Autowired
     DateFormatter dateFormatter;
     @Autowired
-    IResumenPrestamos resumenTipo;
+    @Qualifier("excelService")
+    private IResumenService excelService;
+
     @Autowired
-    GeneradorResumen generador;
+    @Qualifier("pdfService")
+    private IResumenService pdfService;
     
     
     /**
@@ -297,18 +301,12 @@ public class PrestamoServiceImp implements IPrestamoService {
     }
 
 	@Override
-	public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws FileNotFoundException {
-		 resumenTipo = new ResumenPrestamosExcelImp();
-		 generador = new GeneradorResumen(resumenTipo, fechaInicio, fechaFin);
-		 
-		 return generador.generarResumen();
+	public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws FileNotFoundException {	
+		 return excelService.realizarResumen(fechaInicio, fechaFin);
 	}
 
 	@Override
 	public ResponseEntity<byte[]> realizarResumenPdf(String fechaInicio, String fechaFin) throws FileNotFoundException {
-		 resumenTipo = new ResumenPrestamosPdfImp();
-		 generador = new GeneradorResumen(resumenTipo, fechaInicio, fechaFin);
-		 
-		 return generador.generarResumen();
+        return pdfService.realizarResumen(fechaInicio, fechaFin);
 	}
 }
