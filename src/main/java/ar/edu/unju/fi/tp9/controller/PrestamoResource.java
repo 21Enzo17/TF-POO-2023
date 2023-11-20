@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,5 +86,17 @@ public class PrestamoResource {
             response.put("Mensaje", "Error 404, prestamo no encontrado");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
         }
+    }
+    
+    @GetMapping("/prestamos/excel")
+    public ResponseEntity<?> resumenPrestamosExcel(@RequestParam String fechaInicio,@RequestParam String fechaFin) throws FileNotFoundException{
+    	logger.debug("Creando resumen de prestamos con excel");	
+    	return prestamoService.realizarResumenExcel(fechaInicio, fechaFin);
+    }
+    
+    @GetMapping("/prestamos/pdf")
+    public ResponseEntity<?> resumenPrestamosPdf(@RequestParam String fechaInicio,@RequestParam String fechaFin) throws FileNotFoundException{
+    	logger.debug("Creando resumen de prestamos con pdf");	
+    	return prestamoService.realizarResumenPdf(fechaInicio, fechaFin);
     }
 }
