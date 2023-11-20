@@ -1,6 +1,11 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
 
+<<<<<<< src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
+import java.time.LocalDate;
+
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -16,6 +21,8 @@ import org.springframework.core.io.InputStreamSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+
+
 import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.dto.MiembroDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
@@ -28,8 +35,13 @@ import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
 import ar.edu.unju.fi.tp9.service.IEmailService;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
+import ar.edu.unju.fi.tp9.service.IPdfGenerator;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
+<<<<<<< src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
+import ar.edu.unju.fi.tp9.util.BodyGenerator;
+=======
 import ar.edu.unju.fi.tp9.service.IResumenService;
+>>>>>>> src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
 @Service
@@ -49,7 +61,14 @@ public class PrestamoServiceImp implements IPrestamoService {
     IEmailService emailService;
     @Autowired
     DateFormatter dateFormatter;
+
     @Autowired
+    IPdfGenerator pdfGenerator;
+    
+    @Autowired
+    BodyGenerator bodyGenerator;
+
+
     @Qualifier("excelService")
     private IResumenService excelService;
     @Autowired
@@ -57,6 +76,7 @@ public class PrestamoServiceImp implements IPrestamoService {
     private IResumenService pdfService;
     
     
+
     /**
      * Metodo que guarda un prestamo en la bd
      * @param prestamo
@@ -74,6 +94,22 @@ public class PrestamoServiceImp implements IPrestamoService {
         logger.debug("Prestamo: " + prestamoGuardar.getId() +" guardado con exito");
         enviarCorreo(prestamo);
         return prestamoAInfoDto(prestamoGuardar);
+    }
+
+
+    /**
+     * Metodo que obtiene un prestamo y genera su correspondiente comprobante de prestamo
+     * @param idPrestamo
+     * @return ByteArrayOutputStream
+     * @throws ManagerException
+     */
+    @Override
+    public ByteArrayOutputStream generarComprobante(Long idPrestamo) throws ManagerException {
+        PrestamoDto prestamo = obtenerPrestamoById(idPrestamo);
+        if(prestamo == null){
+            throw new ManagerException("No existe el prestamo con id " + idPrestamo);
+        }
+        return pdfGenerator.generarPdfSinGuardar(bodyGenerator.generarBodyComprobante(miembroService.obtenerMiembroById(prestamo.getIdMiembroDto()), libroService.buscarLibroPorId(prestamo.getIdLibroDto()), prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion())); 
     }
 
     /**
@@ -105,7 +141,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         String to = miembroDto.getCorreo();
         String subject = "Prestamo: " + libroDto.getTitulo();
 
-        String htmlBody = generarBody(libroDto, prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion());
+        String htmlBody = bodyGenerator.generarBodyCorreo(libroDto, prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion());
 
         try{ 
             InputStreamSource inputStream = new FileSystemResource("src/main/resources/images/Bibliowlteca.png");
@@ -116,28 +152,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
     }
 
-    /**
-     * Metodo que genera el body del correo
-     * @param libroDto
-     * @param fechaPrestamo
-     * @param fechaDevolucion
-     * @return
-     */
-    public String generarBody(LibroDto libroDto, String fechaPrestamo, String fechaDevolucion){
-        String htmlBody = "<html><body><div style='text-align: center;'>" +
-            "<h1>Bibliowlteca</h1>" +
-            "<img src=\"cid:logo\" style=\"width: 200px; display: block; margin: 0 auto; border-radius: 20px;\" />"  +
-            "<h2>Informacion del prestamo</h2>"  +
-            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
-            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
-            "<p><b>Fecha de prestamo:</b> "+ fechaPrestamo  + "</p>" +
-            "<p><b>Fecha de devolucion:</b> "+ fechaDevolucion + "</p>" +
-            "<h6>Correo generado automaticamente</h6>" + 
-            "</div></body></html>";
-            logger.info("Body generado correctamente");
-        return htmlBody;
-    }
-
+    
 
     /**
      * Metodo que devuelve un prestamo

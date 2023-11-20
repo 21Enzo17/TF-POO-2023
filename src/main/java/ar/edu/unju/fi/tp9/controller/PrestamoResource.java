@@ -10,15 +10,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import org.springframework.http.MediaType;
+
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
 
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -45,6 +51,24 @@ public class PrestamoResource {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @GetMapping("/prestamos/comprobante/{id}")
+    public ResponseEntity<?> obtenerComprobante(@PathVariable Long id ){
+        Map<String, Object> response = new HashMap<String, Object>();
+        try{
+            ByteArrayOutputStream comprobante = prestamoService.generarComprobante(id);
+            byte[] contents = comprobante.toByteArray();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("filename", "comprobante.pdf");
+            return new ResponseEntity<>(contents, headers, HttpStatus.OK);
+        }catch(Exception e){
+            logger.error("Error al obtener comprobante: "+ e.getMessage());
+            response.put("Mensaje", e.getMessage());
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @GetMapping("/prestamos/{id}")
     public ResponseEntity<?> obtenerPrestamo(@PathVariable Long id){
