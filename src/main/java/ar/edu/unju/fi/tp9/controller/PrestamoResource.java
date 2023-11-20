@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
-
+import ar.edu.unju.fi.tp9.util.HeaderGenerator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -36,6 +37,8 @@ public class PrestamoResource {
 
     @Autowired
     IPrestamoService prestamoService;
+    @Autowired
+    HeaderGenerator headerGenerator;
 
     @PostMapping("/prestamos")
     public ResponseEntity<?> guardarPrestmo(@RequestParam Long idMiembro,@RequestParam Long idLibro){
@@ -58,10 +61,8 @@ public class PrestamoResource {
         try{
             ByteArrayOutputStream comprobante = prestamoService.generarComprobante(id);
             byte[] contents = comprobante.toByteArray();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", "comprobante.pdf");
-            return new ResponseEntity<>(contents, headers, HttpStatus.OK);
+            
+            return new ResponseEntity<>(contents, headerGenerator.crearHeadersComprobantePdf() , HttpStatus.OK);
         }catch(Exception e){
             logger.error("Error al obtener comprobante: "+ e.getMessage());
             response.put("Mensaje", e.getMessage());
@@ -113,14 +114,28 @@ public class PrestamoResource {
     }
     
     @GetMapping("/prestamos/excel")
-    public ResponseEntity<?> resumenPrestamosExcel(@RequestParam String fechaInicio,@RequestParam String fechaFin) throws FileNotFoundException{
-    	logger.debug("Creando resumen de prestamos con excel");	
-    	return prestamoService.realizarResumenExcel(fechaInicio, fechaFin);
+    public ResponseEntity<?> resumenPrestamosExcel(@RequestParam String fechaInicio,@RequestParam String fechaFin) throws ManagerException{
+    	Map<String, Object> response = new HashMap<String, Object>();
+        try{
+            return prestamoService.realizarResumenExcel(fechaInicio, fechaFin);
+        }catch(Exception e){
+            logger.error("Error al generar el resumen en excel: "+ e.getMessage());
+            response.put("Mensaje", e.getMessage());
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    	
     }
     
     @GetMapping("/prestamos/pdf")
-    public ResponseEntity<?> resumenPrestamosPdf(@RequestParam String fechaInicio,@RequestParam String fechaFin) throws FileNotFoundException{
-    	logger.debug("Creando resumen de prestamos con pdf");	
-    	return prestamoService.realizarResumenPdf(fechaInicio, fechaFin);
+    public ResponseEntity<?> resumenPrestamosPdf(@RequestParam String fechaInicio,@RequestParam String fechaFin) throws ManagerException{
+        Map<String, Object> response = new HashMap<String, Object>();
+        try{
+            return prestamoService.realizarResumenPdf(fechaInicio, fechaFin);
+        }catch(Exception e){
+            logger.error("Error al generar el resumen en pdf: "+ e.getMessage());
+            response.put("Mensaje", e.getMessage());
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

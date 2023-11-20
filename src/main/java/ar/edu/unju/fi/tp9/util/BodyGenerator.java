@@ -49,7 +49,7 @@ public  class BodyGenerator {
      * @param fechaDevolucion
      * @return
      */
-    public String generarBodyComprobante(MiembroDto miembroDto,LibroDto libroDto, String fechaPrestamo, String fechaDevolucion){
+    public String generarBodyComprobante(MiembroDto miembroDto,LibroDto libroDto, String fechaPrestamo, String fechaDevolucion,String estado){
         URL imageUrl = getClass().getResource("/images/Bibliowlteca.png");
         String imgTag = "<img src=\"" + imageUrl.toString() + "\" style=\"width: 150px; display: block; margin: 0 auto; border-radius: 20px;\" />";
         return  "<html><body><div style='text-align: center; border: 2px solid black; padding: 10px; width: 50%; margin: auto; display: block; border-radius:25px'>" +
@@ -66,6 +66,7 @@ public  class BodyGenerator {
             "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
             "<p><b>Fecha de prestamo:</b> "+ fechaPrestamo  + "</p>" +
             "<p><b>Fecha de devolucion:</b> "+ fechaDevolucion + "</p>" +
+            "<p><b>Estado:</b> "+ estado + "</p>" +
             "</div>" +
             "<h6>Comprobante generado automaticamente</h6>" + 
         "</div></body></html>";

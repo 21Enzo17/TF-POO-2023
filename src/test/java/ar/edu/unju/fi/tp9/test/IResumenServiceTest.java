@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import ar.edu.unju.fi.tp9.dto.PrestamoInfoDto;
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
 import ar.edu.unju.fi.tp9.service.IResumenService;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
@@ -58,13 +59,13 @@ public class IResumenServiceTest {
     }
 
     @Test
-    void crearExcel(){
+    void crearExcel() throws ManagerException{
         ResponseEntity<byte[]> response = excelTarget.realizarResumen(prestamosDto, fechaInicio, fechaFin);
         assertNotNull(response);
     }
 
     @Test
-    void crearPdf(){
+    void crearPdf() throws ManagerException{
         ResponseEntity<byte[]> response = pdfTarget.realizarResumen(prestamosDto, fechaInicio, fechaFin);
         assertNotNull(response);
     }

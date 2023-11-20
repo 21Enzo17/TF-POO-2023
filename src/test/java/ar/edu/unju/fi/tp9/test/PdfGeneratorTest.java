@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.tp9.test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -15,14 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 import ar.edu.unju.fi.tp9.entity.Prestamo;
-import ar.edu.unju.fi.tp9.service.IPdfGenerator;
+import ar.edu.unju.fi.tp9.service.IComprobanteGenerator;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
 @SpringBootTest
 public class PdfGeneratorTest {
 
     @Autowired
-    IPdfGenerator pdfGenerator;
+    IComprobanteGenerator pdfGenerator;
     @Autowired
     DateFormatter dateFormatter;
 
@@ -58,6 +59,6 @@ public class PdfGeneratorTest {
 
     @Test
     public void generarPdfTest() throws Exception {
-        assertDoesNotThrow(()-> pdfGenerator.generarPdf(htmlBody) );
+        assertNotNull(pdfGenerator.generarComprobante(htmlBody));
     }
 }

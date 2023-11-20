@@ -26,8 +26,10 @@ import com.itextpdf.layout.property.HorizontalAlignment;
 import com.itextpdf.layout.property.TextAlignment;
 
 import ar.edu.unju.fi.tp9.dto.PrestamoInfoDto;
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IResumenService;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
+import ar.edu.unju.fi.tp9.util.HeaderGenerator;
 
 @Service("pdfService")
 public class PdfResumenServiceImp implements IResumenService {
@@ -35,9 +37,20 @@ public class PdfResumenServiceImp implements IResumenService {
 	
 	@Autowired
 	DateFormatter dateFormatter;
+	@Autowired
+	HeaderGenerator headerGenerator;
 	
+
+	/**
+	 * Genera un archivo pdf con los prestamos realizados entre las fechas indicadas
+	 * @param prestamosDto
+	 * @param fechaInicio
+	 * @param fechaFin
+	 * @return ResponseEntity<byte[]> con el archivo pdf
+	 * @throws ManagerException
+	 */
 	@Override
-	public ResponseEntity<byte[]> realizarResumen(List<PrestamoInfoDto> prestamosDto, String fechaInicio, String fechaFin)  {
+	public ResponseEntity<byte[]> realizarResumen(List<PrestamoInfoDto> prestamosDto, String fechaInicio, String fechaFin) throws ManagerException {
 		ByteArrayOutputStream resumen = new ByteArrayOutputStream();
 		
 		PdfWriter writer = new PdfWriter(resumen);
@@ -52,10 +65,17 @@ public class PdfResumenServiceImp implements IResumenService {
 		document.close();
 		
 		byte[] pdfBytes = resumen.toByteArray();
-        return new ResponseEntity<>(pdfBytes, crearHeaders(pdfBytes), HttpStatus.OK);
+		logger.info("Pdf generado correctamente");
+        return new ResponseEntity<>(pdfBytes, headerGenerator.crearHeadersPdf(pdfBytes), HttpStatus.OK);
 	}
 	
-	private void agregarImagen(Document document) {
+	
+	/**
+	 * Metodo encargado de agregar el logo d la biblioteca
+	 * @param document
+	 * @throws ManagerException
+	 */
+	private void agregarImagen(Document document) throws ManagerException{
 		String path = "src/main/resources/images/Bibliowlteca.png";
 		ImageData data;
 		
@@ -74,10 +94,18 @@ public class PdfResumenServiceImp implements IResumenService {
 	        
 	        document.add(paragraph);
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error("Error al agregar imagen");
+			throw new ManagerException("Hubo un error al agregar la imagen");
 		}
 	}
 	
+
+	/**
+	 * Metodo encargado de crear el cuerpo del pdf
+	 * @param document
+	 * @param fechaInicio
+	 * @param fechaFin
+	 */
 	private void crearCuerpo(Document document, String fechaInicio, String fechaFin) {
 		String content = "RESUMEN DE PRESTAMOS\nEntre " + fechaInicio + " y " + fechaFin;
 		Paragraph paragraph = new Paragraph(content);
@@ -91,6 +119,12 @@ public class PdfResumenServiceImp implements IResumenService {
 		document.add(paragraph);
 	}
 	
+
+	/**
+	 * Metodo encargado de crear la tabla con los prestamos
+	 * @param document
+	 * @param prestamosDto
+	 */
 	private void crearTabla(Document document, List<PrestamoInfoDto> prestamosDto) {
 		float [] pointColumnWidths = {100F, 150F, 150F, 150F, 150F, 150F};
 		Table table = new Table(pointColumnWidths);
@@ -116,11 +150,5 @@ public class PdfResumenServiceImp implements IResumenService {
         document.add(table);
 	}
 
-	private HttpHeaders crearHeaders(byte[] pdfBytes) {
-		HttpHeaders headers = new HttpHeaders();
-	    headers.setContentType(MediaType.APPLICATION_PDF);
-	    headers.setContentDispositionFormData("attachment", "Resumen.pdf");
-	    headers.setContentLength(pdfBytes.length);
-	    return headers;
-	}
+
 }

@@ -12,24 +12,12 @@ import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 
-import ar.edu.unju.fi.tp9.service.IPdfGenerator;
+import ar.edu.unju.fi.tp9.service.IComprobanteGenerator;
 
 @Service
-public class PdfGenerator implements IPdfGenerator {
-    static Logger logger = Logger.getLogger(PdfGenerator.class);
+public class ComprobanteGenerator implements IComprobanteGenerator {
+    static Logger logger = Logger.getLogger(ComprobanteGenerator.class);
     
-    @Override
-    public void generarPdf(String html) throws FileNotFoundException {
-        String dest = "prestamo.pdf";
-        PdfWriter writer = new PdfWriter(dest);
-        PdfDocument pdfDoc = new PdfDocument(writer);
-        ConverterProperties properties = new ConverterProperties();
-        HtmlConverter.convertToPdf(html, pdfDoc, properties);
-        pdfDoc.close();
-        logger.info("PDF generado con exito");
-        
-    }
-
 
     /**
      * Este metodo se encarga de generar un pdf sin guardarlo en el sistema de archivos,
@@ -39,7 +27,7 @@ public class PdfGenerator implements IPdfGenerator {
      * @throws FileNotFoundException
      */
     @Override
-    public ByteArrayOutputStream generarPdfSinGuardar(String html) {
+    public ByteArrayOutputStream generarComprobante(String html) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(outputStream);
     

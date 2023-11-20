@@ -1,10 +1,8 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
 
-<<<<<<< src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
+
 import java.io.ByteArrayOutputStream;
-import java.net.URL;
-import java.time.LocalDate;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
@@ -35,13 +33,13 @@ import ar.edu.unju.fi.tp9.repository.PrestamoRepository;
 import ar.edu.unju.fi.tp9.service.IEmailService;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
-import ar.edu.unju.fi.tp9.service.IPdfGenerator;
+import ar.edu.unju.fi.tp9.service.IComprobanteGenerator;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
-<<<<<<< src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
+
 import ar.edu.unju.fi.tp9.util.BodyGenerator;
-=======
+
 import ar.edu.unju.fi.tp9.service.IResumenService;
->>>>>>> src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
+
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
 @Service
@@ -63,12 +61,12 @@ public class PrestamoServiceImp implements IPrestamoService {
     DateFormatter dateFormatter;
 
     @Autowired
-    IPdfGenerator pdfGenerator;
+    IComprobanteGenerator comprobanteGenerator;
     
     @Autowired
     BodyGenerator bodyGenerator;
 
-
+    @Autowired
     @Qualifier("excelService")
     private IResumenService excelService;
     @Autowired
@@ -107,9 +105,12 @@ public class PrestamoServiceImp implements IPrestamoService {
     public ByteArrayOutputStream generarComprobante(Long idPrestamo) throws ManagerException {
         PrestamoDto prestamo = obtenerPrestamoById(idPrestamo);
         if(prestamo == null){
+            logger.error("No se encontro el prestamo con id " + idPrestamo + " para generar el comprobante");
             throw new ManagerException("No existe el prestamo con id " + idPrestamo);
         }
-        return pdfGenerator.generarPdfSinGuardar(bodyGenerator.generarBodyComprobante(miembroService.obtenerMiembroById(prestamo.getIdMiembroDto()), libroService.buscarLibroPorId(prestamo.getIdLibroDto()), prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion())); 
+        logger.info("Generando comprobante de prestamo");
+        return comprobanteGenerator.generarComprobante(bodyGenerator.generarBodyComprobante(miembroService.obtenerMiembroById(prestamo.getIdMiembroDto()), 
+        libroService.buscarLibroPorId(prestamo.getIdLibroDto()), prestamo.getFechaPrestamo(), prestamo.getFechaDevolucion(), prestamo.getEstado())); 
     }
 
     /**
@@ -316,32 +317,54 @@ public class PrestamoServiceImp implements IPrestamoService {
         logger.debug(prestamo.getId() + " eliminado con exito");
     }
 
+
+    /**
+     * Metodo encargado de buscar todos los prestamos entre dos fechas y retornarlo como una lista de PrestamoInfoDto
+     * @param fechaInicio
+     * @param fechaFin
+     * @return List<PrestamoInfoDto>
+     */
     private List<PrestamoInfoDto> listaPrestamosEntre(LocalDateTime fechaInicio, LocalDateTime fechaFin){
     	List<Prestamo> prestamos = prestamoRepository.findByFechaPrestamoBetween(fechaInicio, fechaFin);
     	List<PrestamoInfoDto> listaDto = new ArrayList<>();
-    	
+    	logger.debug("Se encontraron " + prestamos.size() + " prestamos");
     	for(Prestamo prestamo : prestamos)
     		listaDto.add(prestamoAInfoDto(prestamo));
     	return listaDto;
-    }
-    
+    }  
+
+
+    /**
+     * Metodo encargado de generar un resumen de prestamos en formato excel
+     * @param fechaInicio
+     * @param fechaFin
+     * @return ResponseEntity<byte[]>
+     */
 	@Override
-	public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws FileNotFoundException {	
+	public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws ManagerException{	
 		LocalDateTime fechaInicioFormateada = dateFormatter.fechDateTime(fechaInicio);
 		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
 		
 		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
-		
+		logger.info("Generando resumen de prestamos con excel");
 		return excelService.realizarResumen(listaDto, fechaInicio, fechaFin);
 	}
 
+
+    /**
+     * Metodo encargado de generar un resumen de prestamos en formato pdf
+     * @param fechaInicio
+     * @param fechaFin
+     * @return ResponseEntity<byte[]>
+     */
 	@Override
-	public ResponseEntity<byte[]> realizarResumenPdf(String fechaInicio, String fechaFin) throws FileNotFoundException {
+	public ResponseEntity<byte[]> realizarResumenPdf(String fechaInicio, String fechaFin) throws ManagerException {
 		LocalDateTime fechaInicioFormateada = dateFormatter.fechDateTime(fechaInicio);
 		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
 		
 		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
 		
+        logger.info("Generando resumen de prestamos con pdf");
         return pdfService.realizarResumen(listaDto, fechaInicio, fechaFin);
 	}
 }
