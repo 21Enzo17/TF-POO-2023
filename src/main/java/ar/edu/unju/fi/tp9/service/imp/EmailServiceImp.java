@@ -59,6 +59,7 @@ public class EmailServiceImp implements IEmailService {
             DataSource dataSource = new ByteArrayDataSource(comprobante.toByteArray(), "application/pdf");
 
             helper.addAttachment("comprobante.pdf", dataSource);
+            
             mailSender.send(message);
         } catch (MailException e) {
             logger.error("Error al enviar el correo: " + e.getMessage());

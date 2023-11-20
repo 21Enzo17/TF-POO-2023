@@ -36,6 +36,7 @@ public class MiembroServiceImp implements IMiembroService {
     public MiembroDto guardarMiembro(MiembroDto miembro) throws ManagerException {
         Miembro miembroReturn;
         if(miembroRepository.findByCorreo(miembro.getCorreo()).orElse(null) != null){
+            logger.error("Error al guardar alumno, correo repetido");
             throw new ManagerException("Error al guardar alumno, correo repetido");
         }else{
             miembroReturn = miembroRepository.save(crearUnMiembro(miembroDtoAMiembro(miembro)));
