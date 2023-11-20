@@ -1,6 +1,7 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
 
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -9,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
@@ -24,7 +26,9 @@ import ar.edu.unju.fi.tp9.service.IEmailService;
 import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
+import ar.edu.unju.fi.tp9.service.IResumenPrestamos;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
+import ar.edu.unju.fi.tp9.util.GeneradorResumen;
 
 @Service
 public class PrestamoServiceImp implements IPrestamoService {
@@ -43,7 +47,12 @@ public class PrestamoServiceImp implements IPrestamoService {
     IEmailService emailService;
     @Autowired
     DateFormatter dateFormatter;
-
+    @Autowired
+    IResumenPrestamos resumenTipo;
+    @Autowired
+    GeneradorResumen generador;
+    
+    
     /**
      * Metodo que guarda un prestamo en la bd
      * @param prestamo
@@ -286,5 +295,20 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoRepository.deleteById(id);
         logger.debug(prestamo.getId() + " eliminado con exito");
     }
-    
+
+	@Override
+	public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws FileNotFoundException {
+		 resumenTipo = new ResumenPrestamosExcelImp();
+		 generador = new GeneradorResumen(resumenTipo, fechaInicio, fechaFin);
+		 
+		 return generador.generarResumen();
+	}
+
+	@Override
+	public ResponseEntity<byte[]> realizarResumenPdf(String fechaInicio, String fechaFin) throws FileNotFoundException {
+		 resumenTipo = new ResumenPrestamosPdfImp();
+		 generador = new GeneradorResumen(resumenTipo, fechaInicio, fechaFin);
+		 
+		 return generador.generarResumen();
+	}
 }

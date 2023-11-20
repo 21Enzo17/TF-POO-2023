@@ -1,8 +1,10 @@
 package ar.edu.unju.fi.tp9.service;
 
+import java.io.FileNotFoundException;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import ar.edu.unju.fi.tp9.dto.MiembroDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoDto;
 import ar.edu.unju.fi.tp9.dto.PrestamoInfoDto;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
@@ -18,4 +20,7 @@ public interface IPrestamoService {
 
     public void eliminarPrestamoById(Long id) throws ManagerException;
 
+    public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws FileNotFoundException;
+    
+    public ResponseEntity<byte[]> realizarResumenPdf(String fechaInicio, String fechaFin) throws FileNotFoundException;
 }
