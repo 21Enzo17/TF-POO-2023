@@ -29,9 +29,10 @@ public class ExcelResumenServiceImp implements IResumenService{
         Sheet sheet = workbook.createSheet("Prestamos");
         CreationHelper creationHelper = workbook.getCreationHelper();
         
-        agregarTitulo(sheet, fechaInicio, fechaFin);
-        generarColumnas(sheet);
+        generarColumnas(sheet, workbook);
         copiarDatos(sheet, prestamosDto, creationHelper);
+        ajustarAncho(sheet);
+        agregarTitulo(sheet, fechaInicio, fechaFin);
         cerrarArchivo(workbook, outputStream);
         
         return new ResponseEntity<>(outputStream.toByteArray(), crearHeaders(), 200);
@@ -43,13 +44,21 @@ public class ExcelResumenServiceImp implements IResumenService{
     	cell.setCellValue("Resumen de prestamos entre " + fechaIncio + " y " + fechaFin);
     }
     
-    private void generarColumnas(Sheet sheet) {
+    private void generarColumnas(Sheet sheet, Workbook workbook) {
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+
     	Row headerRow = sheet.createRow(1);
         String[] headers = {"id", "Miembro", "Libro", "Fecha del Prestamo", "Fecha de Devolucion", "Estado"};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
         }
+
     }
     
     private void copiarDatos(Sheet sheet, List<PrestamoInfoDto> prestamosDto, CreationHelper creationHelper) {
@@ -87,5 +96,12 @@ public class ExcelResumenServiceImp implements IResumenService{
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment", "Prestamos.xlsx");
         return headers;
+    }
+
+    private void ajustarAncho(Sheet sheet){
+        sheet.setColumnWidth(0, 256*5);
+        for (int i = 1; i < 6; i++) {
+            sheet.autoSizeColumn(i);
+        }
     }
 }
