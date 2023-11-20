@@ -1,17 +1,24 @@
 package ar.edu.unju.fi.tp9.service.imp;
 
 
+<<<<<<< src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.time.LocalDate;
+
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -30,7 +37,11 @@ import ar.edu.unju.fi.tp9.service.ILibroService;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 import ar.edu.unju.fi.tp9.service.IPdfGenerator;
 import ar.edu.unju.fi.tp9.service.IPrestamoService;
+<<<<<<< src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
 import ar.edu.unju.fi.tp9.util.BodyGenerator;
+=======
+import ar.edu.unju.fi.tp9.service.IResumenService;
+>>>>>>> src/main/java/ar/edu/unju/fi/tp9/service/imp/PrestamoServiceImp.java
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
 @Service
@@ -50,10 +61,21 @@ public class PrestamoServiceImp implements IPrestamoService {
     IEmailService emailService;
     @Autowired
     DateFormatter dateFormatter;
+
     @Autowired
     IPdfGenerator pdfGenerator;
+    
     @Autowired
     BodyGenerator bodyGenerator;
+
+
+    @Qualifier("excelService")
+    private IResumenService excelService;
+    @Autowired
+    @Qualifier("pdfService")
+    private IResumenService pdfService;
+    
+    
 
     /**
      * Metodo que guarda un prestamo en la bd
@@ -205,6 +227,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoInfoDto.setTituloLibro(prestamo.getLibro().getTitulo());
         prestamoInfoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(prestamo.getFechaPrestamo().toString()));
         prestamoInfoDto.setFechaDevolucion(dateFormatter.transformarFechaNatural(prestamo.getFechaDevolucion().toString()));
+        prestamoInfoDto.setEstado(prestamo.getEstado().toString());
         logger.info("Se mapeo el prestamoInfoDto con exito");
         return prestamoInfoDto;
     }
@@ -292,5 +315,33 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoRepository.deleteById(id);
         logger.debug(prestamo.getId() + " eliminado con exito");
     }
+
+    private List<PrestamoInfoDto> listaPrestamosEntre(LocalDateTime fechaInicio, LocalDateTime fechaFin){
+    	List<Prestamo> prestamos = prestamoRepository.findByFechaPrestamoBetween(fechaInicio, fechaFin);
+    	List<PrestamoInfoDto> listaDto = new ArrayList<>();
+    	
+    	for(Prestamo prestamo : prestamos)
+    		listaDto.add(prestamoAInfoDto(prestamo));
+    	return listaDto;
+    }
     
+	@Override
+	public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws FileNotFoundException {	
+		LocalDateTime fechaInicioFormateada = dateFormatter.fechDateTime(fechaInicio);
+		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
+		
+		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
+		
+		return excelService.realizarResumen(listaDto, fechaInicio, fechaFin);
+	}
+
+	@Override
+	public ResponseEntity<byte[]> realizarResumenPdf(String fechaInicio, String fechaFin) throws FileNotFoundException {
+		LocalDateTime fechaInicioFormateada = dateFormatter.fechDateTime(fechaInicio);
+		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
+		
+		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
+		
+        return pdfService.realizarResumen(listaDto, fechaInicio, fechaFin);
+	}
 }

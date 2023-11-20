@@ -11,6 +11,7 @@ public class PrestamoInfoDto implements Serializable {
     private String tituloLibro;
     private String fechaPrestamo;
     private String fechaDevolucion;
+    private String estado;
 
     public Long getId(){
         return this.id;
@@ -52,6 +53,12 @@ public class PrestamoInfoDto implements Serializable {
         this.fechaDevolucion = fechaDevolucion;
     }
 
+    public String getEstado(){
+        return this.estado;
+    }
 
+    public void setEstado(String estado){
+        this.estado = estado;
+    }
    
 }
