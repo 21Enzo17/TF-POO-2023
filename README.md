@@ -1,4 +1,3 @@
-
 # PROGRAMACION ORIENTADA A OBJETOS
 ## Profesores
 - José Zapana
@@ -13,7 +12,8 @@ Java 17
 * Junit
 * javax-mail
 * spring-Boot-Starter-Mail
-
+* iText7
+* Apache Poi
 ### Integrantes
 - Enzo Nicolás Meneghini
 - Mauricio Miranda
@@ -99,6 +99,19 @@ emitir el mensaje que corresponda.
 - Puede haber más de una solución a los requerimientos planteados.
 - Realicen los cambios que consideren necesarios tanto en las entidades como en los
 servicios para diseñar la solución.
+# Sprint 4
+Implemente las funcionalidades que permitan generar los siguientes reportes:
+1. Generar el comprobante del préstamo (formato pdf)
+2. Resumen de préstamos realizados en el rango de fechas desde y hasta (formato excel y
+formato pdf)
+3. Subir un video con la demostración de la aplicación lograda, el mismo debe incluir
+   - Debe mostrar el rostro en vivo de los participantes
+   - Debe exponer las funcionalidades logradas
+   - Debe explicar las partes relevantes del código
+   - Debe tener una duración máxima de 10 minutos
+### Consideraciones
+- Para la generación de reportes en pdf debe utilizar la librería iText
+- Para la generación del resúmen de préstamos realizados utilizar la librería Apache POI.
 
 ## Diagrama UML
 ![UML]( UML.jpg)
