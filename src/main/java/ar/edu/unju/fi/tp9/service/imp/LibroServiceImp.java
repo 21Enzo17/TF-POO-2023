@@ -27,9 +27,26 @@ public class LibroServiceImp implements ILibroService{
 
 	private static ModelMapper mapper = new ModelMapper();
 	
+	private void verificarIsbnNumeroInventario(String isbn, Long numeroInventario) throws ManagerException {
+		if( libroRepository.findByIsbnAndNumeroInventario(isbn, numeroInventario) != null ) {
+			logger.error("Libro con ISBN " + isbn + " y numero de inventario " + numeroInventario + " ya registrado");
+			throw new ManagerException("Libro con ISBN " + isbn + " y numero de inventario " + numeroInventario + " ya registrado");
+		}
+	}
 	
-	private boolean estaIsbnRegistrado(String isbn) {
-		return libroRepository.existsByIsbn(isbn);
+	private List<LibroDto> devolverListaLibrosDto(List<Libro> libros){
+		List<LibroDto> librosDto = new ArrayList<>();
+		
+		if(libros.size() == 0) {
+			logger.info("No hay libros devolviendo lista vacia");
+			return librosDto;
+		}
+		else {
+			for(Libro libro : libros)
+				librosDto.add(libroALibroDto(libro));
+			logger.info("Devolviendo lista de libros librosDto");
+			return librosDto;
+		}
 	}
 	
 	/**
@@ -39,22 +56,20 @@ public class LibroServiceImp implements ILibroService{
 	public void guardarLibro(LibroDto libroDto) throws ManagerException {
 		Libro nuevoLibro = new Libro();
 		
-		if(estaIsbnRegistrado(libroDto.getIsbn()))
-			if(buscarLibroPorIsbn(libroDto.getIsbn()).getNumeroInventario() == libroDto.getNumeroInventario()) {
-				logger.error("Libro con ISBN " + libroDto.getIsbn() + " y numero de inventario " + libroDto.getNumeroInventario() + " ya registrado");
-				throw new ManagerException("Libro con ISBN " + libroDto.getIsbn() + " y numero de inventario " + libroDto.getNumeroInventario() + " ya registrado");
-			}
+		verificarIsbnNumeroInventario(libroDto.getIsbn(), libroDto.getNumeroInventario());
 				
-			mapper.map(libroDto, nuevoLibro);
-			nuevoLibro.setEstado(EstadoLibro.DISPONIBLE.toString());
-			libroRepository.save(nuevoLibro);
-			logger.debug("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
+		mapper.map(libroDto, nuevoLibro);
+		nuevoLibro.setEstado(EstadoLibro.DISPONIBLE.toString());
+		
+		libroRepository.save(nuevoLibro);
+		logger.debug("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
 	}
 
 	/**
 	 * Recibe un id por parametro y verifica que exista previamente antes de eliminarlo.
 	 */
 	@Override
+	
 	public void eliminarLibro(Long id) {
 		Optional<Libro> libro = libroRepository.findById(id);
 		
@@ -129,40 +144,19 @@ public class LibroServiceImp implements ILibroService{
 	 */
 	@Override
 	public List<LibroDto> buscarLibroPorAutor(String autor) {
-		List<LibroDto> librosDto = new ArrayList<>();
-		List<Libro> libroBuscado = libroRepository.findAllByAutor(autor);
-		
-		if(libroBuscado.size() == 0) {
-			logger.info("No hay libros de " + autor + " devolviendo lista vacia");
-			return librosDto;
-		}
-		else {
-			for(Libro p : libroBuscado)
-				librosDto.add(libroALibroDto(p));
-			logger.info("Devolviendo los librosDto del autor " + autor);
-			return librosDto;
-		}
+		List<Libro> librosBuscados = libroRepository.findAllByAutor(autor);
+		return devolverListaLibrosDto(librosBuscados);
 	}
 
 	/**
 	 * Devuelve un libroDto buscado por isbn pasado por parametro, si no existe, sino devuelve null.
 	 */
 	@Override
-	public LibroDto buscarLibroPorIsbn(String isbn) {
-		LibroDto libroDto = new LibroDto();
-		Libro libroBuscado = libroRepository.findByIsbn(isbn);
+	public List<LibroDto> buscarLibroPorIsbn(String isbn) {
+		List<Libro> librosBuscados = libroRepository.findAllByIsbn(isbn);
+		return devolverListaLibrosDto(librosBuscados);
 		
-		if(libroBuscado == null) {
-			logger.info("Libro por isbn no encontrado, devolviendo null");
-			return null;
-		}
-		else {
-			mapper.map(libroBuscado, libroDto);
-			logger.info("Devolviendo libro buscado por ISBN");
-			return libroDto;
-		}
 	}
-
 	
 	@Override
 	public long librosSize() {

@@ -2,7 +2,6 @@ package ar.edu.unju.fi.tp9.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

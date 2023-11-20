@@ -59,7 +59,7 @@ public class MiembroResource {
         }
     }
 
-    @GetMapping("/miembros/")
+    @GetMapping("/miembros")
     public ResponseEntity<?> obtenerMiembroPorCorreo(@RequestParam String correo){
         Map<String, Object> response = new HashMap<String, Object>();
         try{
