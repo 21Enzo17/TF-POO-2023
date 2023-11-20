@@ -4,6 +4,8 @@ package ar.edu.unju.fi.tp9.service.imp;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -30,7 +32,6 @@ import ar.edu.unju.fi.tp9.service.IPrestamoService;
 import ar.edu.unju.fi.tp9.service.IResumenService;
 import ar.edu.unju.fi.tp9.util.DateFormatter;
 
-
 @Service
 public class PrestamoServiceImp implements IPrestamoService {
     static Logger logger = Logger.getLogger(PrestamoServiceImp.class);
@@ -51,7 +52,6 @@ public class PrestamoServiceImp implements IPrestamoService {
     @Autowired
     @Qualifier("excelService")
     private IResumenService excelService;
-
     @Autowired
     @Qualifier("pdfService")
     private IResumenService pdfService;
@@ -212,6 +212,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoInfoDto.setTituloLibro(prestamo.getLibro().getTitulo());
         prestamoInfoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(prestamo.getFechaPrestamo().toString()));
         prestamoInfoDto.setFechaDevolucion(dateFormatter.transformarFechaNatural(prestamo.getFechaDevolucion().toString()));
+        prestamoInfoDto.setEstado(prestamo.getEstado().toString());
         logger.info("Se mapeo el prestamoInfoDto con exito");
         return prestamoInfoDto;
     }
@@ -300,13 +301,32 @@ public class PrestamoServiceImp implements IPrestamoService {
         logger.debug(prestamo.getId() + " eliminado con exito");
     }
 
+    private List<PrestamoInfoDto> listaPrestamosEntre(LocalDateTime fechaInicio, LocalDateTime fechaFin){
+    	List<Prestamo> prestamos = prestamoRepository.findByFechaPrestamoBetween(fechaInicio, fechaFin);
+    	List<PrestamoInfoDto> listaDto = new ArrayList<>();
+    	
+    	for(Prestamo prestamo : prestamos)
+    		listaDto.add(prestamoAInfoDto(prestamo));
+    	return listaDto;
+    }
+    
 	@Override
 	public ResponseEntity<byte[]> realizarResumenExcel(String fechaInicio, String fechaFin) throws FileNotFoundException {	
-		 return excelService.realizarResumen(fechaInicio, fechaFin);
+		LocalDateTime fechaInicioFormateada = dateFormatter.fechDateTime(fechaInicio);
+		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
+		
+		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
+		
+		return excelService.realizarResumen(listaDto, fechaInicio, fechaFin);
 	}
 
 	@Override
 	public ResponseEntity<byte[]> realizarResumenPdf(String fechaInicio, String fechaFin) throws FileNotFoundException {
-        return pdfService.realizarResumen(fechaInicio, fechaFin);
+		LocalDateTime fechaInicioFormateada = dateFormatter.fechDateTime(fechaInicio);
+		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
+		
+		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
+		
+        return pdfService.realizarResumen(listaDto, fechaInicio, fechaFin);
 	}
 }
