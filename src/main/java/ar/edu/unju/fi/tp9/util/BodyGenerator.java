@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import ar.edu.unju.fi.tp9.dto.LibroDto;
 import ar.edu.unju.fi.tp9.dto.MiembroDto;
+import ar.edu.unju.fi.tp9.entity.Libro;
+import ar.edu.unju.fi.tp9.entity.Miembro;
 
 @Component
 public  class BodyGenerator {
@@ -25,18 +27,17 @@ public  class BodyGenerator {
      * @param fechaDevolucion
      * @return
      */
-    public String generarBodyCorreo(LibroDto libroDto, String fechaPrestamo, String fechaDevolucion){
+    public String generarBodyCorreo(Libro libro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion){
         String htmlBody = "<html><body><div style='text-align: center;'>" +
             "<h1>Bibliowlteca</h1>" +
             "<img src=\"cid:logo\" style=\"width: 200px; display: block; margin: 0 auto; border-radius: 20px;\" />"  +
             "<h2>Informacion del prestamo</h2>"  +
-            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
-            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
-            "<p><b>Fecha de prestamo:</b> "+ fechaPrestamo  + "</p>" +
-            "<p><b>Fecha de devolucion:</b> "+ fechaDevolucion + "</p>" +
+            "<p><b>Titulo:</b> "+ libro.getTitulo() + "</p>"+ 
+            "<p><b>ISBN:</b> " + libro.getIsbn() + "</p>" +
+            "<p><b>Fecha de prestamo:</b> "+ dateFormatter.transformarFechaNatural(fechaPrestamo.toString())  + "</p>" +
+            "<p><b>Fecha de devolucion:</b> "+ dateFormatter.transformarFechaNatural(fechaDevolucion.toString()) + "</p>" +
             "<h6>Correo generado automaticamente</h6>" + 
             "</div></body></html>";
-            logger.info("Body generado correctamente");
         return htmlBody;
     }
 
@@ -47,20 +48,19 @@ public  class BodyGenerator {
      * @param fechaDevolucion
      * @return
      */
-    public String generarBodyCorreoDevolucion(LibroDto libroDto, String fechaPrestamo, String fechaDevolucion, String fechaSancion){
+    public String generarBodyCorreoDevolucion(Libro libro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion, String fechaSancion){
         String htmlBody = "<html><body><div style='text-align: center;'>" +
             "<h1>Bibliowlteca</h1>" +
             "<img src=\"cid:logo\" style=\"width: 200px; display: block; margin: 0 auto; border-radius: 20px;\" />"  +
             "<h2>Informacion de la devolucion</h2>"  +
-            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
-            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
-            "<p><b>Fecha de prestamo:</b> "+ fechaPrestamo  + "</p>" +
-            "<p><b>Fecha de devolucion:</b> "+ fechaDevolucion + "</p>" +
+            "<p><b>Titulo:</b> "+ libro.getTitulo() + "</p>"+ 
+            "<p><b>ISBN:</b> " + libro.getIsbn() + "</p>" +
+            "<p><b>Fecha de prestamo:</b> "+ dateFormatter.transformarFechaNatural(fechaPrestamo.toString())  + "</p>" +
+            "<p><b>Fecha de devolucion:</b> "+ dateFormatter.transformarFechaNatural(fechaDevolucion.toString()) + "</p>" +
             "<p><b>Gracias por confiar en nosotros!</b></p>"+
             (fechaSancion!=null ?"<p><b>Fecha de sancion:</b> "+ fechaSancion + "</p>":"")+
             "<h6>Correo generado automaticamente</h6>" + 
             "</div></body></html>";
-            logger.info("Body generado correctamente");
         return htmlBody;
     }
 
@@ -72,7 +72,7 @@ public  class BodyGenerator {
      * @param fechaDevolucion
      * @return
      */
-    public String generarBodyComprobante(MiembroDto miembroDto,LibroDto libroDto, String fechaPrestamo, String fechaDevolucion,String estado){
+    public String generarBodyComprobante(Miembro miembro,Libro libro, LocalDateTime fechaPrestamo, LocalDateTime fechaDevolucion,String estado){
         URL imageUrl = getClass().getResource("/images/Bibliowlteca.png");
         String imgTag = "<img src=\"" + imageUrl.toString() + "\" style=\"width: 150px; display: block; margin: 0 auto; border-radius: 20px;\" />";
         return  "<html><body><div style='text-align: center; border: 2px solid black; padding: 10px; width: 50%; margin: auto; display: block; border-radius:25px'>" +
@@ -83,12 +83,12 @@ public  class BodyGenerator {
         "<p>Emitido el: " + dateFormatter.transformarFechaNatural(LocalDateTime.now().withSecond(0).withNano(0).toString())  + "</p>" +
         "<hr>"+
         "<div style='text-align: justify;'>" +
-            "<p><b>Nombre del miembro:</b> "+ miembroDto.getNombre() + "</p>"+
-            "<p><b>Correo:</b> "+ miembroDto.getCorreo() + "</p>"+
-            "<p><b>Titulo:</b> "+ libroDto.getTitulo() + "</p>"+ 
-            "<p><b>ISBN:</b> " + libroDto.getIsbn() + "</p>" +
-            "<p><b>Fecha de prestamo:</b> "+ fechaPrestamo  + "</p>" +
-            "<p><b>Fecha de devolucion:</b> "+ fechaDevolucion + "</p>" +
+            "<p><b>Nombre del miembro:</b> "+ miembro.getNombre() + "</p>"+
+            "<p><b>Correo:</b> "+ miembro.getCorreo() + "</p>"+
+            "<p><b>Titulo:</b> "+ libro.getTitulo() + "</p>"+ 
+            "<p><b>ISBN:</b> " + libro.getIsbn() + "</p>" +
+            "<p><b>Fecha de prestamo:</b> "+ dateFormatter.transformarFechaNatural(fechaPrestamo.toString())  + "</p>" +
+            "<p><b>Fecha de devolucion:</b> "+ dateFormatter.transformarFechaNatural(fechaDevolucion.toString()) + "</p>" +
             "<p><b>Estado:</b> "+ estado + "</p>" +
             "</div>" +
             "<h6>Comprobante generado automaticamente</h6>" + 

@@ -71,7 +71,7 @@ public class EmailServiceImp implements IEmailService {
             logger.error("Argumento inválido: " + e.getMessage());
             throw new ManagerException("Uno o más de los argumentos proporcionados son inválidos. Por favor verifique los datos ingresados.");
         }
-        logger.debug("Correo enviado a: " + para);
+        logger.info("Correo enviado a: " + para);
     }
 
 

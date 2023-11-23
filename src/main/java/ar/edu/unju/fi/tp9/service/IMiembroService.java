@@ -9,16 +9,9 @@ import ar.edu.unju.fi.tp9.exception.ManagerException;
 
 @Service
 public interface IMiembroService {
-    /**
-     * Metodo encargado de guardar un miembro 
-     * @param miembro
-     */
+
     public MiembroDto guardarMiembro(MiembroDto miembro) throws ManagerException;
 
-    /**
-     * Metodo encargado de eliminar un miembro
-     * @param id
-     */
     public void eliminarMiembroPorCorreo(String correo) throws ManagerException;
 
     public void eliminarMiembroPorId(Long id) throws ManagerException;
@@ -33,7 +26,7 @@ public interface IMiembroService {
 
     public MiembroDto miembroAMiembroDto(Miembro miembro);
     
-    public void verificarMiembroSancionado(Long id) throws ManagerException;
+    public void verificarMiembroSancionado(Miembro miembro) throws ManagerException;
     
-    public void sancionarMiembro(Long id, int dias) throws ManagerException;
+    public void sancionarMiembro(Miembro miembro, int dias) throws ManagerException;
 }
