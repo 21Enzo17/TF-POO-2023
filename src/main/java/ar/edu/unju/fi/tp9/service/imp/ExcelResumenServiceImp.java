@@ -38,13 +38,15 @@ public class ExcelResumenServiceImp implements IResumenService{
     public ResponseEntity<byte[]> realizarResumen(List<PrestamoInfoDto> prestamosDto, String fechaInicio, String fechaFin) throws ManagerException{
     	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     	
-        logger.info("Generando excel");
+        logger.info("Generando excel con los prestamos realizados entre " + fechaInicio + " y " + fechaFin + "...");
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Prestamos");
         CreationHelper creationHelper = workbook.getCreationHelper();
+
+        CellStyle estilo = generarEstilo(workbook);
         
-        generarColumnas(sheet, workbook);
-        copiarDatos(sheet, prestamosDto, creationHelper);
+        generarEncabezados(sheet, workbook);
+        copiarDatos(sheet, prestamosDto, creationHelper,estilo);
         ajustarAncho(sheet);
         agregarTitulo(sheet, fechaInicio, fechaFin);
         try{
@@ -66,30 +68,30 @@ public class ExcelResumenServiceImp implements IResumenService{
      */
     private void agregarTitulo(Sheet sheet, String fechaIncio, String fechaFin) {
     	Row titulo = sheet.createRow(0);
-    	Cell cell = titulo.createCell(0);
+    	Cell cell = titulo.createCell(1);
     	cell.setCellValue("Resumen de prestamos entre " + fechaIncio + " y " + fechaFin);
     }
     
     /**
-     * Metodo encargado de generar las columnas del excel, con un formato.
+     * Metodo encargado de generar los Encabezados del excel, con un formato.
      * @param sheet
      * @param workbook
      */
-    private void generarColumnas(Sheet sheet, Workbook workbook) {
-        CellStyle headerStyle = workbook.createCellStyle();
+    private void generarEncabezados(Sheet sheet, Workbook workbook) {
+        CellStyle encabezado = generarEstilo(workbook);
         Font font = workbook.createFont();
         font.setBold(true);
-        headerStyle.setFont(font);
-
-
-    	Row headerRow = sheet.createRow(1);
-        String[] headers = {"id", "Miembro", "Libro", "Fecha del Prestamo", "Fecha de Devolucion", "Estado"};
+        encabezado.setFont(font);
+    
+        Row headerRow = sheet.createRow(2);
+        String[] headers = {"", "Id", "Miembro", "Libro", "Fecha del Prestamo", "Estado", ""};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
-            cell.setCellStyle(headerStyle);
+            if(i != 0 && i != headers.length - 1) {
+                cell.setCellStyle(encabezado);
+            }
         }
-
     }
     
     /**
@@ -97,25 +99,35 @@ public class ExcelResumenServiceImp implements IResumenService{
      * @param sheet
      * @param prestamosDto
      * @param creationHelper
+     * @param estilo
      */
-    private void copiarDatos(Sheet sheet, List<PrestamoInfoDto> prestamosDto, CreationHelper creationHelper) {
-    	int numeroDeFila = 2;
-    	
+    private void copiarDatos(Sheet sheet, List<PrestamoInfoDto> prestamosDto, CreationHelper createHelper,CellStyle estilo) {
+        int numeroFila = 3;
         for (PrestamoInfoDto prestamo : prestamosDto) {
-            Row fila = sheet.createRow(numeroDeFila++);
-            fila.createCell(0).setCellValue(prestamo.getId());
-            fila.createCell(1).setCellValue(prestamo.getNombreMiembro());
-            fila.createCell(2).setCellValue(prestamo.getTituloLibro());
-            
-            Cell fechaPrestamoCell = fila.createCell(3);
-            fechaPrestamoCell.setCellValue(prestamo.getFechaPrestamo());
-            fechaPrestamoCell.getCellStyle().setDataFormat(creationHelper.createDataFormat().getFormat("dd/MM/yyyy HH:mm"));
-            
-            Cell fechaDevolucionCell = fila.createCell(4);
-            fechaDevolucionCell.setCellValue(prestamo.getFechaDevolucion());
-            fechaDevolucionCell.getCellStyle().setDataFormat(creationHelper.createDataFormat().getFormat("dd/MM/yyyy HH:mm"));
-            
-            fila.createCell(5).setCellValue(prestamo.getEstado().toString());
+            Row fila = sheet.createRow(numeroFila++);
+            for(int i = 0; i < 6; i++) { 
+                Cell celda = fila.createCell(i);
+                if(i != 0) {
+                    switch(i) {
+                        case 1:
+                            celda.setCellValue(prestamo.getId());
+                            break;
+                        case 2:
+                            celda.setCellValue(prestamo.getNombreMiembro());
+                            break;
+                        case 3:
+                            celda.setCellValue(prestamo.getTituloLibro());
+                            break;
+                        case 4:
+                            celda.setCellValue(prestamo.getFechaPrestamo());
+                            break;
+                        case 5:
+                            celda.setCellValue(prestamo.getEstado());
+                            break;
+                    }
+                    celda.setCellStyle(estilo);
+                }
+            }
         }
     }
 
@@ -139,9 +151,28 @@ public class ExcelResumenServiceImp implements IResumenService{
      * @param sheet
      */
     private void ajustarAncho(Sheet sheet){
-        sheet.setColumnWidth(0, 256*5);
-        for (int i = 1; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             sheet.autoSizeColumn(i);
+            int ancho = sheet.getColumnWidth(i);
+            if (i == 5) {  // Si es la columna F
+                ancho = Math.max(ancho, 256*10);  // Asegura que el ancho sea al menos el de 10 caracteres
+            }
+            sheet.setColumnWidth(i, ancho + 256);  // Agrega 1 carácter de espacio adicional
         }
+    }
+
+    /**
+     * Metodo encargado de generar el estilo de las celdas del excel
+     * @param workbook
+     * @return CellStyle
+     */
+    private CellStyle generarEstilo(Workbook workbook){
+        CellStyle style = workbook.createCellStyle();
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        return style;
     }
 }

@@ -27,7 +27,7 @@ public interface ILibroService {
 
 	Libro libroDtoALibro(LibroDto libroDto);
 
-	void cambiarEstado(Long id, String estado) throws ManagerException;
+	void cambiarEstado(Libro libro, String estado) throws ManagerException;
 	
-	void verificarLibroDisponible(Long id) throws ManagerException;
+	void verificarLibroDisponible(Libro libro) throws ManagerException;
 }

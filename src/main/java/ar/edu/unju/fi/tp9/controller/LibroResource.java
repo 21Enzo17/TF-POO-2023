@@ -35,7 +35,7 @@ public class LibroResource {
 	
 	@PostMapping("/libros")
 	public ResponseEntity<?> guardarLibro(@RequestBody LibroDto libroDto) {
-		logger.debug("Agregando libro + " + libroDto.getTitulo());
+		logger.debug("Agregando libro " + libroDto.getTitulo());
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {

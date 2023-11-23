@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import ar.edu.unju.fi.tp9.dto.AlumnoDto;
@@ -55,71 +56,30 @@ public class MiembroServiceImp implements IMiembroService {
         Miembro miembroBuscado = miembroRepository.findByCorreo(correo).orElse(null);
         if (miembroBuscado != null) {
             miembroRepository.delete(miembroBuscado);
-            logger.info(miembroBuscado.getNombre() + " eliminado con exito");
+            logger.info("Miembro con correo: " + correo + " eliminado con exito");
         } else {
-        	logger.error("No se encontró ningún miembro con el correo especificado");
-            throw new ManagerException("No se encontró ningún miembro con el correo especificado");
+        	logger.error("No se encontró ningún miembro con el correo: " + correo);
+            throw new ManagerException("No se encontró ningún miembro con el correo: " + correo);
         }
         
     }
-
     /**
-     * Este metodo obtiene un miembro de la base de datos por su correo
-     * @param correo
-     * @return miembroDto
-     */
-    @Override
-    public MiembroDto obtenerMiembroByCorreo(String correo) throws ManagerException {
-        Miembro miembro;
-        miembro = miembroRepository.findByCorreo(correo).orElse(null);
-        if(miembro == null){
-        	logger.error("No existe el miembro registrado con el correo " + correo);
-            throw new ManagerException("No existe el miembro registrado con el correo " + correo);
-        }
-        logger.info(miembro.getNumeroMiembro() + " encontrado con exito");
-        return miembroAMiembroDto(miembro);
-    }
-
-    /**
-     * Este metodo transforma cualquier tipo de miembroDto a un miembro
+     * Este metodo elimina un miembro de la base de datos por su id
      * @param miembroDto
-     * @return miembro
+     * @throws ManagerException
      */
     @Override
-    public Miembro miembroDtoAMiembro(MiembroDto miembroDto){
-        Miembro miembro;
-        ModelMapper modelMapper = new ModelMapper();
-        // Se mappea de acuerdo al tipo de miembro
-        if(miembroDto.isAlumno()){
-            miembro = modelMapper.map(miembroDto, Alumno.class);         
-        }else{
-            miembro = modelMapper.map(miembroDto, Docente.class);
+    public void eliminarMiembroPorId(Long id) throws ManagerException {
+        try{
+            miembroRepository.deleteById(id);
+            logger.info("Miembro con id: " + id + " eliminado con exito");
+        } catch(DataIntegrityViolationException e){
+            logger.error("Error al eliminar miembro, miembro tiene préstamos asociados");
+            throw new ManagerException("Miembro con id: " + id  + " tiene préstamos asociados");
+        } catch(Exception e){
+            logger.error("Error al eliminar miembro, miembro no encontrado");
+            throw new ManagerException("Miembro con id: " + id  + " no encontrado");
         }
-        // Asigno fecha de bloqueo actual o uso la existente
-        if(miembroDto.getFechaBloqueo() != null){
-            miembro.setFechaBloqueo(dateFormatter.fechDateTime(miembroDto.getFechaBloqueo()));
-        }
-        logger.info("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
-        return miembro;
-    }
-
-    /**
-     * Este metodo transforma cualquier tipo de miembro a un miembroDto
-     * @param miembro
-     * @return
-     */
-    @Override
-    public MiembroDto miembroAMiembroDto(Miembro miembro){
-        MiembroDto miembroDto;
-        ModelMapper modelMapper = new ModelMapper();
-        if(miembro.isAlumno()){
-            miembroDto = modelMapper.map(miembro, AlumnoDto.class);   
-        }else{
-            miembroDto = modelMapper.map(miembro, DocenteDto.class);
-        }
-        miembroDto.setFechaBloqueo(dateFormatter.transformarFechaNatural(miembro.getFechaBloqueo().toString()));
-        logger.info("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
-        return miembroDto;
     }
 
     /**
@@ -147,7 +107,24 @@ public class MiembroServiceImp implements IMiembroService {
         }
         return miembroAMiembroDto(retorno);
     }
-    
+
+    /**
+     * Este metodo obtiene un miembro de la base de datos por su correo
+     * @param correo
+     * @return miembroDto
+     */
+    @Override
+    public MiembroDto obtenerMiembroByCorreo(String correo) throws ManagerException {
+        Miembro miembro;
+        miembro = miembroRepository.findByCorreo(correo).orElse(null);
+        if(miembro == null){
+        	logger.error("No existe el miembro registrado con el correo " + correo);
+            throw new ManagerException("No existe el miembro registrado con el correo " + correo);
+        }
+        logger.info("Miembro con id: " + miembro.getId() + " encontrado con exito");
+        return miembroAMiembroDto(miembro);
+    }
+
     /**
      * Este metodo obtiene un miembro de la base de datos por su id
      * @param id
@@ -162,35 +139,50 @@ public class MiembroServiceImp implements IMiembroService {
         	logger.error("No existe el miembro con id: " + id);
             throw new ManagerException("No existe el miembro con id: " + id);
         }
-        logger.info(miembro.getNumeroMiembro() + " encontrado con exito");
+        logger.info("Miembro con id: " + miembro.getId() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
     }
 
+    /**
+     * Este metodo transforma cualquier tipo de miembroDto a un miembro
+     * @param miembroDto
+     * @return miembro
+     */
     @Override
-    public void eliminarMiembroPorId(Long id) throws ManagerException {
-        try{
-            miembroRepository.deleteById(id);
-            logger.info("Miembro con id: " + id + " eliminado con exito");
-        }catch(Exception e){
-        	logger.error("Error al eliminar miembro, miembro no encontrado");
-            throw new ManagerException("Error al eliminar miembro, miembro no encontrado");
+    public Miembro miembroDtoAMiembro(MiembroDto miembroDto){
+        Miembro miembro;
+        ModelMapper modelMapper = new ModelMapper();
+        // Se mappea de acuerdo al tipo de miembro
+        if(miembroDto.isAlumno()){
+            miembro = modelMapper.map(miembroDto, Alumno.class);         
+        }else{
+            miembro = modelMapper.map(miembroDto, Docente.class);
         }
+        // Asigno fecha de bloqueo actual o uso la existente
+        if(miembroDto.getFechaBloqueo() != null){
+            miembro.setFechaBloqueo(dateFormatter.fechDateTime(miembroDto.getFechaBloqueo()));
+        }
+        return miembro;
     }
 
-
     /**
-     * Este metodo asigna un numero de miembro y una fecha actual al miembro.
-     * La fecha se setea en la hora actual, para que por defecto el usuario no este bloqueado 
+     * Este metodo transforma cualquier tipo de miembro a un miembroDto
      * @param miembro
      * @return
      */
-    public Miembro crearUnMiembro(Miembro miembro){
-        miembro.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0));
-        miembro.setNumeroMiembro(miembro.generarNumeroMiembro());
-        logger.info("Miembro: " + miembro.getNombre() + " creado con exito");
-        return miembro;
+    @Override
+    public MiembroDto miembroAMiembroDto(Miembro miembro){
+        MiembroDto miembroDto;
+        ModelMapper modelMapper = new ModelMapper();
+        if(miembro.isAlumno()){
+            miembroDto = modelMapper.map(miembro, AlumnoDto.class);   
+        }else{
+            miembroDto = modelMapper.map(miembro, DocenteDto.class);
+        }
+        miembroDto.setFechaBloqueo(dateFormatter.transformarFechaNatural(miembro.getFechaBloqueo().toString()));
+        return miembroDto;
     }
-    
+       
     @Override
     /**
      * Metodo que veridica si un miembro existe y si esta sancionado, en caso de estar sancionado
@@ -198,14 +190,13 @@ public class MiembroServiceImp implements IMiembroService {
      * @param id
      * @throws ManagerException
      */
-    public void verificarMiembroSancionado(Long id) throws ManagerException{
-    	MiembroDto miembroBuscado = obtenerMiembroById(id);
+    public void verificarMiembroSancionado(Miembro miembro) throws ManagerException{
     	
-    	LocalDateTime fechaSancion = dateFormatter.fechDateTime(miembroBuscado.getFechaBloqueo());
+    	LocalDateTime fechaSancion = miembro.getFechaBloqueo();
     	
     	if(LocalDateTime.now().isBefore(fechaSancion)){
             logger.error("El miembro esta sancionado");
-    		throw new ManagerException("El miembro " + miembroBuscado.getNombre() + " esta sancionado hasta la fecha " + miembroBuscado.getFechaBloqueo());
+    		throw new ManagerException("El miembro " + miembro.getNombre() + " esta sancionado hasta la fecha " + dateFormatter.transformarFechaNatural(miembro.getFechaBloqueo().toString()));
         }
     }
 
@@ -216,13 +207,24 @@ public class MiembroServiceImp implements IMiembroService {
      * @throws ManagerException
      */
     @Override
-    public void sancionarMiembro(Long id, int dias) throws ManagerException {
-    	MiembroDto miembroSancionar = obtenerMiembroById(id);
+    public void sancionarMiembro(Miembro miembro, int dias) throws ManagerException {    	
+    	miembro.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0).plusDays(dias));
     	
-    	Miembro miembroGuardar = miembroDtoAMiembro(miembroSancionar);
-    	miembroGuardar.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0).plusDays(dias));
-    	
-    	logger.info("Miembro " + miembroSancionar.getNombre() + " ha sido sancionado por " + dias + " dias");
-    	miembroRepository.save(miembroGuardar);
+    	logger.info("Miembro " + miembro.getNombre() + " ha sido sancionado por " + dias + " dias");
+    	miembroRepository.save(miembro);
     }
+
+    /**
+     * Este metodo asigna un numero de miembro y una fecha actual al miembro.
+     * La fecha se setea en la hora actual, para que por defecto el usuario no este bloqueado 
+     * @param miembro
+     * @return
+     */
+    private Miembro crearUnMiembro(Miembro miembro){
+        miembro.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0));
+        miembro.setNumeroMiembro(miembro.generarNumeroMiembro());
+        logger.info("Miembro: " + miembro.getNombre() + " creado con exito");
+        return miembro;
+    }
+    
 }
