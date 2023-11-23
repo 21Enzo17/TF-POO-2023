@@ -80,17 +80,15 @@ public class PrestamoServiceImp implements IPrestamoService {
      */
     @Override
     public PrestamoInfoDto guardarPrestamo(Long idMiembro, Long idLibro)throws ManagerException {
-        Prestamo prestamoGuardar;
-        PrestamoDto prestamo = crearPrestamo(idMiembro, idLibro);
-        prestamoGuardar = prestamoDtoAPrestamo(prestamo);
+        Prestamo prestamoGuardar = crearPrestamo(idMiembro, idLibro);
         
-        validarPrestamo(prestamo);
-        libroService.cambiarEstado(prestamo.getIdLibroDto(),EstadoLibro.PRESTADO.toString());
+        validarPrestamo(prestamoGuardar);
+        libroService.cambiarEstado(prestamoGuardar.getLibro().getId(),EstadoLibro.PRESTADO.toString());
         
         prestamoGuardar = prestamoRepository.save(prestamoGuardar);
-        logger.debug("Prestamo: " + prestamoGuardar.getId() +" guardado con exito");
-        prestamo.setId(prestamoGuardar.getId());
-        enviarCorreo(prestamo, null,false);
+        logger.info("Prestamo: " + prestamoGuardar.getId() +" guardado con exito para el miembro con id: " + idMiembro + " y el libro con id: " + idLibro);
+        
+        enviarCorreo(prestamoAPrestamoDto(prestamoGuardar), null,false);
         return prestamoAInfoDto(prestamoGuardar);
     }
 
@@ -120,15 +118,14 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @return PrestamoDto
      * @throws ManagerException
      */
-    private PrestamoDto crearPrestamo(Long idMiembro, Long idLibro){
-        PrestamoDto prestamoDto = new PrestamoDto();
-        prestamoDto.setIdMiembroDto(idMiembro);
-        prestamoDto.setIdLibroDto(idLibro); 
-        prestamoDto.setEstado(Estado.PRESTADO.toString());
-        prestamoDto.setFechaPrestamo(dateFormatter.transformarFechaNatural(LocalDateTime.now().withSecond(0).withNano(0).toString()));
-        prestamoDto.setFechaDevolucion(dateFormatter.transformarFechaNatural(LocalDateTime.now().withSecond(0).withNano(0).plusDays(7).toString()));
-        logger.info("Prestamo creado con exito con estado: " + prestamoDto.getEstado());
-        return prestamoDto;
+    private Prestamo crearPrestamo(Long idMiembro, Long idLibro) throws ManagerException{
+        Prestamo prestamo = new Prestamo();
+        prestamo.setMiembro(miembroService.miembroDtoAMiembro(miembroService.obtenerMiembroById(idMiembro)));
+        prestamo.setLibro(libroService.libroDtoALibro(libroService.buscarLibroPorId(idLibro))); 
+        prestamo.setEstado(Estado.PRESTADO);
+        prestamo.setFechaPrestamo(LocalDateTime.now().withSecond(0).withNano(0));
+        prestamo.setFechaDevolucion(LocalDateTime.now().withSecond(0).withNano(0).plusDays(7));
+        return prestamo;
     }
 
     /**
@@ -158,8 +155,6 @@ public class PrestamoServiceImp implements IPrestamoService {
         }
     }
 
-    
-
     /**
      * Metodo que devuelve un prestamo
      * @param id
@@ -168,19 +163,26 @@ public class PrestamoServiceImp implements IPrestamoService {
     @Override 
     public void devolucionPrestamo(Long id) throws ManagerException{
         String fechaSancion = null;
-        Prestamo prestamo = prestamoDtoAPrestamo(obtenerPrestamoById(id));
+       
+        Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
+        if(prestamo == null)
+        	throw new ManagerException("Prestamo con id: " + id + " no ha sido registrado");
+        
         prestamo.setEstado(Estado.DEVUELTO);
         libroService.cambiarEstado(prestamo.getLibro().getId(),EstadoLibro.DISPONIBLE.toString());
+        
         if(prestamo.getFechaDevolucion().isBefore(LocalDateTime.now())) {
         	miembroService.sancionarMiembro(prestamo.getMiembro().getId(), calcularDiasDeSancion(ChronoUnit.DAYS.between(prestamo.getFechaDevolucion(), LocalDateTime.now())));
             fechaSancion = miembroService.obtenerMiembroById(prestamo.getMiembro().getId()).getFechaBloqueo();
-            logger.debug("Miembro sancionado hasta: " + fechaSancion);
+            logger.info("Miembro sancionado hasta: " + fechaSancion);
         }
         
         prestamo.setFechaDevolucion(LocalDateTime.now().withSecond(0).withNano(0));
+        
         prestamoRepository.save(prestamo);
+        
         enviarCorreo(prestamoAPrestamoDto(prestamo), fechaSancion, true);
-        logger.debug(prestamo.getId() + " devuelto con exito");
+        logger.info("Prestamo con id: " + prestamo.getId() + " devuelto con exito");
         
     }
 
@@ -200,7 +202,6 @@ public class PrestamoServiceImp implements IPrestamoService {
         logger.info("Prestamo mapeado con exito");
         return prestamoDto;
     }
-
 
     /**
      * Metodo que convierte un prestamoDto a prestamo
@@ -224,7 +225,6 @@ public class PrestamoServiceImp implements IPrestamoService {
         logger.info("Prestamo mapeado con exito");
         return prestamo;
     }
-
 
     /**
      * Metodo que convierte un prestamo a prestamoInfoDto
@@ -261,7 +261,7 @@ public class PrestamoServiceImp implements IPrestamoService {
                 estadoEnum = null;
                 break;
         }
-        logger.debug("Se devuelve el estado: "+ estadoEnum);
+        logger.info("Se devuelve el estado: "+ estadoEnum);
         return estadoEnum;
     }
     
@@ -270,9 +270,9 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @param prestamoDto
      * @throws ManagerException
      */
-    private void validarPrestamo(PrestamoDto prestamoDto) throws ManagerException {
-    	miembroService.verificarMiembroSancionado(prestamoDto.getIdMiembroDto());
-    	libroService.verificarLibroDisponible(prestamoDto.getIdLibroDto());
+    private void validarPrestamo(Prestamo prestamo) throws ManagerException {
+    	miembroService.verificarMiembroSancionado(prestamo.getMiembro().getId());
+    	libroService.verificarLibroDisponible(prestamo.getLibro().getId());
     }
     
     /**
@@ -281,7 +281,7 @@ public class PrestamoServiceImp implements IPrestamoService {
      * @return
      */
     private int calcularDiasDeSancion(long dias) {
-        logger.debug("Calculando sancion para: " + dias + " dias");
+        logger.info("Calculando sancion para: " + dias + " dias");
         if (dias <= 2) {
             return 3;
         } else if (dias <= 5) {
@@ -305,7 +305,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         	logger.error("No existe el prestamo con id " + id);
             throw new ManagerException("No existe el prestamo con id " + id);
         }
-        logger.debug(prestamo.getId() + " encontrado con exito");
+        logger.info(prestamo.getId() + " encontrado con exito");
         return prestamoAPrestamoDto(prestamo);
 
     }
@@ -324,7 +324,7 @@ public class PrestamoServiceImp implements IPrestamoService {
             throw new ManagerException("No existe el prestamo con id " + id);
         }
         prestamoRepository.deleteById(id);
-        logger.debug(prestamo.getId() + " eliminado con exito");
+        logger.info(prestamo.getId() + " eliminado con exito");
     }
 
 
@@ -337,7 +337,7 @@ public class PrestamoServiceImp implements IPrestamoService {
     private List<PrestamoInfoDto> listaPrestamosEntre(LocalDateTime fechaInicio, LocalDateTime fechaFin){
     	List<Prestamo> prestamos = prestamoRepository.findByFechaPrestamoBetween(fechaInicio, fechaFin);
     	List<PrestamoInfoDto> listaDto = new ArrayList<>();
-    	logger.debug("Se encontraron " + prestamos.size() + " prestamos");
+    	logger.info("Se encontraron " + prestamos.size() + " prestamos");
     	for(Prestamo prestamo : prestamos)
     		listaDto.add(prestamoAInfoDto(prestamo));
     	return listaDto;

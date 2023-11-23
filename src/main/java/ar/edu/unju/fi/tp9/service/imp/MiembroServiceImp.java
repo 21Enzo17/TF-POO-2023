@@ -40,7 +40,7 @@ public class MiembroServiceImp implements IMiembroService {
             throw new ManagerException("Error al guardar alumno, correo repetido");
         }else{
             miembroReturn = miembroRepository.save(crearUnMiembro(miembroDtoAMiembro(miembro)));
-            logger.debug("Miembro: " + miembro.getNombre() + " guardado con exito");
+            logger.info("Miembro: " + miembro.getNombre() + " guardado con exito");
         }
         return miembroAMiembroDto(miembroReturn);
     }
@@ -51,11 +51,11 @@ public class MiembroServiceImp implements IMiembroService {
      */
     @Override
     public void eliminarMiembroPorCorreo(String correo) throws ManagerException{
-        logger.debug("Buscado miembro con correo: " + correo);
+        logger.info("Buscado miembro con correo: " + correo);
         Miembro miembroBuscado = miembroRepository.findByCorreo(correo).orElse(null);
         if (miembroBuscado != null) {
             miembroRepository.delete(miembroBuscado);
-            logger.debug(miembroBuscado.getNombre() + " eliminado con exito");
+            logger.info(miembroBuscado.getNombre() + " eliminado con exito");
         } else {
         	logger.error("No se encontró ningún miembro con el correo especificado");
             throw new ManagerException("No se encontró ningún miembro con el correo especificado");
@@ -76,7 +76,7 @@ public class MiembroServiceImp implements IMiembroService {
         	logger.error("No existe el miembro registrado con el correo " + correo);
             throw new ManagerException("No existe el miembro registrado con el correo " + correo);
         }
-        logger.debug(miembro.getNumeroMiembro() + " encontrado con exito");
+        logger.info(miembro.getNumeroMiembro() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
     }
 
@@ -99,7 +99,7 @@ public class MiembroServiceImp implements IMiembroService {
         if(miembroDto.getFechaBloqueo() != null){
             miembro.setFechaBloqueo(dateFormatter.fechDateTime(miembroDto.getFechaBloqueo()));
         }
-        logger.debug("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
+        logger.info("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
         return miembro;
     }
 
@@ -118,7 +118,7 @@ public class MiembroServiceImp implements IMiembroService {
             miembroDto = modelMapper.map(miembro, DocenteDto.class);
         }
         miembroDto.setFechaBloqueo(dateFormatter.transformarFechaNatural(miembro.getFechaBloqueo().toString()));
-        logger.debug("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
+        logger.info("Datos del miembro: " + miembro.getCorreo() + " mapeados con exito");
         return miembroDto;
     }
 
@@ -141,7 +141,7 @@ public class MiembroServiceImp implements IMiembroService {
                 throw new ManagerException("Error al modificar miembro, correo repetido");
             }else{
                 retorno =  miembroRepository.save(miembroDtoAMiembro(miembro));
-                logger.debug("Miembro: " + miembro.getNombre() + " modificado con exito");
+                logger.info("Miembro: " + miembro.getNombre() + " modificado con exito");
             }
 
         }
@@ -162,7 +162,7 @@ public class MiembroServiceImp implements IMiembroService {
         	logger.error("No existe el miembro con id: " + id);
             throw new ManagerException("No existe el miembro con id: " + id);
         }
-        logger.debug(miembro.getNumeroMiembro() + " encontrado con exito");
+        logger.info(miembro.getNumeroMiembro() + " encontrado con exito");
         return miembroAMiembroDto(miembro);
     }
 
@@ -170,7 +170,7 @@ public class MiembroServiceImp implements IMiembroService {
     public void eliminarMiembroPorId(Long id) throws ManagerException {
         try{
             miembroRepository.deleteById(id);
-            logger.debug("Miembro con id: " + id + " eliminado con exito");
+            logger.info("Miembro con id: " + id + " eliminado con exito");
         }catch(Exception e){
         	logger.error("Error al eliminar miembro, miembro no encontrado");
             throw new ManagerException("Error al eliminar miembro, miembro no encontrado");
@@ -187,7 +187,7 @@ public class MiembroServiceImp implements IMiembroService {
     public Miembro crearUnMiembro(Miembro miembro){
         miembro.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0));
         miembro.setNumeroMiembro(miembro.generarNumeroMiembro());
-        logger.debug("Miembro: " + miembro.getNombre() + " creado con exito");
+        logger.info("Miembro: " + miembro.getNombre() + " creado con exito");
         return miembro;
     }
     

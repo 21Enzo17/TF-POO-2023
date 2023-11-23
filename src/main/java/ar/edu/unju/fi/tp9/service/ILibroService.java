@@ -13,7 +13,7 @@ public interface ILibroService {
 	
 	void editarLibro(LibroDto libroDto);
 	
-	LibroDto buscarLibroPorId(Long id);
+	LibroDto buscarLibroPorId(Long id) throws ManagerException;
 	
 	LibroDto buscarLibroPorTitulo(String titulo);
 	

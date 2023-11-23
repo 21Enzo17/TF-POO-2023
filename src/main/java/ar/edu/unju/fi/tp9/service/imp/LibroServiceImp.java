@@ -62,7 +62,7 @@ public class LibroServiceImp implements ILibroService{
 		nuevoLibro.setEstado(EstadoLibro.DISPONIBLE.toString());
 		
 		libroRepository.save(nuevoLibro);
-		logger.debug("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
+		logger.info("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class LibroServiceImp implements ILibroService{
 		}
 		else {
 			libroRepository.delete(libro.get());
-			logger.debug("El libro con id: "+ id + " ha sido eliminado.");
+			logger.info("El libro con id: "+ id + " ha sido eliminado.");
 		}
 	}
 
@@ -94,7 +94,7 @@ public class LibroServiceImp implements ILibroService{
 		if( libroRepository.existsById(libroDto.getId()) ) {
 			mapper.map(libroDto, editarLibro);
 			libroRepository.save(editarLibro);
-			logger.debug("Libro con id: " + editarLibro.getId() + " ha sido modificado.");
+			logger.info("Libro con id: " + editarLibro.getId() + " ha sido modificado.");
 		}
 		else {
 			logger.error("Libron con id: " + libroDto.getId() + " no ha sido registrado.");
@@ -104,18 +104,20 @@ public class LibroServiceImp implements ILibroService{
 
 	/**
 	 * Busca un libro por id pasado por parametro, si existe lo mapea a libro DTO y lo devuelve, de lo contrario devuelve null.
+	 * @throws ManagerException 
 	 */
 	@Override
-	public LibroDto buscarLibroPorId(Long id) {
-		
+	public LibroDto buscarLibroPorId(Long id) throws ManagerException {
 		LibroDto libroDto = new LibroDto();
 		Optional<Libro> libroBuscado = libroRepository.findById(id);
 		
-		if(libroBuscado.isEmpty())
-			return null;
+		if(libroBuscado.isEmpty()) {
+			logger.error("El libro con el id:" + id + " no ha sido registrado");
+			throw new ManagerException("El libro con el id:" + id + " no ha sido registrado");
+		}	
 		else {
 			mapper.map(libroBuscado.get(), libroDto);
-			logger.debug("Libro Encontrado " + libroDto.getTitulo());
+			logger.info("Se encontro el libro " + libroDto.getTitulo());
 			return libroDto;
 		}
 	}
@@ -200,14 +202,9 @@ public class LibroServiceImp implements ILibroService{
 	@Override
 	public void cambiarEstado(Long id, String estado) throws ManagerException {
 		Libro libro = libroRepository.findById(id).orElse(null);
-		if(libro != null) {
-			libro.setEstado(estado);
-			libroRepository.save(libro);
-			logger.info("Se cambio el estado a libro.");
-		}else{
-			logger.error("No existe el libro con id: " + id);
-			throw new ManagerException("No existe el libro con id: " + id);
-		}
+		libro.setEstado(estado);
+		libroRepository.save(libro);
+		logger.info("Se cambio el estado al libro " + libro.getTitulo());
 	}
 
 

@@ -126,14 +126,13 @@ public class PdfResumenServiceImp implements IResumenService {
 	private void crearTabla(Document document, List<PrestamoInfoDto> prestamosDto) {
 		float [] pointColumnWidths = {100F, 150F, 150F, 150F, 150F, 150F};
 		Table table = new Table(pointColumnWidths);
-        logger.debug("Creando tabla con " + prestamosDto.size() + " prestamos");
+
 		table.addCell(new Cell().add(new Paragraph("Id")));
 		table.addCell(new Cell().add(new Paragraph("Miembro")));
 		table.addCell(new Cell().add(new Paragraph("Libro")));
 		table.addCell(new Cell().add(new Paragraph("Fecha Prestamo")));
 		table.addCell(new Cell().add(new Paragraph("Fecha Devolucion")));
 		table.addCell(new Cell().add(new Paragraph("Estado")));
-		logger.info("Se creo la tabla");
 		
 		for(PrestamoInfoDto dto : prestamosDto) {
 			table.addCell(new Cell().add(new Paragraph(dto.getId().toString())));
@@ -142,7 +141,6 @@ public class PdfResumenServiceImp implements IResumenService {
 			table.addCell(new Cell().add(new Paragraph(dto.getFechaPrestamo())));
 			table.addCell(new Cell().add(new Paragraph(dto.getFechaDevolucion())));
 			table.addCell(new Cell().add(new Paragraph(dto.getEstado())));
-			logger.info("Se agrego un prestamo");
 		}
 		logger.info("Se agrego la tabla correctamente");
         document.add(table);
