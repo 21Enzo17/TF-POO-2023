@@ -35,7 +35,7 @@ public class LibroResource {
 	
 	@PostMapping("/libros")
 	public ResponseEntity<?> guardarLibro(@RequestBody LibroDto libroDto) {
-		logger.debug("Agregando libro " + libroDto.getTitulo());
+		logger.info("Agregando libro " + libroDto.getTitulo());
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {
@@ -53,7 +53,7 @@ public class LibroResource {
 	
 	@PutMapping("/libros")
 	public ResponseEntity<?> editarLibro(@RequestBody LibroDto libroDto){
-		logger.debug("Modificando el libro: " + libroDto.getTitulo());
+		logger.info("Modificando el libro: " + libroDto.getTitulo());
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {
@@ -75,7 +75,7 @@ public class LibroResource {
 	
 	@DeleteMapping("/libros/{id}")
 	public ResponseEntity<?> eliminarLibro(@PathVariable("id") Long id){
-		logger.debug("Eliminado libro con id: " + id);
+		logger.info("Eliminado libro con id: " + id);
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {
@@ -97,7 +97,7 @@ public class LibroResource {
 	
 	@GetMapping("/libros/{id}")
 	public ResponseEntity<?> buscarLibroPorId(@PathVariable("id") Long id){
-		logger.debug("Buscando libro por id: " + id);
+		logger.info("Buscando libro por id: " + id);
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {
@@ -119,7 +119,7 @@ public class LibroResource {
 	
 	@GetMapping("/libros/titulo/{titulo}")
 	public ResponseEntity<?> buscarLibroPorTitulo(@PathVariable("titulo") String titulo){
-		logger.debug("Buscando libro por titulo: " + titulo);
+		logger.info("Buscando libro por titulo: " + titulo);
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {
@@ -142,7 +142,7 @@ public class LibroResource {
 	
 	@GetMapping("/libros/autor/{autor}")
 	public ResponseEntity<?> buscarLibroPorAutor(@PathVariable("autor") String autor){
-		logger.debug("Buscando libro por autor: " + autor);
+		logger.info("Buscando libro por autor: " + autor);
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {
@@ -165,7 +165,7 @@ public class LibroResource {
 	
 	@GetMapping("/libros/isbn/{isbn}")
 	public ResponseEntity<?> buscarLibroPorIsbn(@PathVariable("isbn") String isbn){
-		logger.debug("Buscando libro por ISBN: " + isbn);
+		logger.info("Buscando libro por ISBN: " + isbn);
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {

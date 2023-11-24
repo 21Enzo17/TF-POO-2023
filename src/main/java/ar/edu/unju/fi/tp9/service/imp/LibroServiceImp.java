@@ -41,7 +41,7 @@ public class LibroServiceImp implements ILibroService{
 		nuevoLibro.setEstado(EstadoLibro.DISPONIBLE.toString());
 		
 		libroRepository.save(nuevoLibro);
-		logger.info("El libro " + nuevoLibro.getTitulo() + " se registro con exito");
+		logger.info("Libro registrado con exito, " + nuevoLibro.getId());
 	}
 
 	/**
@@ -52,12 +52,12 @@ public class LibroServiceImp implements ILibroService{
 		Optional<Libro> libro = libroRepository.findById(id);
 		
 		if(libro.isEmpty()) {
-			logger.error("Libro con id: " + id + " no ha sido registrado.");
+			logger.error("Libro no registrado, " + id);
 			throw new EntityNotFoundException("Libro con id: " + id + " no ha sido registrado.");
 		}
 		else {
 			libroRepository.delete(libro.get());
-			logger.info("El libro con id: "+ id + " ha sido eliminado.");
+			logger.info("Libro eliminado correctamente, " + id);
 		}
 	}
 
@@ -72,10 +72,10 @@ public class LibroServiceImp implements ILibroService{
 		if( libroRepository.existsById(libroDto.getId()) ) {
 			mapper.map(libroDto, editarLibro);
 			libroRepository.save(editarLibro);
-			logger.info("Libro con id: " + editarLibro.getId() + " ha sido modificado.");
+			logger.info("Libro modificado con exito, " + libroDto.getId());
 		}
 		else {
-			logger.error("Libron con id: " + libroDto.getId() + " no ha sido registrado.");
+			logger.error("Este libro no existe, " + libroDto.getId());
 			throw new EntityNotFoundException("Libron con id: " + libroDto.getId() + " no ha sido registrado.");
 		}
 	}
@@ -90,7 +90,7 @@ public class LibroServiceImp implements ILibroService{
 		Optional<Libro> libroBuscado = libroRepository.findById(id);
 		
 		if(libroBuscado.isEmpty()) {
-			logger.error("El libro con el id:" + id + " no ha sido registrado");
+			logger.error("Este libro no existe, " + id);
 			throw new ManagerException("El libro con el id:" + id + " no ha sido registrado");
 		}	
 		else {
@@ -109,12 +109,12 @@ public class LibroServiceImp implements ILibroService{
 		Libro libroBuscado = libroRepository.findByTitulo(titulo);
 		
 		if(libroBuscado == null) {
-			logger.info("Libro buscado por titulo no encontrado, devolviendo null");
+			logger.info("Libro no encontrado, " + titulo);
 			return null;
 		}
 		else {
 			mapper.map(libroBuscado, libroDto);
-			logger.info("Devolviendo libro buscado por titulo");
+			logger.info("Libro encontrado " + titulo);
 			return libroDto;
 		}
 	}
@@ -179,7 +179,7 @@ public class LibroServiceImp implements ILibroService{
 	public void cambiarEstado(Libro libro, String estado) throws ManagerException {
 		libro.setEstado(estado);
 		libroRepository.save(libro);
-		logger.info("Se cambio el estado al libro " + libro.getTitulo());
+		logger.info("Estado cambiado, " + libro.getTitulo());
 	}
 
 
@@ -192,7 +192,7 @@ public class LibroServiceImp implements ILibroService{
 	@Override
 	public void verificarLibroDisponible(Libro libro) throws ManagerException {
 		if( !libro.getEstado().equals(EstadoLibro.DISPONIBLE.toString()) ){
-			logger.error("El libro no esta disponible");
+			logger.error("Libro no esta disponible, " + libro.getId());
 			throw new ManagerException("El libro " + libro.getTitulo() + " ya ha sido prestado.");
 		}
 	}

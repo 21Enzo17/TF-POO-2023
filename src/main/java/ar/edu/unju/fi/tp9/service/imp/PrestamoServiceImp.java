@@ -85,7 +85,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         libroService.cambiarEstado(prestamoGuardar.getLibro(),EstadoLibro.PRESTADO.toString());
         
         prestamoGuardar = prestamoRepository.save(prestamoGuardar);
-        logger.info("Prestamo con id: " + prestamoGuardar.getId() +" guardado con exito para el miembro con id: " + idMiembro + " y el libro con id: " + idLibro);
+        logger.info("Prestamo guardado, " + prestamoGuardar.getId());
         
         enviarCorreo(prestamoGuardar, null,false);
         return prestamoAInfoDto(prestamoGuardar);
@@ -121,7 +121,7 @@ public class PrestamoServiceImp implements IPrestamoService {
        
         Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
         if(prestamo == null){
-            logger.error("No existe el prestamo con id " + id);
+            logger.error("No existe el prestamo con id, " + id);
             throw new ManagerException("Prestamo con id: " + id + " no ha sido registrado");
         }
         	
@@ -132,7 +132,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         if(prestamo.getFechaDevolucion().isBefore(LocalDateTime.now())) {
         	miembroService.sancionarMiembro(prestamo.getMiembro(), calcularDiasDeSancion(ChronoUnit.DAYS.between(prestamo.getFechaDevolucion(), LocalDateTime.now())));
             fechaSancion = miembroService.obtenerMiembroById(prestamo.getMiembro().getId()).getFechaBloqueo();
-            logger.info("Miembro con id " + prestamo.getMiembro().getId()  + " sancionado hasta: " + fechaSancion);
+            logger.info("Miembro sancionado, " + prestamo.getMiembro().getId());
         }
         
         prestamo.setFechaDevolucion(LocalDateTime.now().withSecond(0).withNano(0));
@@ -140,7 +140,7 @@ public class PrestamoServiceImp implements IPrestamoService {
         prestamoRepository.save(prestamo);
         
         enviarCorreo(prestamo, fechaSancion, true);
-        logger.info("Prestamo con id: " + prestamo.getId() + " devuelto con exito para el miembro con id: " + prestamo.getMiembro().getId() + " y el libro con id: " + prestamo.getLibro().getId() + ".");
+        logger.info("Prestamo devuelto, " + prestamo.getId() );
         
     }
 
@@ -154,10 +154,10 @@ public class PrestamoServiceImp implements IPrestamoService {
     public PrestamoDto obtenerPrestamoById(Long id) throws ManagerException {
         Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
         if(prestamo == null){
-        	logger.error("No existe el prestamo con id " + id);
+        	logger.error("No existe el prestamo con id, " + id);
             throw new ManagerException("No existe el prestamo con id " + id);
         }
-        logger.info("Prestamo con id: " + prestamo.getId() + " encontrado con exito");
+        logger.info("Prestamo encontrado con exito, " + id);
         return prestamoAPrestamoDto(prestamo);
     }
 
@@ -170,11 +170,11 @@ public class PrestamoServiceImp implements IPrestamoService {
     public void eliminarPrestamoById(Long id) throws ManagerException {
         Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
         if(prestamo == null){
-        	logger.error("No existe el prestamo con id " + id);
+        	logger.error("No existe el prestamo con id, " + id);
             throw new ManagerException("No existe el prestamo con id " + id);
         }
         prestamoRepository.deleteById(id);
-        logger.info("Prestamo con id: " + prestamo.getId() + " eliminado con exito");
+        logger.info("Prestamo eliminado con exito, " + id);
     }
 
     /**

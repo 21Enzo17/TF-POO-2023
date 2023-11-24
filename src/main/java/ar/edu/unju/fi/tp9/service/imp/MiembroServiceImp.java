@@ -41,7 +41,7 @@ public class MiembroServiceImp implements IMiembroService {
             throw new ManagerException("Error al guardar alumno, correo repetido");
         }else{
             miembroReturn = miembroRepository.save(crearUnMiembro(miembroDtoAMiembro(miembro)));
-            logger.info("Miembro: " + miembro.getNombre() + " guardado con exito");
+            logger.info("Miembro: " + miembro.getNombre() + " guardado con exito, " + miembroReturn.getId());
         }
         return miembroAMiembroDto(miembroReturn);
     }
@@ -55,13 +55,17 @@ public class MiembroServiceImp implements IMiembroService {
         logger.info("Buscado miembro con correo: " + correo);
         Miembro miembroBuscado = miembroRepository.findByCorreo(correo).orElse(null);
         if (miembroBuscado != null) {
-            miembroRepository.delete(miembroBuscado);
-            logger.info("Miembro con correo: " + correo + " eliminado con exito");
+            try {
+                miembroRepository.delete(miembroBuscado);
+                logger.info("Miembro con correo: " + correo + " eliminado con exito");
+            } catch(DataIntegrityViolationException e){
+                logger.error("Error al eliminar miembro, miembro tiene préstamos asociados, " + miembroBuscado.getId());
+                throw new ManagerException("Miembro con correo: " + correo  + " tiene préstamos asociados");
+            }
         } else {
-        	logger.error("No se encontró ningún miembro con el correo: " + correo);
+            logger.error("No se encontró ningún miembro con el correo: " + correo);
             throw new ManagerException("No se encontró ningún miembro con el correo: " + correo);
         }
-        
     }
     /**
      * Este metodo elimina un miembro de la base de datos por su id
@@ -72,12 +76,12 @@ public class MiembroServiceImp implements IMiembroService {
     public void eliminarMiembroPorId(Long id) throws ManagerException {
         try{
             miembroRepository.deleteById(id);
-            logger.info("Miembro con id: " + id + " eliminado con exito");
+            logger.info("Miembro eliminado con exito, " + id);
         } catch(DataIntegrityViolationException e){
-            logger.error("Error al eliminar miembro, miembro tiene préstamos asociados");
+            logger.error("Error al eliminar miembro, miembro tiene préstamos asociados, " + id);
             throw new ManagerException("Miembro con id: " + id  + " tiene préstamos asociados");
         } catch(Exception e){
-            logger.error("Error al eliminar miembro, miembro no encontrado");
+            logger.error("Error al eliminar miembro, miembro no encontrado, "+ id);
             throw new ManagerException("Miembro con id: " + id  + " no encontrado");
         }
     }
@@ -93,7 +97,7 @@ public class MiembroServiceImp implements IMiembroService {
     public MiembroDto modificarMiembro(MiembroDto miembro) throws ManagerException {
         Miembro retorno;
         if(!miembroRepository.existsById(miembro.getId())){
-            throw new ManagerException("Error al modificar miembro, miembro no encontrado");
+            throw new ManagerException("Error al modificar miembro, miembro no encontrado ," + miembro.getId());
         }else{
             Miembro miembroEncontrado = miembroRepository.findByCorreo(miembro.getCorreo()).orElse(null);
             if(miembroEncontrado != null && !miembroEncontrado.getId().equals(miembro.getId()) ){
@@ -101,7 +105,7 @@ public class MiembroServiceImp implements IMiembroService {
                 throw new ManagerException("Error al modificar miembro, correo repetido");
             }else{
                 retorno =  miembroRepository.save(miembroDtoAMiembro(miembro));
-                logger.info("Miembro: " + miembro.getNombre() + " modificado con exito");
+                logger.info("Miembro modificado con exito, " + miembro.getId() );
             }
 
         }
@@ -121,7 +125,7 @@ public class MiembroServiceImp implements IMiembroService {
         	logger.error("No existe el miembro registrado con el correo " + correo);
             throw new ManagerException("No existe el miembro registrado con el correo " + correo);
         }
-        logger.info("Miembro con id: " + miembro.getId() + " encontrado con exito");
+        logger.info("Miembro encontrado, "+ miembro.getId());
         return miembroAMiembroDto(miembro);
     }
 
@@ -136,10 +140,10 @@ public class MiembroServiceImp implements IMiembroService {
         Miembro miembro;
         miembro = miembroRepository.findById(id).orElse(null);
         if(miembro == null){
-        	logger.error("No existe el miembro con id: " + id);
+        	logger.error("No existe el miembro, " + id);
             throw new ManagerException("No existe el miembro con id: " + id);
         }
-        logger.info("Miembro con id: " + miembro.getId() + " encontrado con exito");
+        logger.info("Miembro encontrado con exito, " + id);
         return miembroAMiembroDto(miembro);
     }
 
@@ -195,7 +199,7 @@ public class MiembroServiceImp implements IMiembroService {
     	LocalDateTime fechaSancion = miembro.getFechaBloqueo();
     	
     	if(LocalDateTime.now().isBefore(fechaSancion)){
-            logger.error("El miembro esta sancionado");
+            logger.error("El miembro esta sancionado, " + miembro.getId());
     		throw new ManagerException("El miembro " + miembro.getNombre() + " esta sancionado hasta la fecha " + dateFormatter.transformarFechaNatural(miembro.getFechaBloqueo().toString()));
         }
     }
@@ -223,7 +227,6 @@ public class MiembroServiceImp implements IMiembroService {
     private Miembro crearUnMiembro(Miembro miembro){
         miembro.setFechaBloqueo(LocalDateTime.now().withSecond(0).withNano(0));
         miembro.setNumeroMiembro(miembro.generarNumeroMiembro());
-        logger.info("Miembro: " + miembro.getNombre() + " creado con exito");
         return miembro;
     }
     
