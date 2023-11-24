@@ -10,8 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-
-
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IEmailService;
 import jakarta.activation.DataSource;
@@ -71,8 +69,10 @@ public class EmailServiceImp implements IEmailService {
             logger.error("Argumento inválido: " + e.getMessage());
             throw new ManagerException("Uno o más de los argumentos proporcionados son inválidos. Por favor verifique los datos ingresados.");
         }
-        logger.debug("Correo enviado a: " + para);
+        logger.info("Correo enviado a: " + para);
     }
+
+    
 
 
 }

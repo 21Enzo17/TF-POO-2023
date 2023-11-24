@@ -32,7 +32,7 @@ public class MiembroResource {
 
     @PostMapping("/miembros")
     public ResponseEntity<?> guardarUnMiembro(@RequestBody MiembroDto miembroDto){
-        logger.debug("Agregando Miembro: " + miembroDto.getCorreo());
+        logger.info("Agregando Miembro: " + miembroDto.getCorreo());
         Map<String, Object> response = new HashMap<String, Object>();
         try{
             response.put("Objeto",miembroService.guardarMiembro(miembroDto));

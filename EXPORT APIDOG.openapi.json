@@ -262,7 +262,9 @@
         },
         "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4685958-run",
         "security": []
-      },
+      }
+    },
+    "/api/v1/miembro/miembros/3": {
       "delete": {
         "summary": "Borrar un Miembro",
         "x-apidog-folder": "POO2023/Miembros",
@@ -497,43 +499,6 @@
           }
         },
         "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694415-run",
-        "security": []
-      },
-      "delete": {
-        "summary": "Eliminar Por ID",
-        "x-apidog-folder": "POO2023/Libros",
-        "x-apidog-status": "developing",
-        "deprecated": false,
-        "description": "",
-        "tags": [
-          "POO2023/Libros"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "Mensaje": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "Mensaje"
-                  ],
-                  "x-apidog-ignore-properties": [],
-                  "x-apidog-orders": [
-                    "Mensaje"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694496-run",
         "security": []
       }
     },
@@ -772,6 +737,45 @@
           }
         },
         "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694418-run",
+        "security": []
+      }
+    },
+    "/api/v1/libro/libros/2": {
+      "delete": {
+        "summary": "Eliminar Por ID",
+        "x-apidog-folder": "POO2023/Libros",
+        "x-apidog-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "POO2023/Libros"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Mensaje": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "Mensaje"
+                  ],
+                  "x-apidog-ignore-properties": [],
+                  "x-apidog-orders": [
+                    "Mensaje"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4694496-run",
         "security": []
       }
     },
@@ -1065,7 +1069,9 @@
         },
         "x-run-in-apidog": "https://apidog.com/web/project/412546/apis/api-4702157-run",
         "security": []
-      },
+      }
+    },
+    "/api/v1/prestamo/prestamos/2": {
       "delete": {
         "summary": "Eliminar un Prestamo en caso de error",
         "x-apidog-folder": "POO2023/Prestamos",

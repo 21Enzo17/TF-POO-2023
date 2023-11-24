@@ -16,6 +16,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
@@ -50,7 +51,7 @@ public class PdfResumenServiceImp implements IResumenService {
 	@Override
 	public ResponseEntity<byte[]> realizarResumen(List<PrestamoInfoDto> prestamosDto, String fechaInicio, String fechaFin) throws ManagerException {
 		ByteArrayOutputStream resumen = new ByteArrayOutputStream();
-		logger.info("Generando excel");
+		logger.info("Generando pdf con los prestamos realizados entre " + fechaInicio + " y " + fechaFin + "...");
 		PdfWriter writer = new PdfWriter(resumen);
 		PdfDocument pdfDoc = new PdfDocument(writer);
 		
@@ -81,14 +82,15 @@ public class PdfResumenServiceImp implements IResumenService {
 			data = ImageDataFactory.create(path);
 			Image image = new Image(data);
 			image.setPadding(50);
-			image.setWidth(150);
-			image.setMaxHeight(200);
+			image.setWidth(100);
+			image.setMaxHeight(150);
 			image.setAutoScale(false);
 			
 			Paragraph paragraph = new Paragraph();
 	        paragraph.add(image);
 	        paragraph.setTextAlignment(TextAlignment.CENTER);
 	        paragraph.setHorizontalAlignment(HorizontalAlignment.CENTER);
+			paragraph.setMarginBottom(5);
 	        
 	        document.add(paragraph);
 		} catch (MalformedURLException e) {
@@ -109,7 +111,7 @@ public class PdfResumenServiceImp implements IResumenService {
 		Paragraph paragraph = new Paragraph(content);
 		paragraph.setFontSize(20);
 		paragraph.setTextAlignment(TextAlignment.CENTER);
-		paragraph.setMargin(10);
+		paragraph.setMarginBottom(0);
 		paragraph.setPaddingLeft(10);
 		paragraph.setPaddingRight(10);
 		paragraph.setWidth(1000);
@@ -124,27 +126,25 @@ public class PdfResumenServiceImp implements IResumenService {
 	 * @param prestamosDto
 	 */
 	private void crearTabla(Document document, List<PrestamoInfoDto> prestamosDto) {
-		float [] pointColumnWidths = {100F, 150F, 150F, 150F, 150F, 150F};
+		float [] pointColumnWidths = {50F, 150F, 225F, 225F, 150F};
 		Table table = new Table(pointColumnWidths);
-        logger.debug("Creando tabla con " + prestamosDto.size() + " prestamos");
-		table.addCell(new Cell().add(new Paragraph("Id")));
-		table.addCell(new Cell().add(new Paragraph("Miembro")));
-		table.addCell(new Cell().add(new Paragraph("Libro")));
-		table.addCell(new Cell().add(new Paragraph("Fecha Prestamo")));
-		table.addCell(new Cell().add(new Paragraph("Fecha Devolucion")));
-		table.addCell(new Cell().add(new Paragraph("Estado")));
-		logger.info("Se creo la tabla");
+
+		Style centradoNegritas = new Style().setTextAlignment(TextAlignment.CENTER).setBold();
+		Style centrado = new Style().setTextAlignment(TextAlignment.CENTER);
+
+		table.addCell(new Cell().add(new Paragraph("Id")).addStyle(centradoNegritas));
+		table.addCell(new Cell().add(new Paragraph("Miembro")).addStyle(centradoNegritas));
+		table.addCell(new Cell().add(new Paragraph("Libro")).addStyle(centradoNegritas));
+		table.addCell(new Cell().add(new Paragraph("Fecha Prestamo")).addStyle(centradoNegritas));
+		table.addCell(new Cell().add(new Paragraph("Estado")).addStyle(centradoNegritas));
 		
 		for(PrestamoInfoDto dto : prestamosDto) {
-			table.addCell(new Cell().add(new Paragraph(dto.getId().toString())));
-			table.addCell(new Cell().add(new Paragraph(dto.getNombreMiembro())));
-			table.addCell(new Cell().add(new Paragraph(dto.getTituloLibro())));
-			table.addCell(new Cell().add(new Paragraph(dto.getFechaPrestamo())));
-			table.addCell(new Cell().add(new Paragraph(dto.getFechaDevolucion())));
-			table.addCell(new Cell().add(new Paragraph(dto.getEstado())));
-			logger.info("Se agrego un prestamo");
+			table.addCell(new Cell().add(new Paragraph(dto.getId().toString())).addStyle(centradoNegritas));
+			table.addCell(new Cell().add(new Paragraph(dto.getNombreMiembro())).addStyle(centrado));
+			table.addCell(new Cell().add(new Paragraph(dto.getTituloLibro())).addStyle(centrado));
+			table.addCell(new Cell().add(new Paragraph(dto.getFechaPrestamo())).addStyle(centrado));
+			table.addCell(new Cell().add(new Paragraph(dto.getEstado())).addStyle(centrado));
 		}
-		logger.info("Se agrego la tabla correctamente");
         document.add(table);
 	}
 

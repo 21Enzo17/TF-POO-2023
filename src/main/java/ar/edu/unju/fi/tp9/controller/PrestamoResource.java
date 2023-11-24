@@ -40,7 +40,7 @@ public class PrestamoResource {
 
     @PostMapping("/prestamos")
     public ResponseEntity<?> guardarPrestmo(@RequestParam Long idMiembro,@RequestParam Long idLibro){
-        logger.debug("Agregando Prestamo");
+        logger.info("Agregando Prestamo");
         Map<String, Object> response = new HashMap<String, Object>();
         try{
             response.put("PrestamoInfo",prestamoService.guardarPrestamo(idMiembro, idLibro));
