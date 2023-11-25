@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -56,9 +57,8 @@ public class ExcelResumenServiceImp implements IResumenService{
         }
         
         logger.info("Excel generado correctamente");
-        return new ResponseEntity<>(outputStream.toByteArray(), headerGenerator.crearHeadersExcel(), 200);
+        return new ResponseEntity<>(outputStream.toByteArray(), headerGenerator.crearHeadersExcel(), HttpStatus.OK);
     }
-    
 
     /**
      * Metodo encargado de agregar las fechas solicitadas en el documento

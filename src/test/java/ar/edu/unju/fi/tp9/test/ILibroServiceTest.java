@@ -86,13 +86,12 @@ class ILibroServiceTest {
 		libroService.eliminarLibro(libroGuardadoDto.getId());
 		assertEquals(5, libroService.librosSize());
 		
-		libroGuardadoDto = libroService.buscarLibroPorTitulo("Un libro");
-		assertNull(libroGuardadoDto);
+		assertThrows(ManagerException.class,()->libroService.buscarLibroPorTitulo("Un libro"));
 	}
 	
 	@Test
 	@DisplayName("Test editar libro")
-	void editarLibroTest() {
+	void editarLibroTest() throws ManagerException {
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("IT");
 		
 		libroGuardadoDto.setTitulo("Moby dick");
@@ -107,7 +106,7 @@ class ILibroServiceTest {
 	
 	@Test
 	@DisplayName("Test Buscar Libro por Autor")
-	void buscarLibroAutorTest() {
+	void buscarLibroAutorTest() throws ManagerException {
 		librosPorAutor = libroService.buscarLibroPorAutor("J.K Rowling");
 		assertEquals(librosPorAutor.size(), 1);
 		
@@ -117,7 +116,7 @@ class ILibroServiceTest {
 	
 	@Test
 	@DisplayName("Test Buscar Libro por Titulo")
-	void buscarLibroTitutloTest() {
+	void buscarLibroTitutloTest() throws ManagerException {
 		libroGuardadoDto = libroService.buscarLibroPorTitulo("El camino de los reyes");
 		assertNotNull(libroGuardadoDto);
 		
@@ -127,7 +126,7 @@ class ILibroServiceTest {
 	
 	@Test
 	@DisplayName("Test Buscar Libro por ISBN")
-	void buscarLibroIsbnTest() {
+	void buscarLibroIsbnTest() throws ManagerException {
 		librosPorIsbn = libroService.buscarLibroPorIsbn("ISBN-10-0451524935");
 		assertEquals(librosPorIsbn.size(), 1);
 		
