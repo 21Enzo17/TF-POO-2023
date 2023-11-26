@@ -7,8 +7,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ar.edu.unju.fi.tp9.dto.LibroDto;
-import ar.edu.unju.fi.tp9.dto.MiembroDto;
 import ar.edu.unju.fi.tp9.entity.Libro;
 import ar.edu.unju.fi.tp9.entity.Miembro;
 

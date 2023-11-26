@@ -15,7 +15,6 @@ import ar.edu.unju.fi.tp9.enums.EstadoLibro;
 import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.repository.LibroRepository;
 import ar.edu.unju.fi.tp9.service.ILibroService;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class LibroServiceImp implements ILibroService{
@@ -46,26 +45,33 @@ public class LibroServiceImp implements ILibroService{
 
 	/**
 	 * Recibe un id por parametro y verifica que exista previamente antes de eliminarlo.
+	 * @throws ManagerException 
 	*/
 	@Override
-	public void eliminarLibro(Long id) {
+	public void eliminarLibro(Long id) throws ManagerException {
 		Optional<Libro> libro = libroRepository.findById(id);
 		
 		if(libro.isEmpty()) {
 			logger.error("Libro no registrado, " + id);
-			throw new EntityNotFoundException("Libro con id: " + id + " no ha sido registrado.");
+			throw new ManagerException("Libro con id: " + id + " no ha sido registrado.");
 		}
 		else {
-			libroRepository.delete(libro.get());
-			logger.info("Libro eliminado correctamente, " + id);
+			try{
+				libroRepository.delete(libro.get());
+				logger.info("Libro eliminado correctamente, " + id);
+			}catch(Exception e) {
+				logger.error("Error al eliminar el libro con id: " + id + ", " + e.getMessage());
+				throw new ManagerException("Error al eliminar el libro, " + id);
+			}			
 		}
 	}
 
 	/**
 	 * Recibe un libro DTO por parametro, es mapeado un libro y verifica que exista previamente antes de editarlo.
+	 * @throws ManagerException 
 	 */
 	@Override
-	public void editarLibro(LibroDto libroDto) {
+	public void editarLibro(LibroDto libroDto) throws ManagerException {
 		Libro editarLibro = new Libro();
 		
 		
@@ -76,7 +82,7 @@ public class LibroServiceImp implements ILibroService{
 		}
 		else {
 			logger.error("Este libro no existe, " + libroDto.getId());
-			throw new EntityNotFoundException("Libron con id: " + libroDto.getId() + " no ha sido registrado.");
+			throw new ManagerException("Libron con id: " + libroDto.getId() + " no ha sido registrado.");
 		}
 	}
 	
@@ -102,18 +108,19 @@ public class LibroServiceImp implements ILibroService{
 
 	/**
 	 * Busca un libro por titulo si lo encuentra devuelve dto, sino, null, 
+	 * @throws ManagerException 
 	 */
 	@Override
-	public LibroDto buscarLibroPorTitulo(String titulo) {
+	public LibroDto buscarLibroPorTitulo(String titulo) throws ManagerException {
 		LibroDto libroDto = new LibroDto();
 		Libro libroBuscado = libroRepository.findByTitulo(titulo);
 		
 		if(libroBuscado == null) {
-			logger.info("Libro no encontrado, " + titulo);
-			return null;
+			logger.error("Libro no encontrado, " + titulo);
+			throw new ManagerException("Libro con el siguiente titulo no encontrado: " + titulo);
 		}
 		else {
-			mapper.map(libroBuscado, libroDto);
+			libroDto = libroALibroDto(libroBuscado);
 			logger.info("Libro encontrado " + titulo);
 			return libroDto;
 		}
@@ -121,21 +128,30 @@ public class LibroServiceImp implements ILibroService{
 
 	/**
 	 * Busca un libro por autor pasado por parametro y lo mapea a DTO, si no existe, devuelve null.
+	 * @throws ManagerException 
 	 */
 	@Override
-	public List<LibroDto> buscarLibroPorAutor(String autor) {
+	public List<LibroDto> buscarLibroPorAutor(String autor) throws ManagerException {
 		List<Libro> librosBuscados = libroRepository.findAllByAutor(autor);
+		if(librosBuscados.isEmpty()) {
+			logger.error("No hay libros registrados de " + autor);
+			throw new ManagerException("No hay libros registrados de " + autor);
+		}
 		return devolverListaLibrosDto(librosBuscados);
 	}
 
 	/**
 	 * Devuelve un libroDto buscado por isbn pasado por parametro, si no existe, sino devuelve null.
+	 * @throws ManagerException 
 	 */
 	@Override
-	public List<LibroDto> buscarLibroPorIsbn(String isbn) {
+	public List<LibroDto> buscarLibroPorIsbn(String isbn) throws ManagerException {
 		List<Libro> librosBuscados = libroRepository.findAllByIsbn(isbn);
+		if(librosBuscados.isEmpty()) {
+			logger.error("No hay libros registrados con el isbn: " + isbn);
+			throw new ManagerException("No hay libros registrados con el isbn: " + isbn);
+		}
 		return devolverListaLibrosDto(librosBuscados);
-		
 	}
 	
 	@Override

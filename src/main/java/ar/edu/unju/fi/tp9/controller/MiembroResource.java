@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.edu.unju.fi.tp9.dto.MiembroDto;
+import ar.edu.unju.fi.tp9.exception.ManagerException;
 import ar.edu.unju.fi.tp9.service.IMiembroService;
 
 @RestController
@@ -38,7 +39,7 @@ public class MiembroResource {
             response.put("Objeto",miembroService.guardarMiembro(miembroDto));
             response.put("Mensaje", "Miembro guardado con exito");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al guardar el miembro: "+ e.getMessage());
             response.put("Mensaje", "Error al guardar miembro: " + e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -52,7 +53,7 @@ public class MiembroResource {
             MiembroDto miembro = miembroService.obtenerMiembroById(id);
             response.put("Miembro", miembro);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
              logger.error("Error al buscar miembro: "+ e.getMessage());
             response.put("Mensaje", "Error 404, miembro no encontrado");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -66,7 +67,7 @@ public class MiembroResource {
             MiembroDto miembro = miembroService.obtenerMiembroByCorreo(correo);
             response.put("Miembro", miembro);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al buscar miembro: "+ e.getMessage());
             response.put("Mensaje", "Error 404, miembro no encontrado");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -80,9 +81,12 @@ public class MiembroResource {
             response.put("Objeto",miembroService.modificarMiembro(miembroDto));
             response.put("Mensaje", "Miembro modificado con exito");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al modificar miembro: "+ e.getMessage());
             response.put("Mensaje", "Error al modificar miembro: " + e.getMessage());
+            if (e.getMessage().contains("miembro no encontrado")) {
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -94,7 +98,7 @@ public class MiembroResource {
             miembroService.eliminarMiembroPorId(id);
             response.put("Mensaje", "Miembro eliminado con exito");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al eliminar miembro: "+ e.getMessage());
             response.put("Mensaje", "Error al eliminar miembro: " + e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);

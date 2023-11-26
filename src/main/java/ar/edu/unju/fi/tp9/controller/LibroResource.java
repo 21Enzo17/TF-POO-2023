@@ -2,7 +2,6 @@ package ar.edu.unju.fi.tp9.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class LibroResource {
 			response.put("Mensaje", "Libro guardado con exito");
 			
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
-		}catch(Exception e) {
+		}catch(ManagerException e) {
 			logger.error("Error al guardar el libro: " + e.getMessage());
 			response.put("Mensaje", "Error al guardar el libro");
 			
@@ -60,16 +59,12 @@ public class LibroResource {
 			libroService.editarLibro(libroDto);
 			response.put("Mensaje", "Libro editado correctamente");
 			
-		}catch (NoSuchElementException e) {
+		}catch (ManagerException e) {
 			response.put("Mensaje", "No existe libro guardado con el id enviado");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-			
-		}catch (DataAccessException e) {
-			response.put("Mensaje", "Error al guardar el objeto");
-			response.put("Error", e.getMostSpecificCause().getMessage());
-			
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			response.put("Error", e.getMessage());
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);	
 		}
+
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 	
@@ -82,13 +77,13 @@ public class LibroResource {
 			libroService.eliminarLibro(id);
 			response.put("Mensaje", "Objeto eliminado correctamente");
 			
-		} catch (NoSuchElementException e) {
-			response.put("Mensaje", "No existe libro registrado con id: " + id);
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		} catch (ManagerException e) {
+			logger.error("No existe libro registrado con id: " + id);
+			response.put("Error", e.getMessage());
+
+			if(e.getMessage().contains("no ha sido registrado."))
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 			
-		} catch (DataAccessException e) {
-			response.put("Mensaje", "Error al eliminar el libro");
-			response.put("Error", e.getMostSpecificCause().getMessage());
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			
 		}
@@ -105,13 +100,9 @@ public class LibroResource {
 			response.put("Mensaje", "libro encontrado con exito");
 			
 		} catch (ManagerException e) {
-			response.put("Mensaje", "No existe libro registrado con id: " + id);
+			logger.error("No existe libro registrado con id: " + id);
+			response.put("Error", e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-			
-		} catch (DataAccessException e) {
-			response.put("Mensaje", "Error al buscar el libro");
-			response.put("Error", e.getMostSpecificCause().getMessage());
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			
 		}
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
@@ -126,15 +117,10 @@ public class LibroResource {
 			response.put("Objeto", libroService.buscarLibroPorTitulo(titulo));
 			response.put("Mensaje", "libro encontrado con exito");
 			
-		} catch (NoSuchElementException e) {
-			logger.error("Libro no encontrado por titulo");
-			response.put("Mensaje", "No existe libro registrado con titulo: " + titulo);
+		} catch (ManagerException e) {
+			logger.error("Libro no encontrado por titulo " + titulo);
+			response.put("Error", e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-			
-		} catch (DataAccessException e) {
-			response.put("Mensaje", "Error al buscar el libro");
-			response.put("Error", e.getMostSpecificCause().getMessage());
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			
 		}
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
@@ -149,15 +135,10 @@ public class LibroResource {
 			response.put("Objeto", libroService.buscarLibroPorAutor(autor));
 			response.put("Mensaje", "libro encontrado con exito");
 			
-		} catch (NoSuchElementException e) {
-			logger.error("Libro no encontrado por titulo");
-			response.put("Mensaje", "No existe libro registrado con autor: " + autor);
+		} catch (ManagerException e) {
+			logger.error("Libros no encontrados por el autor " + autor);
+			response.put("Error", e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-			
-		} catch (DataAccessException e) {
-			response.put("Mensaje", "Error al buscar el libro");
-			response.put("Error", e.getMostSpecificCause().getMessage());
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			
 		}
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
@@ -172,15 +153,10 @@ public class LibroResource {
 			response.put("Objeto", libroService.buscarLibroPorIsbn(isbn));
 			response.put("Mensaje", "libro encontrado con exito");
 			
-		} catch (NoSuchElementException e) {
-			logger.error("Libro no encontrado por titulo");
-			response.put("Mensaje", "No existe libro registrado con ISBN: " + isbn);
+		} catch (ManagerException e) {
+			logger.error("Libros no encontrados por isbn " + isbn);
+			response.put("Error", e.getMessage());
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-			
-		} catch (DataAccessException e) {
-			response.put("Mensaje", "Error al buscar el libro");
-			response.put("Error", e.getMostSpecificCause().getMessage());
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			
 		}
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);

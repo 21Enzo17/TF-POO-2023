@@ -9,17 +9,17 @@ import ar.edu.unju.fi.tp9.exception.ManagerException;
 public interface ILibroService {
 	void guardarLibro(LibroDto libroDto) throws ManagerException;
 	
-	void eliminarLibro(Long id);
+	void eliminarLibro(Long id) throws ManagerException;
 	
-	void editarLibro(LibroDto libroDto);
+	void editarLibro(LibroDto libroDto) throws ManagerException;
 	
 	LibroDto buscarLibroPorId(Long id) throws ManagerException;
 	
-	LibroDto buscarLibroPorTitulo(String titulo);
+	LibroDto buscarLibroPorTitulo(String titulo) throws ManagerException;
 	
-	List<LibroDto> buscarLibroPorAutor(String autor);
+	List<LibroDto> buscarLibroPorAutor(String autor) throws ManagerException;
 	
-	List<LibroDto> buscarLibroPorIsbn(String isbn);
+	List<LibroDto> buscarLibroPorIsbn(String isbn) throws ManagerException;
 	
 	long librosSize();
 
