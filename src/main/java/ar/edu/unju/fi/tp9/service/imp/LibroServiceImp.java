@@ -56,8 +56,13 @@ public class LibroServiceImp implements ILibroService{
 			throw new ManagerException("Libro con id: " + id + " no ha sido registrado.");
 		}
 		else {
-			libroRepository.delete(libro.get());
-			logger.info("Libro eliminado correctamente, " + id);
+			try{
+				libroRepository.delete(libro.get());
+				logger.info("Libro eliminado correctamente, " + id);
+			}catch(Exception e) {
+				logger.error("Error al eliminar el libro con id: " + id + ", " + e.getMessage());
+				throw new ManagerException("Error al eliminar el libro, " + id);
+			}			
 		}
 	}
 

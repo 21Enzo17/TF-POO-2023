@@ -123,8 +123,10 @@ public class PrestamoServiceImp implements IPrestamoService {
         if(prestamo == null){
             logger.error("No existe el prestamo con id, " + id);
             throw new ManagerException("Prestamo con id: " + id + " no ha sido registrado");
-        }
-        	
+        }else if (prestamo.getEstado().equals(Estado.DEVUELTO)){
+            logger.error("El prestamo ya ha sido devuelto, " + id);
+            throw new ManagerException("El prestamo ya ha sido devuelto");
+        }	
         
         prestamo.setEstado(Estado.DEVUELTO);
         libroService.cambiarEstado(prestamo.getLibro(),EstadoLibro.DISPONIBLE.toString());
@@ -189,6 +191,10 @@ public class PrestamoServiceImp implements IPrestamoService {
 		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
 		
 		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
+        if (listaDto.isEmpty()) {
+            logger.error("Error al generar el resumen en excel, no hay prestamos entre las fechas ingresadas");
+            throw new ManagerException("No hay prestamos entre las fechas ingresadas");
+        }
 		logger.info("Generando resumen de prestamos con excel");
 		return excelService.realizarResumen(listaDto, fechaInicio, fechaFin);
 	}
@@ -206,7 +212,10 @@ public class PrestamoServiceImp implements IPrestamoService {
 		LocalDateTime fechaFinalFormateada = dateFormatter.fechDateTime(fechaFin);
 		
 		List<PrestamoInfoDto> listaDto = listaPrestamosEntre(fechaInicioFormateada, fechaFinalFormateada);
-		
+		if(listaDto.isEmpty()) {
+            logger.error("Error al generar el resumen en pdf, no hay prestamos entre las fechas ingresadas");
+            throw new ManagerException("No hay prestamos entre las fechas ingresadas");
+        }
         logger.info("Generando resumen de prestamos con pdf");
         return pdfService.realizarResumen(listaDto, fechaInicio, fechaFin);
 	}

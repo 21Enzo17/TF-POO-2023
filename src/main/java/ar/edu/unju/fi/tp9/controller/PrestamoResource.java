@@ -46,7 +46,7 @@ public class PrestamoResource {
             response.put("PrestamoInfo",prestamoService.guardarPrestamo(idMiembro, idLibro));
             response.put("Mensaje", "Prestamo guardado con exito");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al guardar el prestamo: "+ e.getMessage());
             response.put("Mensaje", "Error al guardar prestamo: " + e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,7 +61,7 @@ public class PrestamoResource {
             byte[] contents = comprobante.toByteArray();
             
             return new ResponseEntity<>(contents, headerGenerator.crearHeadersComprobantePdf() , HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al obtener comprobante: "+ e.getMessage());
             response.put("Mensaje", e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -76,7 +76,7 @@ public class PrestamoResource {
             PrestamoDto prestamo = prestamoService.obtenerPrestamoById(id);
             response.put("Prestamo", prestamo);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
              logger.error("Error al buscar prestamo: "+ e.getMessage());
             response.put("Mensaje", "Error 404, prestamo no encontrado");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -90,10 +90,13 @@ public class PrestamoResource {
             prestamoService.devolucionPrestamo(id);
             response.put("Mensaje", "Prestamo devuelto con exito");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
              logger.error("Error al devolver prestamo: "+ e.getMessage());
-            response.put("Mensaje", "Error 404, prestamo no encontrado");
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+            
+            response.put("Mensaje", e.getMessage());
+            if(e.getMessage().contains("prestamo no encontrado"))
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -104,7 +107,7 @@ public class PrestamoResource {
             prestamoService.eliminarPrestamoById(id);
             response.put("Mensaje", "Prestamo eliminado con exito");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al eliminar prestamo: "+ e.getMessage());
             response.put("Mensaje", "Error 404, prestamo no encontrado");
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -116,13 +119,13 @@ public class PrestamoResource {
     	Map<String, Object> response = new HashMap<String, Object>();
         try{
             return prestamoService.realizarResumenExcel(fechaInicio, fechaFin);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al generar el resumen en excel: "+ e.getMessage());
             response.put("Mensaje", e.getMessage());
+            if(e.getMessage().contains("no hay prestamos"))
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-    	
     }
     
     @GetMapping("/prestamos/pdf")
@@ -130,9 +133,11 @@ public class PrestamoResource {
         Map<String, Object> response = new HashMap<String, Object>();
         try{
             return prestamoService.realizarResumenPdf(fechaInicio, fechaFin);
-        }catch(Exception e){
+        }catch(ManagerException e){
             logger.error("Error al generar el resumen en pdf: "+ e.getMessage());
             response.put("Mensaje", e.getMessage());
+            if(e.getMessage().contains("no hay prestamos"))
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
